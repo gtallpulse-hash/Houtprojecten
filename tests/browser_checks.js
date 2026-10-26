@@ -344,6 +344,67 @@ checks.terug = async () => {
   return { ok: document.querySelectorAll(".gcat").length === 5 && S.gc === null };
 };
 
+const SJABLOON = ["zaaien/zaaien-binnen-buiten", "verzorging/water-geven", "seizoen/ijsheiligen", "seizoen/klimaat", "zaaien/kiemtijd", "zaaien/plantafstand", "oogsten/oogst-wanneer", "grond/voeding", "plagen/slakken", "plagen/phytophthora"];
+const ZONDER_BRON = ["oogsten/oogst-wanneer", "grond/voeding"];
+
+checks.sjabloon = async () => {
+  const fouten = [];
+  const verwacht = JSON.stringify(["Wat doe ik", "Hoe doe ik dat", "Waar let ik op"]);
+  for (const pad of SJABLOON) {
+    const r = artByPath(pad);
+    const titels = r.a.b.filter((x) => x.k === "h").map((x) => x.t);
+    if (JSON.stringify(titels) !== verwacht) fouten.push(pad + ": " + titels.join("|"));
+  }
+  return { ok: fouten.length === 0, detail: fouten.join("; ") };
+};
+
+checks.bronnen = async () => {
+  const fouten = [];
+  for (const g of GIDS) for (const a of g.arts) {
+    if (!!a.bron !== !!a.nagekeken) fouten.push("half ingevuld: " + g.id + "/" + a.id);
+  }
+  for (const pad of SJABLOON) {
+    const r = artByPath(pad), moetBron = !ZONDER_BRON.includes(pad);
+    if (moetBron !== !!(r.a.bron && r.a.nagekeken)) fouten.push("bron " + pad);
+    openArticle(pad);
+    const regel = [...document.querySelectorAll("#sheet p.credit")].find((e) => e.textContent.startsWith("Bron:"));
+    if (moetBron && (!regel || !regel.textContent.includes("Nagekeken: oktober 2026"))) fouten.push("regel ontbreekt " + pad);
+    if (!moetBron && regel) fouten.push("regel zonder bron " + pad);
+    closeOv();
+  }
+  openArticle("beginnen/waar-begin-ik");
+  if ([...document.querySelectorAll("#sheet p.credit")].some((e) => e.textContent.startsWith("Bron:"))) fouten.push("regel bij artikel zonder velden");
+  closeOv();
+  return { ok: fouten.length === 0, detail: fouten.join("; ") };
+};
+
+// Acceptatiecriterium 8: interactieve elementen zijn minstens 44 px hoog.
+export function kleineDoelen() {
+  const sel = "button, a[href], input:not([type=hidden]), select, summary";
+  return [...document.querySelectorAll(sel)]
+    .filter((e) => e.offsetParent !== null && !e.closest("[hidden]") && !e.closest("[inert]"))
+    .filter((e) => !(e.tagName === "A" && e.closest("p, li")))  // links in lopende tekst zijn uitgezonderd (WCAG 2.2, doelgrootte)
+    .map((e) => ({ e, h: e.getBoundingClientRect().height }))
+    .filter((x) => x.h > 0 && x.h < 43.5)
+    .map((x) => `${x.e.tagName.toLowerCase()}.${(x.e.className || "").toString().split(" ")[0]} ${Math.round(x.h)}px "${(x.e.textContent || x.e.getAttribute("aria-label") || "").trim().slice(0, 25)}"`);
+}
+
+checks.doelen44 = async () => {
+  const uit = {};
+  const doe = async (naam, fn) => { await fn(); await sleep(200); const k = kleineDoelen(); if (k.length) uit[naam] = k.slice(0, 4); };
+  await doe("kal-maand", async () => { resetFilters(); S.tab = "kal"; S.kv = "maand"; render(); });
+  await doe("kal-jaar", async () => { S.kv = "jaar"; render(); document.querySelector('details.grp[data-view="jaar"]').open = true; });
+  await doe("alle", async () => { S.tab = "alle"; render(); document.querySelectorAll("details.grp").forEach((d) => (d.open = true)); });
+  await doe("tuin", async () => { S.tab = "tuin"; render(); });
+  await doe("hulp", async () => { S.tab = "hulp"; S.hulp = null; render(); });
+  await doe("hulp-detail", async () => { S.hulp = "geel"; render(); });
+  await doe("gids", async () => { S.tab = "gids"; S.gc = null; S.hulp = null; render(); });
+  await doe("gids-naslag", async () => { S.gc = "naslag"; render(); });
+  await doe("detail", async () => { S.gc = null; openDetail("tomaat"); });
+  closeOv();
+  return { ok: Object.keys(uit).length === 0, detail: JSON.stringify(uit) };
+};
+
 export async function runAll(names) {
   const out = {};
   for (const naam of names || Object.keys(checks)) {

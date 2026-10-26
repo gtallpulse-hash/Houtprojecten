@@ -32,5 +32,9 @@ check("geenNuTab", '["nu","Nu"]' not in SRC and "viewNu" not in SRC)
 check("standaard", 'S={tab:"kal"' in SRC and 'kv:"maand"' in SRC)
 check("sleutels blijven", SRC.count('"mt-tuin-v1"') >= 1 and SRC.count('"sg-ch"') >= 1)
 
+# --- Taak 5: bronnen en sjabloon
+check("geenPlaatshouders", re.search(r"TODO|TBD|lorem", SRC, re.I) is None)
+check("vorstdata uit bron", "rond half april" not in SRC and "tussen half oktober en begin november" not in SRC and "27 maart" in SRC and "21 november" in SRC)
+
 if __name__ == "__main__":
     sys.exit(1 if FAILS else 0)

@@ -157,7 +157,7 @@ th{font-weight:600;color:var(--muted)}
 .sheet .pad{padding-inline:18px}
 .hero{position:relative}
 .hero .ph{border-radius:24px 24px 0 0;aspect-ratio:16/10;max-height:340px}
-.x{position:absolute;top:12px;right:12px;border:0;background:var(--surface);color:var(--ink);border-radius:50%;width:42px;height:42px;font-size:1.3rem;line-height:1}
+.x{position:absolute;top:12px;right:12px;border:0;background:var(--surface);color:var(--ink);border-radius:50%;width:44px;height:44px;font-size:1.3rem;line-height:1}
 .credit{font-size:.85rem;color:var(--muted);margin:6px 0 0}
 .credit a{color:inherit}
 .head{padding-block:16px 4px}
@@ -205,7 +205,7 @@ details.fold>div{padding-bottom:18px}
 details.grp.cg>summary{min-height:56px}
 details.grp.cg>.cbody{padding:0 14px 10px}
 @media(min-width:760px){.mhead{margin-left:178px}}
-.crow{display:block;width:100%;text-align:left;border:0;background:transparent;padding:4px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.crow{display:block;width:100%;min-height:44px;text-align:left;border:0;background:transparent;padding:4px 0;border-bottom:1px solid var(--line);cursor:pointer}
 .crow:hover .nmr{color:var(--leaf)}
 .crow .nmr{font-weight:600;display:flex;gap:10px;align-items:baseline;line-height:1.3}
 .niv{font-weight:400;color:var(--muted);font-size:.85rem}
@@ -222,7 +222,7 @@ details.grp.cg>.cbody{padding:0 14px 10px}
 .gcat b{font:700 1.1rem var(--f-display);display:block}
 .gcat span{display:block;color:var(--muted);font-size:.9rem;margin-top:2px}
 .gcat em{font-style:normal;font-size:.8rem;color:var(--leaf);font-weight:600;display:block;margin-top:6px}
-.back{border:0;background:transparent;color:var(--leaf);font-weight:600;padding:6px 0;margin-top:8px}
+.back{border:0;background:transparent;color:var(--leaf);font-weight:600;padding:6px 0;margin-top:8px;min-height:44px}
 .acards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;margin-top:14px}
 .acard{all:unset;box-sizing:border-box;cursor:pointer;background:var(--surface);border-radius:16px;padding:14px 16px;display:block}
 .acard:focus-visible{outline:3px solid var(--sky);outline-offset:3px}
@@ -245,7 +245,7 @@ details.grp.cg>.cbody{padding:0 14px 10px}
 .buur .bh{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
 .buur p{margin:6px 0 0;font-size:.94rem}
 .buur p b{font-weight:600}
-.lnk{all:unset;cursor:pointer;font:700 1rem var(--f-display);color:var(--ink);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.lnk{all:unset;cursor:pointer;font:700 1rem var(--f-display);color:var(--ink);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px;min-height:44px;display:inline-flex;align-items:center}
 .lnk:hover{text-decoration-color:var(--leaf)}
 .lnk:focus-visible{outline:3px solid var(--sky);border-radius:4px}
 .pg{margin-top:6px}
@@ -277,7 +277,7 @@ details.grp.cg>.cbody{padding:0 14px 10px}
 .hero-card .btn.pri{background:var(--on-leaf);color:var(--leaf);border-color:var(--on-leaf)}
 .hc-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
 .hc-list{margin:0;padding-left:1.4rem;display:flex;flex-direction:column;gap:2px;font-size:.95rem}
-.hc-list button{all:unset;cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(255,255,255,.4)}
+.hc-list button{all:unset;cursor:pointer;min-height:44px;display:inline-flex;align-items:center;text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(255,255,255,.4)}
 .hc-list button:focus-visible{outline:3px solid var(--on-leaf);border-radius:4px}
 .guide-cta{margin-top:18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 .guide-cta span{color:var(--muted);font-size:.9rem}
@@ -303,7 +303,7 @@ details.grp.cg>.cbody{padding:0 14px 10px}
   </section>
   <main id="main" tabindex="-1"></main>
   <div id="live" class="sr" role="status" aria-live="polite"></div>
-  <footer><p class="src">Gegevens zijn gemiddelden voor Vlaanderen. De eerste vorst valt gemiddeld tussen half oktober en begin november, de laatste rond half april. Plant vorstgevoelige gewassen pas na de ijsheiligen (11-13 mei). Controleer bij twijfel het zaadzakje van je ras. Foto's komen van Wikimedia Commons met vrije licenties. De fotograaf staat onder elke foto in het detailscherm.</p></footer>
+  <footer><p class="src">Gegevens zijn gemiddelden voor Vlaanderen. In Ukkel viel de laatste vorst gemiddeld op 27 maart en de eerste op 21 november (KMI, 1991 tot 2020). Plant vorstgevoelige gewassen pas na de ijsheiligen (11-13 mei). Controleer bij twijfel het zaadzakje van je ras. Foto's komen van Wikimedia Commons met vrije licenties. De fotograaf staat onder elke foto in het detailscherm.</p></footer>
 </div>
 
 <nav class="nav" aria-label="Hoofdmenu"><div class="nav-in" id="nav"></div></nav>
@@ -731,12 +731,15 @@ const GIDS=[
   p("Je meet de pH met een goedkope teststrip of grondtest. Is de grond te zuur, dan bekalk je in het najaar. Is hij te kalkrijk voor blauwe bes, kweek je ze in een pot met zure potgrond en geef je regenwater."),
   tip("Kool met knolvoet (verdikte wortels) is meestal een teken van te zure grond. Kalk en vruchtwisseling helpen.")]},
  {id:"voeding",t:"Voeding: stikstof, fosfor en kalium",min:4,s:"Wat elke voedingsstof doet en wat je ziet als er te weinig is.",b:[
-  p("Planten hebben drie hoofdvoedingsstoffen nodig. Op meststoffen staan de letters N, P en K."),
+  h("Wat doe ik"),
+  p("Geef je planten de voeding die ze nodig hebben, niet meer. Op meststoffen staan de letters N, P en K."),
+  h("Hoe doe ik dat"),
   tb(["Stof","Waarvoor","Tekort herken je aan"],[
    ["Stikstof (N)","Bladgroei en groene kleur","Bleke, gele onderste bladeren, trage groei"],
    ["Fosfor (P)","Wortels, bloei en vruchten","Paarsachtig blad, weinig bloei"],
    ["Kalium (K)","Vruchten, smaak, weerstand","Bruine bladranden, zwakke vruchten"]]),
-  h("Wie vraagt wat?"),ul(["Veel voeding (zware eters): kool, pompoen, courgette, tomaat, prei, aardappel.","Matig: sla, spinazie, wortel, ui, biet, snijbiet.","Weinig: peulvruchten (erwt, boon). Die maken zelf stikstof via knolletjes aan hun wortels. Kruiden zoals tijm en rozemarijn ook."]),
+  p("Wie vraagt veel, matig of weinig voeding?"),ul(["Veel voeding (zware eters): kool, pompoen, courgette, tomaat, prei, aardappel.","Matig: sla, spinazie, wortel, ui, biet, snijbiet.","Weinig: peulvruchten (erwt, boon). Die maken zelf stikstof via knolletjes aan hun wortels. Kruiden zoals tijm en rozemarijn ook."]),
+  h("Waar let ik op"),
   tip("Compost voedt langzaam en goed. Een organische moestuinmest in het voorjaar en tomatenvoeding tijdens de bloei volstaan meestal."),
   warn("Te veel stikstof geeft veel blad en weinig vruchten, en trekt bladluis aan. Meer is niet beter.")]},
  {id:"potgrond",t:"Potgrond of tuingrond",min:2,s:"Waarom je ze niet door elkaar haalt.",b:[
@@ -757,13 +760,15 @@ const GIDS=[
   warn("Leg mulch niet vers en dik tegen de stengel. Dat geeft rotting en nodigt slakken uit. Laat 2 cm vrij rond de plant.")]}
 ]},
 {id:"zaaien",t:"Zaaien en kweken",d:"Van zaadje tot plant",ic:"seed",arts:[
- {id:"zaaien-binnen-buiten",t:"Zaaien: binnen of buiten",min:3,s:"Welke gewassen je voorzaait en welke je direct buiten zaait.",b:[
-  p("Sommige gewassen heb je vroeg nodig of hebben warmte nodig die er in maart nog niet is. Dan zaai je ze binnen voor."),
+ {id:"zaaien-binnen-buiten",t:"Zaaien: binnen of buiten",min:3,s:"Welke gewassen je in huis zaait en welke je direct buiten zaait.",bron:"IVN, factsheet Zaaien (2022); Leefmilieu Brussel, infofiche Teelttechnieken (2013)",nagekeken:"2026-10",b:[
+  h("Wat doe ik"),
+  p("Kies per gewas: zaai het in huis in een potje, of direct buiten in de grond. Zo begin je op het juiste moment."),
   tb(["Zaai buiten","Zaai in huis"],[
-   ["Radijs, wortel, biet, erwt, tuinboon, spinazie, peterselie, dille, koriander, snijbiet, rucola","Tomaat, paprika, courgette, komkommer, pompoen, basilicum, prei, kool (voor vroege oogst)"],
-   ["Stokbonen (na half mei)","Sla (voor een vroege oogst)"]]),
-  tip("Wortelgewassen (wortel, biet, radijs) verplant je niet. Hun wortel groeit scheef of splitst als je ze verplaatst."),
-  p("Voorzaaien doe je 6 tot 8 weken voor de uitplantdatum, vaak half maart tot half april. Gebruik zaaigrond en een lichte plaats.")]},
+   ["Radijs, spinazie, rode biet, erwt, peterselie, rucola, sla","Tomaat, komkommer, courgette, basilicum, broccoli, sla (voor een vroege oogst)"]]),
+  h("Hoe doe ik dat"),
+  ol(["Zaai in huis in zaaigrond en zet de potjes op een lichte plaats.","Hard de plantjes af voor je ze uitplant: zet ze een paar dagen buiten, eerst kort en dan steeds langer.","Plant ze uit als ze ongeveer 10 cm groot zijn of twee tot drie echte bladeren hebben."]),
+  h("Waar let ik op"),
+  ul(["Tot half mei (de ijsheiligen) kan het buiten nog vriezen. Zet gevoelige planten pas daarna buiten.","Spinazie, radijs en wortel kunnen al in het vroege voorjaar buiten. Hun jonge plantjes verdragen wat vorst.","Is de grond nog erg koud? Dek ze af met doorzichtig plastic. Zo warmt de grond sneller op."])]},
  {id:"zaaigrond-licht",t:"Zaaigrond, licht en warmte",min:3,s:"Waarom je plantjes lang en slap worden, en hoe je dat voorkomt.",b:[
   p("Kiemplanten hebben drie dingen nodig: vocht, warmte en licht."),
   ul(["Vocht: houd de grond vochtig, maar niet nat. Gebruik een plantenspuit.","Warmte: tomaat, paprika en courgette kiemen bij 20 tot 25 °C. Sla, spinazie en erwten kiemen al bij 10 °C.","Licht: zodra de eerste blaadjes boven zijn, willen ze het zo lichtrijk mogelijk."]),
@@ -774,51 +779,56 @@ const GIDS=[
   h("Afharden"),p("Plantjes die binnen opgroeiden, moeten wennen aan zon, wind en temperatuurverschillen. Zet ze 7 tot 10 dagen eerst enkele uren per dag buiten in de schaduw, daarna steeds langer en meer in de zon."),
   tip("Sla je afharden over, dan krijgen je plantjes een schok. Ze kunnen verbranden of stagneren."),
   warn("Zet vorstgevoelige planten niet buiten voor half mei. Een late nachtvorst kan een hele tomatenaanplant doden.")]},
- {id:"kiemtijd",t:"Zaaidiepte en kiemtijd per gewas",min:4,s:"Een overzicht dat je kan raadplegen bij het zaaien.",b:[
-  p("Dit zijn gemiddelden. Het zaadzakje is altijd de baas."),
-  tb(["Gewas","Zaaidiepte","Kiemt na","Kiemtemperatuur"],[
-   ["Tomaat","0,5 cm","5 tot 10 dagen","20 tot 25 °C"],
-   ["Paprika","0,5 tot 1 cm","10 tot 20 dagen","25 tot 28 °C"],
-   ["Courgette, komkommer","2 tot 3 cm","5 tot 10 dagen","20 °C of meer"],
-   ["Pompoen","2 tot 3 cm","5 tot 10 dagen","20 °C of meer"],
-   ["Radijs","1 cm","3 tot 5 dagen","10 °C of meer"],
-   ["Sla","0,5 cm (licht bedekken)","3 tot 7 dagen","10 tot 20 °C (boven 25 °C kiemt sla slecht)"],
-   ["Spinazie","2 tot 3 cm","7 tot 14 dagen","10 tot 18 °C"],
-   ["Wortel","1 cm","10 tot 21 dagen","10 tot 25 °C"],
-   ["Rode biet","2 cm","7 tot 14 dagen","10 tot 25 °C"],
-   ["Erwt","3 tot 4 cm","7 tot 14 dagen","5 °C of meer"],
-   ["Tuinboon","5 cm","10 tot 20 dagen","5 °C of meer"],
-   ["Stokboon","3 tot 4 cm","7 tot 10 dagen","15 °C of meer"],
-   ["Prei, ui","1 cm","10 tot 14 dagen","10 tot 20 °C"],
-   ["Peterselie","1 cm","14 tot 28 dagen","15 tot 20 °C"],
-   ["Basilicum","0,5 cm","5 tot 10 dagen","20 tot 25 °C"],
-   ["Koriander, dille","1 cm","7 tot 14 dagen","15 tot 20 °C"]]),
-  tip("Zaaidiepte is ongeveer 2 à 3 keer de dikte van het zaadje. Heel fijn zaad (sla, wortel) nauwelijks bedekken.")]},
+ {id:"kiemtijd",t:"Zaaidiepte en kiemtijd per gewas",min:4,s:"Een overzicht dat je kan raadplegen bij het zaaien.",bron:"Leefmilieu Brussel, infofiche Teelttechnieken (2013); UC Master Gardener, Seed germination temperature and timing",nagekeken:"2026-10",b:[
+  h("Wat doe ik"),
+  p("Zaai elk zaad op de juiste diepte en in grond die warm genoeg is. Dan komt het snel en gelijk op. Hoe groter het zaad, hoe dieper je het zaait."),
+  h("Hoe doe ik dat"),
+  tb(["Zaadgrootte","Voorbeelden","Zaaidiepte"],[
+   ["Klein","tomaat, sla, wortel, prei, ui, kool","0,5 tot 1 cm"],
+   ["Middelgroot","spinazie, radijs, komkommer, rode biet","1 tot 2 cm"],
+   ["Groot","erwt, boon, pompoen, courgette","1,5 tot 3 cm"],
+   ["Zeer groot","tuinboon","2 tot 3 cm"]]),
+  tb(["Gewas","Kiemt na (in warme grond)","Beste bodemtemperatuur"],[
+   ["Tomaat","6 tot 8 dagen","18 tot 29 °C"],
+   ["Paprika","ongeveer 12 dagen","18 tot 24 °C"],
+   ["Radijs","3 tot 4 dagen","18 tot 29 °C"],
+   ["Sla","ongeveer 3 dagen","16 tot 24 °C"],
+   ["Wortel","6 tot 7 dagen","18 tot 29 °C"],
+   ["Spinazie","ongeveer 6 dagen","18 tot 24 °C"],
+   ["Rode biet","5 tot 6 dagen","18 tot 29 °C"],
+   ["Erwt","ongeveer 8 dagen","18 tot 24 °C"],
+   ["Ui","4 tot 5 dagen","18 tot 29 °C"],
+   ["Komkommer","3 tot 6 dagen","18 tot 35 °C"]]),
+  h("Waar let ik op"),
+  ul(["Koude grond vertraagt het kiemen sterk. Bij 10 °C kan wortel ongeveer 17 dagen nodig hebben.","In zandgrond zaai je dieper dan in kleigrond.","Dit zijn gemiddelden. Het zaadzakje is altijd de baas: volg de diepte en afstand op het zakje van jouw ras."])]},
  {id:"zaad-kopen",t:"Zaad kopen en bewaren",min:3,s:"Waar je op let, en hoelang zaad meegaat.",b:[
   h("Waar op letten"),ul(["Kijk naar de uiterste zaaidatum op het zakje.","Kies rassen die bij jouw klimaat passen: 'vroeg', 'buiten' of 'koude-tolerant' voor Vlaanderen.","F1 betekent hybride: sterk en gelijkmatig, maar je kan er geen zaad van bewaren.","Biologisch zaad is niet bewerkt of ontsmet."]),
   h("Hoelang kan zaad bewaard worden?"),
   tb(["Gewas","Ongeveer"],[["Ui, prei, peterselie, pastinaak","1 tot 2 jaar"],["Erwt, boon, wortel, biet, radijs, koriander","2 tot 3 jaar"],["Tomaat, sla, kool, komkommer, courgette","4 tot 5 jaar"]]),
   p("Bewaar zaad koel, droog en donker, bijvoorbeeld in een doos in de kelder. Zaad dat te lang bewaard werd kiemt slechter: zaai dan wat dichter."),
   tip("Test oud zaad met 10 zaadjes in vochtig keukenpapier. Kiemen er meer dan 7, dan kan je het nog gebruiken.")]},
- {id:"plantafstand",t:"Plantafstanden en rijen",min:3,s:"Hoeveel ruimte elk gewas nodig heeft.",b:[
-  p("Planten die te dicht staan concurreren om licht, water en voeding en zijn gevoeliger voor ziektes. Planten die te ver staan, laten ruimte voor onkruid."),
-  tb(["Gewas","Tussen planten","Tussen rijen"],[
-   ["Radijs","3 tot 5 cm","10 tot 15 cm"],["Wortel","4 tot 5 cm","20 tot 25 cm"],["Sla","20 tot 30 cm","25 tot 30 cm"],["Spinazie","10 cm","20 cm"],
-   ["Ui","10 cm","25 cm"],["Prei","15 cm","30 cm"],["Tomaat","50 tot 60 cm","80 cm"],["Courgette","80 tot 100 cm","100 cm"],
-   ["Pompoen","1 tot 1,5 m","1,5 m"],["Stokboon","10 cm (rond een stok)","60 cm"],["Aardappel","30 tot 35 cm","60 tot 75 cm"],["Spruitkool","60 cm","60 cm"],["Aardbei","30 tot 40 cm","50 cm"]]),
-  tip("Smalle rijen zijn voor snelle gewassen. Plan de ruimte voor het volwassen formaat, niet voor het plantje dat je nu in je hand hebt.")]},
+ {id:"plantafstand",t:"Plantafstanden en rijen",min:3,s:"Hoeveel ruimte elk gewas nodig heeft.",bron:"Leefmilieu Brussel, infofiche Gemakkelijke groenten (2013); Tuinadvies.be, Groenten zaaikalender",nagekeken:"2026-10",b:[
+  h("Wat doe ik"),
+  p("Geef elke plant genoeg ruimte voor haar volwassen formaat. Staan planten te dicht op elkaar, dan blijven ze nat. Dun ze dan uit."),
+  tb(["Gewas","Rijafstand x plantafstand"],[
+   ["Radijs","10 tot 15 cm x 2 tot 3 cm"],["Sla","25 x 25 cm"],["Wortel","30 x 5 cm"],["Ui","20 x 10 cm"],["Prei","40 x 15 cm"],
+   ["Courgette","100 x 100 cm (ongeveer 1 m² per plant)"],["Spruitkool","60 tot 70 x 60 cm"],["Pompoen","2 tot 3 m² per plant"]]),
+  h("Hoe doe ik dat"),
+  ol(["Zaai in rijen met de rijafstand uit de tabel.","Dun na het opkomen uit tot de plantafstand uit de tabel. De afstand tussen de planten is belangrijker dan hun grootte.","Druk met je vinger de grond aan rond de plant die blijft staan."]),
+  h("Waar let ik op"),
+  ul(["Tomaat, spinazie, erwt en andere gewassen staan niet in de tabel. Volg daarvoor het zaadzakje.","Dit zijn richtwaarden uit twee bronnen. Het Tuinadvies-overzicht is ouder en de bronnen verschillen soms een paar centimeter.","Plan de ruimte voor de volwassen plant, niet voor het plantje dat je nu in je hand hebt."])]},
  {id:"plantjes-kopen",t:"Plantjes kopen: waar je op let",min:2,s:"Een gezonde plant herken je zo.",b:[
   ul(["Stevige, kortbebladerde plant, niet lang en slap.","Groene bladeren, geen gele of bruine vlekken.","Geen insecten onder de bladeren (kijk goed).","Witte wortels die onderaan door de pot kijken, geen dichte kluwen.","Kies kleine, stevige plantjes boven grote met bloemen of vruchten: die verplanten slechter."]),
   tip("Koop plantjes pas als je ze kan planten. Wachten in een te kleine pot stresseert ze.")]}
 ]},
 {id:"verzorging",t:"Water en verzorging",d:"Gieten, wieden, steunen en snoeien",ic:"water",arts:[
- {id:"water-geven",t:"Water geven",min:4,s:"Hoe, wanneer en hoeveel.",b:[
-  p("Meer planten sterven aan fout water geven dan aan te weinig. Drie regels."),
-  ol(["Geef liever zelden en veel dan elke dag een beetje. Zo gaan de wortels dieper.","Geef water aan de voet en niet over de bladeren, vooral bij tomaat (schimmel).","Geef water in de ochtend. 's Avonds blijft het nat en trekt slakken aan."]),
-  h("Hoeveel?"),p("Als ruwe richtlijn heeft een moestuin in een droge periode ongeveer 10 tot 15 liter per m² per week nodig. Zandgrond heeft meer nodig, kleigrond minder. Potten drogen veel sneller uit: in de zomer soms dagelijks."),
-  h("De vingertest"),p("Steek je vinger 3 cm in de grond. Is hij droog? Geef water. Is hij vochtig? Wacht."),
-  tip("Een laag mulch vermindert de verdamping sterk. Een druppelslang met timer geeft water precies waar het moet zijn."),
-  warn("Onregelmatig water geeft problemen: tomaat barst en krijgt neusrot, wortel splijt, sla wordt bitter.")]},
+ {id:"water-geven",t:"Water geven",min:4,s:"Hoe, wanneer en hoeveel.",bron:"Hubo, Water geven in de tuin; Leefmilieu Brussel, infofiches Irrigatie en Teelttechnieken (2013)",nagekeken:"2026-10",b:[
+  h("Wat doe ik"),
+  p("Geef water aan de wortels, niet over de bladeren. Geef liever eens flink water dan elke dag een beetje."),
+  h("Hoe doe ik dat"),
+  ol(["Controleer eerst de grond: voel met je hand de aarde op 10 cm diepte. Voelt ze koel aan, dan hoef je niet te gieten.","Geef water in de vroege ochtend. Dan kan het blad overdag opdrogen.","Giet aan de voet van de plant met een gieter met mondstuk. Vermijd een harde waterstraal.","Geef genoeg water zodat het diep in de grond trekt. Eén keer per week flink water geven werkt beter dan dagelijks een kwartiertje."]),
+  h("Waar let ik op"),
+  ul(["Geef nooit water in de volle zon. Het water verdampt en de bladeren kunnen verbranden.","Water over het blad geeft schimmel, vooral bij tomaat, aardappel en bonen.","Een laag mulch van minstens 5 cm (bijvoorbeeld maaisel of stro) houdt de grond vochtig. Let in vochtig weer wel op: slakken schuilen graag in mulch en de plantvoet kan gaan rotten.","Laat de grond niet uitdrogen. Zelfs een lichte droogte kan een plant blijvend schaden."])]},
  {id:"regenwater",t:"Regenwater en druppelslang",min:2,s:"Slim omgaan met water.",b:[
   ul(["Regenwater is zacht en ideaal voor je planten, zeker voor blauwe bes.","Een regenton van 200 tot 500 L vult snel. Zet hem onder een afvoerpijp.","Een druppelslang geeft water traag aan de wortel af. Dit bespaart tot de helft en voorkomt natte bladeren.","Een gieter met broes is ideaal voor kiemplanten."]),
   tip("In Vlaanderen zijn droge zomers steeds gewoner. Een regenton is een goede investering.")]},
@@ -848,10 +858,13 @@ const GIDS=[
   tip("Een kleine tuin die je goed verzorgt, haalt het van een grote die je laat verkommeren.")]}
 ]},
 {id:"plagen",t:"Plagen en ziektes",d:"Herkennen en voorkomen",ic:"bug",arts:[
- {id:"slakken",t:"Slakken",min:3,s:"De grootste vijand van jonge plantjes.",b:[
-  p("Slakken eten jonge sla, courgette, bonen en spinazie. Vooral na regen zijn ze actief, 's nachts."),
-  ul(["Zoek ze 's avonds of vroeg in de ochtend met een lamp en raap ze op.","Plaats bierbakjes: de slakken verdrinken erin.","Maak barrières met koperband of zand. Het werkt beperkt.","Gebruik slakkenkorrels op basis van ijzerfosfaat (veilig voor huisdieren en egels), nooit metaldehyde.","Moedig natuurlijke vijanden aan: egels, padden, merels, loopkevers.","Kweek in hoge bakken of potten op een verhoging."]),
-  tip("Giet 's ochtends en niet 's avonds. Een droge grond 's nachts is minder aantrekkelijk voor slakken.")]},
+ {id:"slakken",t:"Slakken",min:3,s:"De grootste vijand van jonge plantjes.",bron:"Velt, Slakken ecologisch bestrijden",nagekeken:"2026-10",b:[
+  h("Wat doe ik"),
+  p("Slakken eten jonge sla, courgette, bonen en spinazie. Begin vroeg in het voorjaar, wanneer slakken hun eerste eieren leggen, en combineer meerdere maatregelen."),
+  h("Hoe doe ik dat"),
+  ol(["Controleer tuinafval en mulch regelmatig. Daar schuilen slakken.","Zoek ze 's avonds of bij vochtig weer met een zaklamp en raap ze op.","Strooi scherpe materialen zoals zand, eierschalen of houtas rond kwetsbare planten.","Graaf een bierval in: een beker tot aan de rand ingegraven, half gevuld met bier en met een afdakje.","Lukt het zo niet, gebruik dan spaarzaam slakkenkorrels met ijzerfosfaat, ongeveer 30 korrels per m²."]),
+  h("Waar let ik op"),
+  ul(["Koop geen slakkenkorrels met metaldehyde. Die zijn giftig voor onder meer vogels, egels en honden.","In een bierval kunnen ook nuttige loopkevers terechtkomen.","Lok natuurlijke vijanden aan: egels, lijsters, kikkers, padden en loopkevers.","Op droge grond bewegen slakken moeilijker. Oppervlakkig schoffelen helpt."])]},
  {id:"bladluis",t:"Bladluis en nuttige insecten",min:3,s:"Wie je vrienden zijn.",b:[
   p("Bladluizen zitten in groepjes op jonge scheuten en onder bladeren. Ze zuigen sap en scheiden honingdauw uit."),
   h("Wat doe je?"),ul(["Spuit ze weg met een krachtige waterstraal.","Wrijf kleine kolonies tussen je vingers.","Geef geen overschot aan stikstof: dat trekt bladluis aan.","Laat nuttige insecten hun werk doen."]),
@@ -865,11 +878,13 @@ const GIDS=[
   p("De wortelvlieg legt eitjes naast wortel, peterselie of pastinaak. De larven vreten gangen in de wortel. Wortelvlieg vliegt laag (tot 60 cm) en vooral in mei en augustus."),
   ul(["Dek af met fijn gaas tot minstens 60 cm hoogte of kweek wortelen in hoge bakken.","Zaai niet te vroeg: de vlieg vliegt vooral in mei en augustus. Een late zaai (juni) of een zaai onder gaas helpt.","Dun uit 's avonds of bij regenweer: de geur van beschadigde wortels trekt wortelvlieg aan.","Plant ui, prei of knoflook ernaast. Onderzoek geeft een wisselend effect."]),
   p("De uivlieg doet hetzelfde bij uien. De aanpak is gelijkaardig: gaas, en wisselteelt.")]},
- {id:"phytophthora",t:"Phytophthora bij tomaat en aardappel",min:4,s:"Dé ziekte van natte zomers.",b:[
-  p("Phytophthora infestans is een schimmelachtig organisme dat aardappel en tomaat aantast. Het vlamt op bij warm en vochtig weer en kan in enkele dagen een hele aanplant verwoesten."),
-  h("Herkennen"),ul(["Donkerbruine, vettige vlekken op bladeren, vaak met een witte rand onderaan.","Stengels worden bruin.","Vruchten krijgen harde bruine plekken."]),
-  h("Voorkomen"),ul(["Kies resistente rassen: bij tomaat bijvoorbeeld Philovita F1 of Crimson Crush F1, bij aardappel Sarpo Mira.","Houd het blad droog: giet aan de voet, zet tomaten onder een overkapping.","Plant ruim, haal onderste bladeren weg voor luchtcirculatie.","Zet tomaat en aardappel ver uit elkaar en wissel elk jaar van plek.","Verwijder aangetaste planten direct, niet op de composthoop."]),
-  warn("Een besmette plant is niet te redden. Verwijder hem om andere planten te sparen.")]},
+ {id:"phytophthora",t:"Phytophthora bij tomaat en aardappel",min:4,s:"De ziekte van natte zomers.",bron:"RHS, Tomato blight",nagekeken:"2026-10",b:[
+  h("Wat doe ik"),
+  p("Phytophthora infestans is een schimmelachtig organisme dat tomaat en aardappel aantast. Voorkom het, want als gewone tuinier kun je het niet bestrijden."),
+  h("Hoe doe ik dat"),
+  ol(["Kies, waar mogelijk, resistente rassen. Ze zijn niet volledig immuun, maar doen het vaak goed als andere rassen uitvallen.","Houd het blad droog: giet aan de voet en zet buitentomaten onder een overkapping.","Wissel van plek. Zet tomaat minstens vier jaar niet terug op dezelfde plek, en plant daar ook geen aardappel.","Haal aangetaste planten meteen weg. Compost ze niet: breng ze naar het groenafval van de gemeente, begraaf ze diep of verbrand ze."]),
+  h("Waar let ik op"),
+  ul(["Herkennen: bruine, waterige vlekken op blad en stengel. Bij vochtig weer zie je onderaan het blad soms een witte schimmellaag. Op vruchten komen waterige bruine plekken.","De ziekte komt vooral bij warm en nat weer, als het blad urenlang nat blijft.","Een paar zieke bladeren wegknippen houdt de ziekte niet tegen.","Vruchten van aangetaste planten kunnen al besmet zijn. Gebruik ze snel."])]},
  {id:"meeldauw",t:"Meeldauw",min:2,s:"Het witte poeder op courgette en komkommer.",b:[
   p("Echte meeldauw verschijnt als wit poeder op het blad van courgette, pompoen, komkommer en erwt. Het komt vooral aan het einde van een droge, warme zomer."),
   ul(["Plant niet te dicht en geef regelmatig water aan de voet.","Haal aangetaste bladeren weg.","Kies rassen met resistentie.","Spuit eventueel verdunde melk (1 deel op 9 delen water), dat werkt beperkt."]),
@@ -888,20 +903,24 @@ const GIDS=[
    ["Doorschieten","Sla, spinazie, koriander","Plant bloeit voortijdig","Zaai op koelere momenten, schaduw"]])]}
 ]},
 {id:"seizoen",t:"Seizoenen en klimaat",d:"Het Vlaamse jaar",ic:"sun",arts:[
- {id:"klimaat",t:"Het klimaat in Vlaanderen",min:3,s:"Wat je mag verwachten.",b:[
-  p("Vlaanderen heeft een zeeklimaat: milde winters en gematigde zomers. Het ondervindt vaak regen, maar steeds vaker ook droge periodes. De regio maakt verschil."),
-  tb(["Streek","Eigenschap"],[["Kust","Zachter, meer wind, later in het voorjaar warm"],["Polders en laagland","Wat vochtig, vlak, soms koude lucht in lage plekken"],["Kempen","Zand, droger, vaker nachtvorst in het voorjaar"],["Hoogland (Haspengouw, Ardennen)","Kouder, later in het voorjaar"]]),
-  p("Gemiddeld valt de laatste vorst rond half april en de eerste vorst tussen half oktober en begin november. Dat laat je ongeveer 6 tot 7 maanden vorstvrij."),
-  tip("Je eigen tuin heeft een eigen microklimaat. Een zuidmuur kan 2 tot 3 weken voorsprong geven.")]},
- {id:"ijsheiligen",t:"De ijsheiligen en vorst",min:3,s:"Waarom 15 mei zo belangrijk is.",b:[
-  p("De ijsheiligen zijn Mamertus, Pancratius en Servatius, op 11, 12 en 13 mei. Volgens de volkswijsheid is de kans op nachtvorst daarna klein. De wijsheid klopt vaak, maar niet altijd."),
-  tb(["Gewas","Verdraagt vorst?"],[
-   ["Tomaat, paprika, courgette, komkommer, pompoen, basilicum, stokboon","Nee. Plant pas na half mei"],
-   ["Aardappel","Loof vriest af bij vorst, maar groeit vaak terug"],
-   ["Sla, spinazie, erwt, tuinbonen, radijs, wortel","Ja, lichte vorst is geen probleem"],
-   ["Prei, boerenkool, spruitkool, veldsla","Ja, ze overwinteren"]]),
-  tip("Heb je een vorstwaarschuwing? Dek de plantjes af met een oud laken of vliesdoek. Dat geeft enkele graden bescherming."),
-  p("Kijk voor het uitplanten van tomaat naar de weersvoorspelling en wacht liever een week te lang dan te kort.")]},
+ {id:"klimaat",t:"Vorst: wat je mag verwachten",min:3,s:"De gemiddelde eerste en laatste vorst.",bron:"KMI, klimaatstatistieken Ukkel (referentieperiode 1991 tot 2020); IVN, factsheet Zaaien (2022)",nagekeken:"2026-10",b:[
+  h("Wat doe ik"),
+  p("Gebruik de gemiddelde vorstdata als richtlijn voor je planning, niet als zekerheid."),
+  tb(["Wat","Gemiddeld in Ukkel (1991 tot 2020)"],[["Laatste vorst in het voorjaar","27 maart"],["Eerste vorst in het najaar","21 november"]]),
+  h("Hoe doe ik dat"),
+  ol(["Gebruik deze data als startpunt voor je zaai- en plantplanning.","Voor vorstgevoelige planten houd je half mei aan als grens (zie de ijsheiligen).","Controleer vlak voor het uitplanten de weersvoorspelling voor de komende nachten."]),
+  h("Waar let ik op"),
+  ul(["Dit zijn gemiddelden van het weerstation in Ukkel. Op andere plekken kunnen ze afwijken.","Een gemiddelde zegt niet wanneer de laatste vorst valt in jouw jaar. Tot half mei kan het buiten nog vriezen (IVN).","Het zijn gemiddelden over dertig jaar (1991 tot 2020), geen voorspelling voor dit jaar."])]},
+ {id:"ijsheiligen",t:"De ijsheiligen en vorst",min:3,s:"Waarom half mei zo belangrijk is.",bron:"IVN, factsheet Zaaien (2022); KNMI, Laatste nachtvorst valt steeds vroeger",nagekeken:"2026-10",b:[
+  h("Wat doe ik"),
+  p("Zet vorstgevoelige planten pas na de ijsheiligen buiten. Dat zijn Mamertus, Pancratius en Servatius, op 11, 12 en 13 mei. Sommige bronnen rekenen ook 14 mei mee."),
+  tb(["Gewas","Buiten zetten"],[
+   ["Tomaat, komkommer, paprika, courgette","Pas na de ijsheiligen (half mei)"],
+   ["Spinazie, radijs, wortel","Je kunt ze al vroeg zaaien. Jonge plantjes verdragen wat vorst."]]),
+  h("Hoe doe ik dat"),
+  ol(["Kijk rond half mei naar de weersvoorspelling voor de komende nachten.","Staat er vorst in de voorspelling? Dek de plantjes af met vliesdoek.","Zet je planten buiten als de nachten mild blijven."]),
+  h("Waar let ik op"),
+  ul(["De regel is geen garantie. In De Bilt kwam er sinds 1901 in negen jaren na 14 mei nog vorst voor. De regel klopt dus in ongeveer 92% van de jaren (KNMI).","De laatste voorjaarsvorst komt tegenwoordig eerder dan vroeger. In De Bilt eindigde de periode met vorstkans in 1981 tot 2010 gemiddeld op 8 mei, tegen 22 mei begin vorige eeuw (KNMI).","Wacht liever een week te lang dan te kort."])]},
  {id:"vier-seizoenen",t:"Seizoen per seizoen",min:4,s:"Wat je in elk seizoen doet.",b:[
   h("Lente"),p("Bereid de grond voor, zaai voor, zaai de eerste gewassen buiten en plant na half mei vorstgevoelige planten uit."),
   h("Zomer"),p("Geef water, steun, wied, oogst. Zaai bij voor het najaar: wortel, snijbiet, spinazie, sla, veldsla."),
@@ -987,6 +1006,9 @@ GIDS.push(
 ]},
 {id:"oogsten",t:"Oogsten en bewaren",d:"Rijpheid, bewaren, invriezen, drogen",ic:"basket",arts:[
  {id:"oogst-wanneer",t:"Wanneer is het rijp?",min:4,s:"De tekenen per gewas.",b:[
+  h("Wat doe ik"),
+  p("Controleer om de paar dagen of je gewas klaar is en oogst op het juiste moment."),
+  h("Hoe doe ik dat"),
   tb(["Gewas","Je oogst wanneer"],[
    ["Radijs","De knol 2 tot 3 cm dik is"],["Sla","De krop vol is, of pluk de buitenste bladeren"],["Spinazie","Bladeren 10 tot 15 cm"],
    ["Wortel","De kop 2 cm dik is. Bij twijfel een proef trekken"],["Rode biet","Golfbal tot tennisbal"],["Courgette","15 tot 20 cm, jong en glanzend"],
@@ -994,7 +1016,8 @@ GIDS.push(
    ["Erwt","Peul vol maar nog zacht, erwtjes zoet"],["Stokboon","Peul stevig, bonen nog niet bol"],["Prei","Schacht 2 tot 3 cm dik"],
    ["Ui","Loof valt om en wordt geel"],["Knoflook","Onderste bladeren geel, de rest groen"],["Aardappel","Loof sterft af (late), na bloei (jonge)"],
    ["Aardbei","Volledig rood"],["Appel","Pitjes bruin, appel komt los bij een lichte draai"]]),
-  tip("Oogst 's ochtends als het koel is. Groenten zijn dan het knapperigst.")]},
+  h("Waar let ik op"),
+  ul(["Oogst 's ochtends als het koel is. Groenten zijn dan het knapperigst.","Twijfel je? Doe een proefoogst: trek één wortel of radijs en kijk hoe ver ze zijn.","Oogst radijs en courgette vaak en jong."])]},
  {id:"bewaren",t:"Bewaren zonder invriezen",min:4,s:"Koel, droog en donker.",b:[
   tb(["Gewas","Hoe bewaren","Hoelang"],[
    ["Aardappel","Donker, koel (4 tot 8 °C), niet in de koelkast","Maanden"],
@@ -1818,7 +1841,7 @@ function renderChrome(){
 }
 
 /* ---------- Kalender: Deze maand ---------- */
-const HINT={2:"Warmteminnende gewassen zoals tomaat en paprika zaai je nu alleen binnen.",3:"Warmteminnende gewassen zoals tomaat en paprika zaai je nu alleen binnen.",4:"De laatste nachtvorst valt gemiddeld rond half april, maar kan later komen.",5:"Plant vorstgevoelige gewassen pas na de ijsheiligen (11 tot 13 mei).",10:"De eerste vorst valt gemiddeld tussen half oktober en begin november.",11:"De eerste vorst valt gemiddeld tussen half oktober en begin november."};
+const HINT={2:"Warmteminnende gewassen zoals tomaat en paprika zaai je nu alleen binnen.",3:"Warmteminnende gewassen zoals tomaat en paprika zaai je nu alleen binnen.",4:"In Ukkel viel de laatste vorst gemiddeld op 27 maart. Tot half mei kan het buiten nog vriezen.",5:"Plant vorstgevoelige gewassen pas na de ijsheiligen (11 tot 13 mei).",10:"In Ukkel viel de eerste vorst gemiddeld op 21 november (KMI, 1991 tot 2020).",11:"In Ukkel viel de eerste vorst gemiddeld op 21 november (KMI, 1991 tot 2020)."};
 const hintVoor=m=>HINT[m]||"";
 const faseLijst=(k,m)=>filtered().filter(c=>c[k].includes(m)).sort(byEase);
 const LIM=6;
@@ -1850,8 +1873,8 @@ function viewAlle(){
 const KOOL=["boerenkool","spruitkool","broccoli","bloemkool","wittekool","rodekool","savooikool","kolrabi"];
 const HELP=[
 {id:"geel",t:"Gele bladeren",s:"Het blad wordt bleek of geel.",w:[
- {t:"Te nat",h:"De grond blijft drassig of de pot staat in water. De plant is vaak slap en geel tegelijk.",c:"Steek je vinger 3 cm in de grond. Voelt die nat en plakkerig aan?",d:"Geef een paar dagen geen water. Zorg dat potten gaten onderaan hebben en niet in een bakje water staan.",l:["verzorging/water-geven"]},
- {t:"Te droog",h:"Het blad hangt, wordt geel en droog aan de randen. De grond is hard.",c:"Is de grond 3 cm diep droog?",d:"Geef minder vaak, maar flink water, aan de voet en liefst 's ochtends. Een laagje mulch (stro of gras rond de plant) houdt vocht vast.",l:["verzorging/water-geven","grond/mulchen"]},
+ {t:"Te nat",h:"De grond blijft drassig of de pot staat in water. De plant is vaak slap en geel tegelijk.",c:"Voel met je hand de aarde op 10 cm diepte. Voelt ze nat en plakkerig aan?",d:"Geef een paar dagen geen water. Zorg dat potten gaten onderaan hebben en niet in een bakje water staan.",l:["verzorging/water-geven"]},
+ {t:"Te droog",h:"Het blad hangt, wordt geel en droog aan de randen. De grond is hard.",c:"Voel met je hand de aarde op 10 cm diepte. Voelt ze niet koel meer aan?",d:"Geef minder vaak, maar flink water, aan de voet en liefst 's ochtends. Een laagje mulch (stro of gras rond de plant) houdt vocht vast.",l:["verzorging/water-geven","grond/mulchen"]},
  {t:"Tekort aan voeding",h:"De oudste, onderste bladeren worden gelijkmatig lichtgeel en de groei is traag. Vaak bij vraatzuchtige gewassen en in potten.",c:"Wanneer gaf je voor het laatst compost of mest?",d:"Werk compost in de grond of geef een organische meststof. In potten is de voorraad sneller op.",l:["grond/voeding","grond/compost"],g:["tomaat","courgette","pompoen","komkommer","prei"]},
  {t:"Gewoon ouder blad",h:"Alleen de onderste, oudste bladeren verkleuren. De rest van de plant groeit gezond.",d:"Je hoeft niets te doen. Je mag die bladeren afknippen. Dit is normaal, zeker tegen het einde van het seizoen.",g:["tomaat"]},
  {t:"Een plantenziekte",h:"Het geel gaat samen met bruine vlekken of wit poeder.",d:"Kijk bij 'Bruine of zwarte vlekken' of 'Witte aanslag'.",l:["plagen/plagen-overzicht"]}]},
@@ -2063,7 +2086,7 @@ function viewGids(){
 }
 function openArticle(path){
   const [cid,aid]=path.split("/"),cat=GIDS.find(g=>g.id===cid),a=cat&&cat.arts.find(x=>x.id===aid);if(!a)return;
-  showSheet(`<div class="art"><button class="x" style="top:18px" data-act="close" aria-label="Sluiten">×</button><h2>${esc(a.t)}</h2><div class="meta">${esc(cat.t)} · ${a.min} min lezen</div>${blocks(a.b)}</div>`);
+  showSheet(`<div class="art"><button class="x" style="top:18px" data-act="close" aria-label="Sluiten">×</button><h2>${esc(a.t)}</h2><div class="meta">${esc(cat.t)} · ${a.min} min lezen</div>${blocks(a.b)}${a.bron&&a.nagekeken?`<p class="credit" style="margin-top:18px">Bron: ${esc(a.bron)}. Nagekeken: ${MF[+a.nagekeken.slice(5)-1]} ${a.nagekeken.slice(0,4)}.</p>`:""}</div>`);
 }
 
 /* ---------- Render ---------- */
