@@ -194,6 +194,78 @@ checks.focusSchakelaar = async () => {
   return { ok: !!(ok1 && ok2) };
 };
 
+const lum = (rgb) => {
+  const [r, g, b] = rgb.match(/\d+/g).map(Number).map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+};
+const contrast = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
+const jaar = async () => { resetFilters(); S.tab = "kal"; S.kv = "jaar"; S.jgrp.clear(); render(); await sleep(150); };
+const openEerste = async () => { const d = document.querySelector('details.grp[data-view="jaar"]'); d.open = true; await sleep(100); return d; };
+
+checks.jaarGroepen = async () => {
+  const fouten = [];
+  await jaar();
+  const g = () => [...document.querySelectorAll('details.grp[data-view="jaar"]')];
+  if (g().length !== 11) fouten.push("aantal " + g().length);
+  if (g().some((d) => d.open)) fouten.push("standaard open");
+  S.q = "sla"; render(); await sleep(100);
+  if (!g().length || g().length >= 11 || g().some((d) => !d.open || !d.querySelector(".crow"))) fouten.push("zoeken sla");
+  S.q = "zzzz"; render(); await sleep(100);
+  const e = document.querySelector("#main .empty");
+  if (!e || e.innerText.trim() !== "Geen gewassen gevonden. Pas je zoekopdracht of filters aan.") fouten.push("lege toestand");
+  resetFilters(); render();
+  return { ok: fouten.length === 0, detail: fouten.join(", ") };
+};
+
+checks.jaarRij = async () => {
+  const fouten = [];
+  await jaar(); await openEerste();
+  const rijen = [...document.querySelectorAll(".crow")];
+  if (!rijen.length) return { ok: false, detail: "geen rijen" };
+  const h = Math.max(...rijen.map((r) => r.getBoundingClientRect().height));
+  if (h > 60) fouten.push("hoogte " + Math.round(h));
+  if (document.querySelector(".crow .dots")) fouten.push("bolletjes");
+  for (const r of rijen) {
+    const c = BY[r.dataset.open], niv = r.querySelector(".niv");
+    if (!niv || niv.textContent !== DIFF[c.d]) fouten.push("niveau " + c.id);
+    if (!r.getAttribute("aria-label").includes(textCal(c))) fouten.push("aria " + c.id);
+  }
+  return { ok: fouten.length === 0, detail: fouten.slice(0, 4).join(", ") };
+};
+
+checks.jaarNu = async () => {
+  await jaar(); await openEerste();
+  const c = getComputedStyle(document.querySelector(".mhead .now"), "::before").content;
+  return { ok: c === '"nu"', detail: c };
+};
+
+checks.jaarLegenda = async () => {
+  await jaar();
+  const l = document.querySelector(".legend"), t = l.innerText.replace(/\s+/g, " ");
+  const labels = ["Zaai in huis (open)", "Zaai buiten (gevuld)", "Plant uit", "Oogst"].every((x) => t.includes(x));
+  const regels = l.getBoundingClientRect().height / parseFloat(getComputedStyle(l).lineHeight || "20");
+  return { ok: labels && regels <= 2.6, detail: regels.toFixed(1) + " regels" };
+};
+
+checks.jaarDonker = async () => {
+  await jaar(); await openEerste();
+  theme("dark"); await sleep(100);
+  const bar = document.querySelector(".trk i.k-zb");
+  const c = bar ? contrast(css(bar, "borderTopColor"), hexRgb(tok("--bg"))) : 0;
+  theme("light");
+  return { ok: c >= 3, detail: c.toFixed(2) };
+};
+
+checks.zoekJaar = async () => {
+  await jaar();
+  const q = document.getElementById("q");
+  if (!q) return { ok: false, detail: "geen zoekveld in Jaaroverzicht" };
+  q.value = "courgette"; q.dispatchEvent(new Event("input", { bubbles: true })); await sleep(150);
+  const ok = !!document.querySelector('details.grp[data-view="jaar"][open] .crow') && document.activeElement && document.activeElement.id === "q";
+  resetFilters(); render();
+  return { ok: !!ok };
+};
+
 export async function runAll(names) {
   const out = {};
   for (const naam of names || Object.keys(checks)) {
