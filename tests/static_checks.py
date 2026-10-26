@@ -36,5 +36,8 @@ check("sleutels blijven", SRC.count('"mt-tuin-v1"') >= 1 and SRC.count('"sg-ch"'
 check("geenPlaatshouders", re.search(r"TODO|TBD|lorem", SRC, re.I) is None)
 check("vorstdata uit bron", "rond half april" not in SRC and "tussen half oktober en begin november" not in SRC and "27 maart" in SRC and "21 november" in SRC)
 
+# --- Reviewer-herstel
+check("pompoenillustratie", "Courgette en pompoen: 1 plant per m" not in SRC)
+
 if __name__ == "__main__":
     sys.exit(1 if FAILS else 0)

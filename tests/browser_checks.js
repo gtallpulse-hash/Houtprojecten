@@ -99,7 +99,9 @@ checks.tuinLabels = async () => {
   TUIN.crops = [id];
   await go("tuin");
   const txt = [...document.querySelectorAll(".task span")].map((s) => s.textContent);
+  const koppen = [...document.querySelectorAll(".tasks")].map((u) => u.previousElementSibling && u.previousElementSibling.textContent);
   TUIN.crops = oud;
+  if (koppen.some((k) => /^(Planten|Oogsten)$/.test(k))) fouten.push("oude koppen: " + koppen.join("|"));
   if (!txt.length || txt.some((t) => /voorzaaien|planten$/.test(t))) fouten.push("taaktekst: " + txt.join("; "));
   return { ok: fouten.length === 0, detail: fouten.join(", ") };
 };
@@ -177,7 +179,7 @@ checks.hint = async () => {
 };
 
 checks.leeg = async () => {
-  S.tab = "kal"; S.kv = "maand"; S.m = NOW; S.q = "zzzz"; render(); await sleep(100);
+  S.tab = "kal"; S.kv = "maand"; S.m = NOW; S.plek = "__geen__"; render(); await sleep(100);
   const e = document.querySelector("#main .empty");
   const txt = e ? e.innerText.trim() : "";
   const ok = !document.querySelector("[data-sec]") && txt.startsWith("In ") && txt.endsWith("Kies een andere maand.");
@@ -402,7 +404,67 @@ checks.doelen44 = async () => {
   await doe("gids-naslag", async () => { S.gc = "naslag"; render(); });
   await doe("detail", async () => { S.gc = null; openDetail("tomaat"); });
   closeOv();
+  for (let i = 0; i < SG.length; i++) await doe("start-" + i, async () => { S.tab = "gids"; S.gc = "start"; S.ch = i; render(); });
+  S.gc = null;
+  for (const pad of ["zaaien/zaaien-binnen-buiten", "plagen/slakken"]) await doe("artikel " + pad, async () => { openArticle(pad); });
+  closeOv();
+  await doe("vergelijk", async () => { S.cmp.clear(); S.cmp.add("tomaat"); S.cmp.add("courgette"); openCompare(); });
+  closeOv(); S.cmp.clear();
   return { ok: Object.keys(uit).length === 0, detail: JSON.stringify(uit) };
+};
+
+checks.zoekLekt = async () => {
+  const secties = () => [...document.querySelectorAll("[data-sec]")].map((x) => x.dataset.sec + ":" + faseLijst(x.dataset.sec, NOW).length).join(",");
+  resetFilters(); S.tab = "kal"; S.kv = "maand"; S.m = NOW; render(); await sleep(100);
+  const basis = secties();
+  S.kv = "jaar"; render(); await sleep(100);
+  const q = document.getElementById("q");
+  q.value = "tomaat"; q.dispatchEvent(new Event("input", { bubbles: true })); await sleep(100);
+  document.querySelector('[data-kv="maand"]').click(); await sleep(150);
+  const na = secties();
+  resetFilters(); render();
+  return { ok: na === basis && basis !== "", detail: basis + " <> " + na };
+};
+
+checks.hintGewassen = async () => {
+  const fouten = [];
+  resetFilters(); S.tab = "kal"; S.kv = "maand";
+  for (const m of [2, 3]) {
+    S.m = m; render(); await sleep(50);
+    const lijst = faseLijst("zb", m).map((c) => c.id);
+    const genoemd = C.filter((c) => new RegExp("(^|[^a-z])" + c.n.toLowerCase() + "([^a-z]|$)").test(HINT[m].toLowerCase()));
+    if (!genoemd.length) fouten.push("geen gewas in hint " + m);
+    for (const c of genoemd) if (!lijst.includes(c.id)) fouten.push(`${c.n} staat niet bij Zaai in huis in maand ${m}`);
+  }
+  S.m = NOW; render();
+  return { ok: fouten.length === 0, detail: fouten.join("; ") };
+};
+
+checks.artikelGroep = async () => {
+  const fouten = [];
+  const verwacht = { "grond/mulchen": "Zo doe je het › Verzorgen", "seizoen/ijsheiligen": "Weten waarom", "plagen/slakken": "Hulp", "combineren/combi-goed": "Naslag" };
+  for (const [pad, tekst] of Object.entries(verwacht)) {
+    openArticle(pad);
+    const meta = document.querySelector("#sheet .meta").textContent;
+    if (!meta.startsWith(tekst)) fouten.push(pad + ": " + meta);
+    closeOv();
+  }
+  return { ok: fouten.length === 0, detail: fouten.join("; ") };
+};
+
+checks.consistentie = async () => {
+  const fouten = [];
+  const txt = (p) => JSON.stringify(artByPath(p).a.b);
+  const hulp = HELP.flatMap((x) => x.w).filter((w) => w.t === "Phytophthora").map((w) => w.d).join(" ");
+  if (/restafval|Verwijder aangetaste delen/.test(hulp)) fouten.push("Hulp phytophthora spreekt artikel tegen");
+  if (!txt("plagen/phytophthora").includes("composthoop") || !txt("plagen/phytophthora").includes("vier jaar")) fouten.push("phytophthora-artikel mist compost- of rotatieregel");
+  const water = txt("verzorging/water-geven");
+  if (/verbrand/i.test(water)) fouten.push("water: verbrandingsclaim");
+  if (!water.includes("einde van de dag") || !water.includes("Potten en bakken")) fouten.push("water: moment of potten ontbreekt");
+  const kiem = txt("zaaien/kiemtijd");
+  if (!kiem.includes("2 tot 5 cm") || !kiem.includes("gewaspagina") || !kiem.includes("twee tot drie weken")) fouten.push("kiemtijd: nuance ontbreekt");
+  if (!txt("zaaien/plantafstand").includes("gewaspagina")) fouten.push("plantafstand: verwijzing ontbreekt");
+  return { ok: fouten.length === 0, detail: fouten.join("; ") };
 };
 
 export async function runAll(names) {

@@ -179,7 +179,7 @@ details.fold>div{padding-bottom:18px}
 .bul{margin:0;padding-left:1.2rem;display:flex;flex-direction:column;gap:6px}
 .sub-h{font-size:1rem;margin:14px 0 6px}
 .links{display:flex;gap:6px;flex-wrap:wrap}
-.links button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 13px;font-size:.9rem}
+.links button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 13px;font-size:.9rem;min-height:44px}
 .chips{display:flex;gap:6px;flex-wrap:wrap}
 .chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:11px 14px;min-height:44px;font-weight:500}
 .chip[aria-pressed="true"]{background:var(--leaf);border-color:var(--leaf);color:var(--on-leaf);font-weight:600}
@@ -261,7 +261,7 @@ details.grp.cg>.cbody{padding:0 14px 10px}
 .more>b{font-family:var(--f-display);display:block;margin-bottom:8px}
 .steps-nav{display:flex;gap:6px;overflow-x:auto;padding-block:12px 4px;scrollbar-width:none}
 .steps-nav::-webkit-scrollbar{display:none}
-.steps-nav button{flex:none;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-weight:600}
+.steps-nav button{flex:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-weight:600}
 .steps-nav button[aria-current="step"]{background:var(--leaf);border-color:var(--leaf);color:var(--on-leaf)}
 .reader{margin-top:10px;max-width:70ch}
 .reader h2,.art h2{font-size:clamp(1.8rem,6vw,2.5rem);letter-spacing:-.01em}
@@ -787,7 +787,7 @@ const GIDS=[
    ["Klein","tomaat, sla, wortel, prei, ui, kool","0,5 tot 1 cm"],
    ["Middelgroot","spinazie, radijs, komkommer, rode biet","1 tot 2 cm"],
    ["Groot","erwt, boon, pompoen, courgette","1,5 tot 3 cm"],
-   ["Zeer groot","tuinboon","2 tot 3 cm"]]),
+   ["Zeer groot","tuinboon","2 tot 5 cm"]]),
   tb(["Gewas","Kiemt na (in warme grond)","Beste bodemtemperatuur"],[
    ["Tomaat","6 tot 8 dagen","18 tot 29 °C"],
    ["Paprika","ongeveer 12 dagen","18 tot 24 °C"],
@@ -800,7 +800,7 @@ const GIDS=[
    ["Ui","4 tot 5 dagen","18 tot 29 °C"],
    ["Komkommer","3 tot 6 dagen","18 tot 35 °C"]]),
   h("Waar let ik op"),
-  ul(["Koude grond vertraagt het kiemen sterk. Bij 10 °C kan wortel ongeveer 17 dagen nodig hebben.","In zandgrond zaai je dieper dan in kleigrond.","Dit zijn gemiddelden. Het zaadzakje is altijd de baas: volg de diepte en afstand op het zakje van jouw ras."])]},
+  ul(["Koude grond vertraagt het kiemen sterk. In het voorjaar kan wortel twee tot drie weken nodig hebben (bij 10 °C ongeveer 17 dagen).","In zandgrond zaai je dieper dan in kleigrond.","Dit zijn gemiddelden. Het zaadzakje is altijd de baas: volg de diepte en afstand op het zakje van jouw ras.","Elk gewas is een beetje anders: kijk ook op de gewaspagina en op het zaadzakje voor de diepte van jouw gewas. Lichtkiemers zoals sla bedek je nauwelijks."])]},
  {id:"zaad-kopen",t:"Zaad kopen en bewaren",min:3,s:"Waar je op let, en hoelang zaad meegaat.",b:[
   h("Waar op letten"),ul(["Kijk naar de uiterste zaaidatum op het zakje.","Kies rassen die bij jouw klimaat passen: 'vroeg', 'buiten' of 'koude-tolerant' voor Vlaanderen.","F1 betekent hybride: sterk en gelijkmatig, maar je kan er geen zaad van bewaren.","Biologisch zaad is niet bewerkt of ontsmet."]),
   h("Hoelang kan zaad bewaard worden?"),
@@ -816,7 +816,7 @@ const GIDS=[
   h("Hoe doe ik dat"),
   ol(["Zaai in rijen met de rijafstand uit de tabel.","Dun na het opkomen uit tot de plantafstand uit de tabel. De afstand tussen de planten is belangrijker dan hun grootte.","Druk met je vinger de grond aan rond de plant die blijft staan."]),
   h("Waar let ik op"),
-  ul(["Tomaat, spinazie, erwt en andere gewassen staan niet in de tabel. Volg daarvoor het zaadzakje.","Dit zijn richtwaarden uit twee bronnen. Het Tuinadvies-overzicht is ouder en de bronnen verschillen soms een paar centimeter.","Plan de ruimte voor de volwassen plant, niet voor het plantje dat je nu in je hand hebt."])]},
+  ul(["Tomaat, spinazie, erwt en andere gewassen staan niet in de tabel. Volg daarvoor het zaadzakje.","Dit zijn richtwaarden uit twee bronnen. Het Tuinadvies-overzicht is ouder en de bronnen verschillen soms een paar centimeter.","Plan de ruimte voor de volwassen plant, niet voor het plantje dat je nu in je hand hebt.","Op de gewaspagina staat de ruimte per gewas. Die kan een paar centimeter afwijken van deze tabel; volg bij twijfel het zaadzakje."])]},
  {id:"plantjes-kopen",t:"Plantjes kopen: waar je op let",min:2,s:"Een gezonde plant herken je zo.",b:[
   ul(["Stevige, kortbebladerde plant, niet lang en slap.","Groene bladeren, geen gele of bruine vlekken.","Geen insecten onder de bladeren (kijk goed).","Witte wortels die onderaan door de pot kijken, geen dichte kluwen.","Kies kleine, stevige plantjes boven grote met bloemen of vruchten: die verplanten slechter."]),
   tip("Koop plantjes pas als je ze kan planten. Wachten in een te kleine pot stresseert ze.")]}
@@ -826,9 +826,9 @@ const GIDS=[
   h("Wat doe ik"),
   p("Geef water aan de wortels, niet over de bladeren. Geef liever eens flink water dan elke dag een beetje."),
   h("Hoe doe ik dat"),
-  ol(["Controleer eerst de grond: voel met je hand de aarde op 10 cm diepte. Voelt ze koel aan, dan hoef je niet te gieten.","Geef water in de vroege ochtend. Dan kan het blad overdag opdrogen.","Giet aan de voet van de plant met een gieter met mondstuk. Vermijd een harde waterstraal.","Geef genoeg water zodat het diep in de grond trekt. Eén keer per week flink water geven werkt beter dan dagelijks een kwartiertje."]),
+  ol(["Controleer eerst de grond: voel met je hand de aarde op 10 cm diepte. Voelt ze koel aan, dan hoef je niet te gieten.","Geef water in de vroege ochtend, of aan het einde van de dag. Giet aan de voet, zodat het blad droog blijft.","Giet aan de voet van de plant met een gieter met mondstuk. Vermijd een harde waterstraal.","Geef genoeg water zodat het diep in de grond trekt. Eén keer per week flink water geven werkt beter dan dagelijks een kwartiertje."]),
   h("Waar let ik op"),
-  ul(["Geef nooit water in de volle zon. Het water verdampt en de bladeren kunnen verbranden.","Water over het blad geeft schimmel, vooral bij tomaat, aardappel en bonen.","Een laag mulch van minstens 5 cm (bijvoorbeeld maaisel of stro) houdt de grond vochtig. Let in vochtig weer wel op: slakken schuilen graag in mulch en de plantvoet kan gaan rotten.","Laat de grond niet uitdrogen. Zelfs een lichte droogte kan een plant blijvend schaden."])]},
+  ul(["Geef geen water in de volle middagzon. Een groot deel verdampt voordat de wortels het kunnen opnemen.","Water over het blad geeft schimmel, vooral bij tomaat, aardappel en bonen.","Een laag mulch van minstens 5 cm (bijvoorbeeld maaisel of stro) houdt de grond vochtig. Let in vochtig weer wel op: slakken schuilen graag in mulch en de plantvoet kan gaan rotten.","Laat de grond niet uitdrogen. Zelfs een lichte droogte kan een plant blijvend schaden.","Dit geldt voor volle grond. Potten en bakken drogen sneller uit en hebben bij warm weer vaker water nodig."])]},
  {id:"regenwater",t:"Regenwater en druppelslang",min:2,s:"Slim omgaan met water.",b:[
   ul(["Regenwater is zacht en ideaal voor je planten, zeker voor blauwe bes.","Een regenton van 200 tot 500 L vult snel. Zet hem onder een afvoerpijp.","Een druppelslang geeft water traag aan de wortel af. Dit bespaart tot de helft en voorkomt natte bladeren.","Een gieter met broes is ideaal voor kiemplanten."]),
   tip("In Vlaanderen zijn droge zomers steeds gewoner. Een regenton is een goede investering.")]},
@@ -878,11 +878,11 @@ const GIDS=[
   p("De wortelvlieg legt eitjes naast wortel, peterselie of pastinaak. De larven vreten gangen in de wortel. Wortelvlieg vliegt laag (tot 60 cm) en vooral in mei en augustus."),
   ul(["Dek af met fijn gaas tot minstens 60 cm hoogte of kweek wortelen in hoge bakken.","Zaai niet te vroeg: de vlieg vliegt vooral in mei en augustus. Een late zaai (juni) of een zaai onder gaas helpt.","Dun uit 's avonds of bij regenweer: de geur van beschadigde wortels trekt wortelvlieg aan.","Plant ui, prei of knoflook ernaast. Onderzoek geeft een wisselend effect."]),
   p("De uivlieg doet hetzelfde bij uien. De aanpak is gelijkaardig: gaas, en wisselteelt.")]},
- {id:"phytophthora",t:"Phytophthora bij tomaat en aardappel",min:4,s:"De ziekte van natte zomers.",bron:"RHS, Tomato blight",nagekeken:"2026-10",b:[
+ {id:"phytophthora",t:"Phytophthora bij tomaat en aardappel",min:4,s:"De ziekte van natte zomers.",bron:"RHS, Tomato blight (Britse bron; de adviezen over afvoer en wisselteelt komen daaruit)",nagekeken:"2026-10",b:[
   h("Wat doe ik"),
   p("Phytophthora infestans is een schimmelachtig organisme dat tomaat en aardappel aantast. Voorkom het, want als gewone tuinier kun je het niet bestrijden."),
   h("Hoe doe ik dat"),
-  ol(["Kies, waar mogelijk, resistente rassen. Ze zijn niet volledig immuun, maar doen het vaak goed als andere rassen uitvallen.","Houd het blad droog: giet aan de voet en zet buitentomaten onder een overkapping.","Wissel van plek. Zet tomaat minstens vier jaar niet terug op dezelfde plek, en plant daar ook geen aardappel.","Haal aangetaste planten meteen weg. Compost ze niet: breng ze naar het groenafval van de gemeente, begraaf ze diep of verbrand ze."]),
+  ol(["Kies, waar mogelijk, resistente rassen. Ze zijn niet volledig immuun, maar doen het vaak goed als andere rassen uitvallen.","Houd het blad droog: giet aan de voet en zet buitentomaten onder een overkapping.","Wissel van plek. Zet na een besmetting tomaat minstens vier jaar niet terug op dezelfde plek (RHS), en plant daar ook geen aardappel.","Haal aangetaste planten meteen weg. Gooi ze niet op je eigen composthoop. Begraaf ze diep of gooi ze bij het restafval."]),
   h("Waar let ik op"),
   ul(["Herkennen: bruine, waterige vlekken op blad en stengel. Bij vochtig weer zie je onderaan het blad soms een witte schimmellaag. Op vruchten komen waterige bruine plekken.","De ziekte komt vooral bij warm en nat weer, als het blad urenlang nat blijft.","Een paar zieke bladeren wegknippen houdt de ziekte niet tegen.","Vruchten van aangetaste planten kunnen al besmet zijn. Gebruik ze snel."])]},
  {id:"meeldauw",t:"Meeldauw",min:2,s:"Het witte poeder op courgette en komkommer.",b:[
@@ -1314,7 +1314,7 @@ zaaidiepte:sv(190,`
 plantafstand:sv(200,`
  ${(()=>{const sq=(x,n,r,l,s)=>{let o=`<rect x="${x}" y="30" width="96" height="96" class="o fll"/>`;const st=96/n;for(let i=0;i<n;i++)for(let j=0;j<n;j++)o+=`<circle cx="${x+st/2+i*st}" cy="${30+st/2+j*st}" r="${r}" class="fl"/>`;return o+`<text x="${x+48}" y="148" text-anchor="middle">${l}</text><text x="${x+48}" y="165" text-anchor="middle" class="sm">${s}</text>`;};
   return sq(10,10,1.8,"Radijs","bijna 100 per m²")+sq(130,4,4.5,"Sla","16 per m²")+sq(250,2,12,"Tomaat","2 à 3 per m²");})()}
- <text x="180" y="20" text-anchor="middle" class="sm">Elk vierkant is 1 m²</text><text x="180" y="190" text-anchor="middle" class="sm">Courgette en pompoen: 1 plant per m²</text>`,"Hoeveel planten per vierkante meter"),
+ <text x="180" y="20" text-anchor="middle" class="sm">Elk vierkant is 1 m²</text><text x="180" y="190" text-anchor="middle" class="sm">Courgette: 1 plant per m²</text>`,"Hoeveel planten per vierkante meter"),
 afharden:sv(190,`
  ${[["Dag 1-2","2 uur","schaduw"],["Dag 3-5","4 uur","halfschaduw"],["Dag 6-8","6 uur","zon"],["Dag 9-10","hele dag","en nacht"]].map((a,i)=>`<g transform="translate(${10+i*88} 30)"><rect class="o fll" width="78" height="110" rx="10"/><text x="39" y="26" text-anchor="middle">${a[0]}</text>${sunI(39,62)}<text x="39" y="96" text-anchor="middle" class="sm">${a[1]}</text><text x="39" y="108" text-anchor="middle" class="sm" style="opacity:.0">${a[2]}</text></g>`).join("")}
  <text x="180" y="172" text-anchor="middle" class="sm">Elke dag wat langer buiten, steeds meer zon</text>`,"Afharden in 10 dagen"),
@@ -1802,7 +1802,8 @@ const activeF=()=>(S.type!=="alle")+(S.diep!=="alle")+(S.plek!=="alle");
 const byEase=(a,b)=>a.d-b.d||a.n.localeCompare(b.n);
 const fold=t=>t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
 const SYN={courgette:"zucchini courgettes",tomaat:"tomaten trostomaat cherrytomaat tomate",aardappel:"aardappelen patat krieltjes",biet:"rode bieten bietjes rooie biet",wortel:"wortelen wortels peen",spruitkool:"spruiten spruitjes",boerenkool:"kale groenkool",prei:"porei",ui:"uien",sjalot:"sjalotten",bloemkool:"bloemkolen",witloof:"witlof chicoree",wittekool:"witte kool",rodekool:"rode kool blauwe kool",savooikool:"savooi savooiekool",kolrabi:"koolrabi",snijbiet:"bladbiet mangold",rucola:"raketsla rauke arugula",veldsla:"rapunzel lamsoor feldsalat",pompoen:"pompoenen butternut kalebas",komkommer:"komkommers slangenkomkommer",erwt:"erwten doperwt doperwten kapucijner tuinerwt",tuinboon:"tuinbonen dikke boon paardenboon",stokboon:"stokbonen snijboon snijbonen pronkboon",struikboon:"struikbonen sperzieboon sperziebonen princessenboon boontjes",suikermais:"mais maiskolf maiskolven",peterselie:"pieterselie",koriander:"cilantro",basilicum:"basil",bieslook:"ciboulette",dille:"dil",munt:"mint pepermunt",tijm:"thijm",rozemarijn:"rosmarijn",aardbei:"aardbeien",framboos:"frambozen",rodebes:"aalbes rode aalbes trosbes rode bessen",zwartebes:"zwarte aalbes cassis zwarte bessen",blauwebes:"bosbes bosbessen blueberry blauwe bessen",kruisbes:"stekelbes kruisbessen",braam:"bramen",rabarber:"rhubarb",knolselder:"selder knolselderij",pastinaak:"pastinaken witte wortel",appel:"appels appelboom",peer:"peren perenboom",pruim:"pruimen pruimenboom",aubergine:"eierplant aubergines",knoflook:"look",broccoli:"brocoli",sla:"salade kropsla ijsbergsla eikenbladsla",radijs:"radijsjes radijzen",spinazie:"spinach",salie:"salvia",oregano:"marjolein wilde marjolein"};
-function filtered(){return C.filter(c=>(S.type==="alle"||c.t===S.type)&&(S.diep==="alle"||c.d<=+S.diep)&&(S.plek==="alle"||c.pl.includes(S.plek))&&(!S.q||fold(c.n+" "+c.l+" "+c.c+" "+(SYN[c.id]||"")).includes(fold(S.q.trim()))));}
+const zoekQ=()=>S.tab==="alle"||(S.tab==="kal"&&S.kv==="jaar")?S.q:"";
+function filtered(){return C.filter(c=>(S.type==="alle"||c.t===S.type)&&(S.diep==="alle"||c.d<=+S.diep)&&(S.plek==="alle"||c.pl.includes(S.plek))&&(!zoekQ()||fold(c.n+" "+c.l+" "+c.c+" "+(SYN[c.id]||"")).includes(fold(zoekQ().trim()))));}
 function rel(a,b){const x=BY[a].buren.find(y=>y.id===b);return x?(x.t==="g"?"good":"bad"):"neutral";}
 
 /* ---------- Kaartjes ---------- */
@@ -1841,7 +1842,7 @@ function renderChrome(){
 }
 
 /* ---------- Kalender: Deze maand ---------- */
-const HINT={2:"Warmteminnende gewassen zoals tomaat en paprika zaai je nu alleen binnen.",3:"Warmteminnende gewassen zoals tomaat en paprika zaai je nu alleen binnen.",4:"In Ukkel viel de laatste vorst gemiddeld op 27 maart. Tot half mei kan het buiten nog vriezen.",5:"Plant vorstgevoelige gewassen pas na de ijsheiligen (11 tot 13 mei).",10:"In Ukkel viel de eerste vorst gemiddeld op 21 november (KMI, 1991 tot 2020).",11:"In Ukkel viel de eerste vorst gemiddeld op 21 november (KMI, 1991 tot 2020)."};
+const HINT={2:"Warmteminnende gewassen zoals paprika zaai je nu alleen binnen.",3:"Warmteminnende gewassen zoals tomaat en paprika zaai je nu alleen binnen.",4:"In Ukkel viel de laatste vorst gemiddeld op 27 maart. Tot half mei kan het buiten nog vriezen.",5:"Plant vorstgevoelige gewassen pas na de ijsheiligen (11 tot 13 mei).",10:"In Ukkel viel de eerste vorst gemiddeld op 21 november (KMI, 1991 tot 2020).",11:"In Ukkel viel de eerste vorst gemiddeld op 21 november (KMI, 1991 tot 2020)."};
 const hintVoor=m=>HINT[m]||"";
 const faseLijst=(k,m)=>filtered().filter(c=>c[k].includes(m)).sort(byEase);
 const LIM=6;
@@ -1879,7 +1880,7 @@ const HELP=[
  {t:"Gewoon ouder blad",h:"Alleen de onderste, oudste bladeren verkleuren. De rest van de plant groeit gezond.",d:"Je hoeft niets te doen. Je mag die bladeren afknippen. Dit is normaal, zeker tegen het einde van het seizoen.",g:["tomaat"]},
  {t:"Een plantenziekte",h:"Het geel gaat samen met bruine vlekken of wit poeder.",d:"Kijk bij 'Bruine of zwarte vlekken' of 'Witte aanslag'.",l:["plagen/plagen-overzicht"]}]},
 {id:"vlekken",t:"Bruine of zwarte vlekken",s:"Op bladeren, stengels of vruchten.",w:[
- {t:"Phytophthora",h:"Bruine vlekken op blad en stengel, later harde bruine plekken op de vruchten. Vooral bij vochtig, warm weer.",c:"Zie je onderaan het blad ook een witte waas?",d:"Verwijder aangetaste delen en gooi ze bij het restafval, niet op de compost. Geef water aan de voet, plant ruimer en kies resistente rassen.",l:["plagen/phytophthora"],g:["tomaat","aardappel"]},
+ {t:"Phytophthora",h:"Bruine vlekken op blad en stengel, later harde bruine plekken op de vruchten. Vooral bij vochtig, warm weer.",c:"Zie je onderaan het blad ook een witte waas?",d:"Haal aangetaste planten weg en gooi ze niet op de composthoop. Geef water aan de voet en kies resistente rassen.",l:["plagen/phytophthora"],g:["tomaat","aardappel"]},
  {t:"Neusrot",h:"Een zwarte, ingezakte plek onderaan de vrucht, soms al aan groene vruchten. Het is geen ziekte, maar komt door onregelmatig water.",d:"Geef regelmatig water en leg een laagje mulch (stro of gras) rond de plant. Verwijder aangetaste vruchten. De volgende zijn vaak weer goed.",l:["verzorging/tomaat-verzorgen","plagen/plagen-overzicht"],g:["tomaat","paprika"]},
  {t:"Schade door zon, wind of vorst",h:"Droge, papierachtige plekken die plots verschijnen, na een zonnige dag, hitte of koude nacht. Ze worden niet groter.",d:"Wacht af: nieuw blad groeit gezond. Bescherm tegen vorst met doek of gaas en geef schaduw bij hitte.",l:["seizoen/ijsheiligen","seizoen/droogte-hitte"]},
  {t:"Een andere schimmelziekte",h:"Vlekken met ringetjes of een gele rand, vooral in een natte zomer.",d:"Verwijder het zieke blad, geef water aan de voet en plant ruimer. Twijfel je? Kijk dan in het overzicht.",l:["plagen/plagen-overzicht"]}]},
@@ -1907,7 +1908,7 @@ const HELP=[
  {t:"Te veel stikstof",h:"Groot, donkergroen blad, maar weinig bloemen of vruchten.",d:"Bemest minder met stikstof.",l:["grond/voeding"]}]},
 {id:"rotten",t:"Vruchten die rotten",s:"Zachte, bruine of beschimmelde vruchten.",w:[
  {t:"Neusrot",h:"Een zwarte, ingezakte plek onderaan de vrucht.",d:"Geef regelmatig water en leg een laagje mulch (stro of gras) rond de plant.",l:["verzorging/tomaat-verzorgen"],g:["tomaat","paprika"]},
- {t:"Phytophthora",h:"Harde bruine plekken op vruchten, vaak met bruine vlekken op het blad.",d:"Verwijder aangetaste delen, geef water aan de voet en kies resistente rassen.",l:["plagen/phytophthora"],g:["tomaat","aardappel"]},
+ {t:"Phytophthora",h:"Harde bruine plekken op vruchten, vaak met bruine vlekken op het blad.",d:"Haal aangetaste planten weg, geef water aan de voet en kies resistente rassen.",l:["plagen/phytophthora"],g:["tomaat","aardappel"]},
  {t:"Grijsschimmel op aardbeien",h:"Een grijs pluizig laagje op rijpe vruchten, vooral bij vochtig weer en vruchten op natte grond.",d:"Leg stro onder de planten, oogst vaak en haal aangetaste vruchten weg.",l:["plagen/plagen-overzicht"],g:["aardbei"]},
  {t:"Contact met natte grond",h:"Vruchten die op de grond liggen rotten onderaan.",d:"Leg een plank of stro onder de vruchten.",l:["verzorging/water-geven"],g:["courgette","pompoen"]}]},
 {id:"kiemen-niet",t:"Zaadjes die niet kiemen",s:"Er komt niets op.",w:[
@@ -1954,7 +1955,7 @@ function tuinTasks(){const out=[];TUIN.crops.forEach(id=>{const c=BY[id];["zb","
 function tuinProg(){const ds=doneSet(),t=tuinTasks();return t.filter(x=>ds.has(x.key)).length+" van "+t.length+" gedaan";}
 function viewTuin(){
   const n=TUIN.crops.length,tasks=tuinTasks(),ds=doneSet();
-  const grpDef=[["Zaaien",["zb","zd"]],["Planten",["pt"]],["Oogsten",["oo"]]];
+  const grpDef=[["Zaaien",["zb","zd"]],["Plant uit",["pt"]],["Oogst",["oo"]]];
   const taskHtml=grpDef.map(([t,ks])=>{const l=tasks.filter(x=>ks.includes(x.k));
     return l.length?`<h3 class="sub-h">${t}</h3><ul class="tasks">${l.map(x=>`<li><label class="task"><input type="checkbox" data-task="${x.key}"${ds.has(x.key)?" checked":""}><span>${esc(x.c.n)}: ${TKIND[x.k]}</span></label><button class="lnk" data-open="${x.id}" aria-label="Uitleg over ${esc(x.c.n)}">Uitleg</button></li>`).join("")}</ul>`:"";}).join("");
   const fits=c=>TUIN.plek==="alle"||c.pl.includes(TUIN.plek);
@@ -2084,9 +2085,13 @@ function viewGids(){
    <section class="sec"><h2>Kies waarmee je verder wilt<small>Kort en praktisch. Je hebt ze niet nodig om te beginnen.</small></h2>
    <div class="gcats">${GROEPEN.map(g=>`<button class="gcat" data-cat="${g.id}"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true">${GIC[g.ic]||GIC.sprout}</svg></span><span><b>${esc(g.t)}</b><span>${esc(g.d)}</span><em>${g.subs.reduce((n,x)=>n+x.arts.length,0)} artikels</em></span></button>`).join("")}<button class="gcat" data-act="tohulp"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true">${GIC.bug}</svg></span><span><b>Als het misgaat</b><span>Gele bladeren, vlekken, plagen en meer</span><em>Naar Hulp</em></span></button></div></section>`;
 }
+function artMeta(path,cat){
+  for(const g of GROEPEN)for(const x of g.subs)if(x.arts.includes(path))return g.t+(x.t?" › "+x.t:"");
+  return PLAGEN.includes(path)?"Hulp › Plagen en ziektes":cat.t;
+}
 function openArticle(path){
   const [cid,aid]=path.split("/"),cat=GIDS.find(g=>g.id===cid),a=cat&&cat.arts.find(x=>x.id===aid);if(!a)return;
-  showSheet(`<div class="art"><button class="x" style="top:18px" data-act="close" aria-label="Sluiten">×</button><h2>${esc(a.t)}</h2><div class="meta">${esc(cat.t)} · ${a.min} min lezen</div>${blocks(a.b)}${a.bron&&a.nagekeken?`<p class="credit" style="margin-top:18px">Bron: ${esc(a.bron)}. Nagekeken: ${MF[+a.nagekeken.slice(5)-1]} ${a.nagekeken.slice(0,4)}.</p>`:""}</div>`);
+  showSheet(`<div class="art"><button class="x" style="top:18px" data-act="close" aria-label="Sluiten">×</button><h2>${esc(a.t)}</h2><div class="meta">${esc(artMeta(path,cat))} · ${a.min} min lezen</div>${blocks(a.b)}${a.bron&&a.nagekeken?`<p class="credit" style="margin-top:18px">Bron: ${esc(a.bron)}. Nagekeken: ${MF[+a.nagekeken.slice(5)-1]} ${a.nagekeken.slice(0,4)}.</p>`:""}</div>`);
 }
 
 /* ---------- Render ---------- */
