@@ -52,6 +52,18 @@ button{font:inherit;color:inherit;cursor:pointer}
 .btn.pri{background:var(--leaf);border-color:var(--leaf);color:var(--on-leaf)}
 .btn b{background:var(--leaf);color:var(--on-leaf);border-radius:999px;min-width:20px;height:20px;font-size:.78rem;display:inline-grid;place-items:center;padding-inline:5px}
 .sec{margin-top:32px}
+.grps{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+details.grp{background:var(--surface);border:1px solid var(--line);border-radius:18px}
+details.grp>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;min-height:72px;padding:12px 16px;border-radius:18px}
+details.grp>summary::-webkit-details-marker{display:none}
+details.grp>summary::after{content:"+";font-size:1.4rem;color:var(--leaf);margin-left:4px}
+details.grp[open]>summary::after{content:"\2212"}
+.grp .gt{flex:1;min-width:0;font:700 1.2rem var(--f-display)}
+.grp .gt small{display:block;font:400 .9rem var(--f-body);color:var(--muted);margin-top:2px}
+.grp .thumbs{display:flex}
+.grp .thumbs img{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--surface);margin-left:-12px;background:var(--leaf-soft)}
+.grp .thumbs img:first-child{margin-left:0}
+details.grp>.grid{padding:0 14px 18px;margin-top:4px}
 .morewrap{margin-top:16px;display:flex;justify-content:center}
 .bs{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
 .bs button{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 16px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-weight:500}
@@ -1714,7 +1726,7 @@ for(const id in PHOTOS)PIC[id]=PHOTOS[id].src;
 
 const KIND={zb:["Binnen voorzaaien","k-zb-t"],zd:["Buiten zaaien","k-zd-t"],pt:["Planten","k-pt-t"]};
 const NOW=new Date().getMonth()+1;const cr=s=>String(s).split(" I\u0027d")[0].replace(/\s*\(.*?$/,"");
-const S={tab:"nu",m:NOW,type:"alle",diep:"alle",plek:"alle",q:"",cmp:new Set(),more:new Set(),gc:null,ch:0};
+const S={tab:"nu",m:NOW,type:"alle",diep:"alle",plek:"alle",q:"",cmp:new Set(),more:new Set(),grp:new Set(),gc:null,ch:0};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function ranges(arr){if(!arr||!arr.length)return "-";const s=new Set(arr);if(s.size===12)return "heel jaar";let st=1;while(s.has(st))st++;const out=[];let run=null;for(let k=1;k<=12;k++){const m=((st+k-1)%12)+1;if(s.has(m)){if(!run){run=[m,m];out.push(run);}else run[1]=m;}else run=null;}return out.map(x=>x[0]===x[1]?MN[x[0]-1]:MN[x[0]-1]+"-"+MN[x[1]-1]).join(", ");}
 const nm=id=>BY[id].n;
@@ -1771,13 +1783,17 @@ function viewNu(){
    sec("oo","Oogsten",`${oo.length} gewassen klaar in ${MF[m-1]}`,oo,null,"Er is in "+MF[m-1]+" niets te oogsten met deze filters.")+
    sec("kom","Volgende maand",`Wat start in ${MF[nx-1]}`,kom,c=>starts(c,nx),"In "+MF[nx-1]+" komt er niets nieuws bij.");
 }
+const GROUPS=["Vruchtgroente","Bladgroente","Wortelgroente","Koolgroente","Uigewas","Knolgewas","Peulvrucht","Vaste groente","Kruid","Klein fruit","Boomfruit"];
 function viewAlle(){
   const l=filtered().sort((a,b)=>a.n.localeCompare(b.n));
-  return `<section class="sec" style="margin-top:14px">${l.length?`<div class="grid">${l.map(c=>tile(c)).join("")}</div>`:'<div class="empty">Geen gewassen gevonden. Pas je zoekopdracht of filters aan.</div>'}</section>`;
+  if(!l.length)return `<section class="sec" style="margin-top:14px"><div class="empty">Geen gewassen gevonden. Pas je zoekopdracht of filters aan.</div></section>`;
+  const act=!!S.q||S.type!=="alle"||S.diep!=="alle"||S.plek!=="alle";
+  const names=[...GROUPS,...new Set(l.map(c=>c.c).filter(g=>!GROUPS.includes(g)))].filter(g=>l.some(c=>c.c===g));
+  return `<div class="grps">${names.map(g=>{const arr=l.filter(c=>c.c===g);
+    return `<details class="grp" data-grp="${esc(g)}"${act||S.grp.has(g)?" open":""}><summary><span class="gt">${esc(g)}<small>${arr.length} ${arr.length===1?"gewas":"gewassen"}</small></span><span class="thumbs" aria-hidden="true">${arr.slice(0,3).map(c=>`<img src="${PIC[c.id]||""}" alt="" loading="lazy">`).join("")}</span></summary><div class="grid">${arr.map(c=>tile(c)).join("")}</div></details>`;}).join("")}</div>`;
 }
 
 /* ---------- Kalender ---------- */
-const GROUPS=["Vruchtgroente","Bladgroente","Wortelgroente","Koolgroente","Uigewas","Knolgewas","Peulvrucht","Vaste groente","Kruid","Klein fruit","Boomfruit"];
 function runs(arr){const s=[...new Set(arr)].sort((a,b)=>a-b),o=[];let st=null,pv=null;for(const m of s){if(st===null){st=pv=m;}else if(m===pv+1){pv=m;}else{o.push([st,pv]);st=pv=m;}}if(st!==null)o.push([st,pv]);return o;}
 function track(c){
   const bar=(arr,k,row)=>runs(arr).map(([a,b])=>`<i class="${k}" style="grid-column:${a}/${b+1};grid-row:${row}"></i>`).join("");
@@ -1975,6 +1991,7 @@ document.addEventListener("click",e=>{
   if(a==="clear"){S.cmp.clear();render();return;}
 });
 document.addEventListener("input",e=>{if(e.target.id==="q"){S.q=e.target.value;const pos=e.target.selectionStart;render();const q=document.getElementById("q");q.focus();q.setSelectionRange(pos,pos);}});
+document.addEventListener("toggle",e=>{const d=e.target;if(!d.classList||!d.classList.contains("grp"))return;if(!(S.q||S.type!=="alle"||S.diep!=="alle"||S.plek!=="alle")){if(d.open)S.grp.add(d.dataset.grp);else S.grp.delete(d.dataset.grp);}},true);
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!document.getElementById("ov").hidden)closeOv();});
 render();
 </script>
