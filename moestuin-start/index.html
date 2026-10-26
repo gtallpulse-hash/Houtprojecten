@@ -58,12 +58,28 @@ details.grp>summary{list-style:none;cursor:pointer;display:flex;align-items:cent
 details.grp>summary::-webkit-details-marker{display:none}
 details.grp>summary::after{content:"+";font-size:1.4rem;color:var(--leaf);margin-left:4px}
 details.grp[open]>summary::after{content:"\2212"}
-.grp .gt{flex:1;min-width:0;font:700 1.2rem var(--f-display)}
+.grp .gt{flex:1;min-width:0;margin:0;font:700 1.2rem var(--f-display)}
 .grp .gt small{display:block;font:400 .9rem var(--f-body);color:var(--muted);margin-top:2px}
 .grp .thumbs{display:flex}
 .grp .thumbs img{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--surface);margin-left:-12px;background:var(--leaf-soft)}
 .grp .thumbs img:first-child{margin-left:0}
 details.grp>.grid{padding:0 14px 18px;margin-top:4px}
+.hgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:14px}
+.hbtn{all:unset;box-sizing:border-box;cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px;min-height:88px;display:block;touch-action:manipulation}
+.hbtn:focus-visible{outline:3px solid var(--sky);outline-offset:3px}
+.hbtn b{font:700 1.05rem var(--f-display);display:block}
+.hbtn span{display:block;color:var(--muted);font-size:.9rem;margin-top:4px}
+.hpick{margin-top:12px;display:flex;flex-direction:column;gap:6px}
+.hpick label{font-weight:600}
+.hpick select{font:inherit;padding:11px 14px;min-height:44px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.hlist{display:flex;flex-direction:column;gap:12px;margin-top:14px}
+.hc{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.hc h2{font-size:1.2rem}
+.hc .pill{margin-top:6px}
+.hc p{margin:8px 0 0;font-size:.97rem}
+.hc p b{font-weight:600;display:block}
+.hc .links{margin-top:10px}
+.hc .links button{min-height:44px;padding:8px 14px}
 .morewrap{margin-top:16px;display:flex;justify-content:center}
 .bs{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
 .bs button{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 16px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-weight:500}
@@ -260,11 +276,13 @@ details.fold>div{padding-bottom:18px}
     <h1 id="h1"></h1>
     <p id="sub"></p>
   </header>
+  <section class="ctl" aria-label="Maand en zoeken">
   <div class="months" id="months" role="group" aria-label="Kies een maand"></div>
   <div class="bar" id="bar"></div>
+  </section>
   <main id="main" tabindex="-1"></main>
   <div id="live" class="sr" role="status" aria-live="polite"></div>
-  <p class="src">Gegevens zijn gemiddelden voor Vlaanderen. De eerste vorst valt gemiddeld tussen half oktober en begin november, de laatste rond half april. Plant vorstgevoelige gewassen pas na de ijsheiligen (11-13 mei). Controleer bij twijfel het zaadzakje van je ras. Foto's komen van Wikimedia Commons met vrije licenties. De fotograaf staat onder elke foto in het detailscherm.</p>
+  <footer><p class="src">Gegevens zijn gemiddelden voor Vlaanderen. De eerste vorst valt gemiddeld tussen half oktober en begin november, de laatste rond half april. Plant vorstgevoelige gewassen pas na de ijsheiligen (11-13 mei). Controleer bij twijfel het zaadzakje van je ras. Foto's komen van Wikimedia Commons met vrije licenties. De fotograaf staat onder elke foto in het detailscherm.</p></footer>
 </div>
 
 <nav class="nav" aria-label="Hoofdmenu"><div class="nav-in" id="nav"></div></nav>
@@ -1726,7 +1744,7 @@ for(const id in PHOTOS)PIC[id]=PHOTOS[id].src;
 
 const KIND={zb:["Binnen voorzaaien","k-zb-t"],zd:["Buiten zaaien","k-zd-t"],pt:["Planten","k-pt-t"]};
 const NOW=new Date().getMonth()+1;const cr=s=>String(s).split(" I\u0027d")[0].replace(/\s*\(.*?$/,"");
-const S={tab:"nu",m:NOW,type:"alle",diep:"alle",plek:"alle",q:"",cmp:new Set(),more:new Set(),grp:new Set(),gc:null,ch:0};
+const S={tab:"nu",m:NOW,type:"alle",diep:"alle",plek:"alle",q:"",cmp:new Set(),more:new Set(),grp:new Set(),hulp:null,hg:"",gc:null,ch:0};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function ranges(arr){if(!arr||!arr.length)return "-";const s=new Set(arr);if(s.size===12)return "heel jaar";let st=1;while(s.has(st))st++;const out=[];let run=null;for(let k=1;k<=12;k++){const m=((st+k-1)%12)+1;if(s.has(m)){if(!run){run=[m,m];out.push(run);}else run[1]=m;}else run=null;}return out.map(x=>x[0]===x[1]?MN[x[0]-1]:MN[x[0]-1]+"-"+MN[x[1]-1]).join(", ");}
 const nm=id=>BY[id].n;
@@ -1735,7 +1753,9 @@ const dots=d=>`<span class="dots d${d}" aria-label="${DIFF[d]}"><i class="on"></
 const short=t=>t.split(" (")[0];
 const activeF=()=>(S.type!=="alle")+(S.diep!=="alle")+(S.plek!=="alle");
 const byEase=(a,b)=>a.d-b.d||a.n.localeCompare(b.n);
-function filtered(){return C.filter(c=>(S.type==="alle"||c.t===S.type)&&(S.diep==="alle"||c.d<=+S.diep)&&(S.plek==="alle"||c.pl.includes(S.plek))&&(!S.q||(c.n+" "+c.l+" "+c.c).toLowerCase().includes(S.q.toLowerCase())));}
+const fold=t=>t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+const SYN={courgette:"zucchini courgettes",tomaat:"tomaten trostomaat cherrytomaat tomate",aardappel:"aardappelen patat krieltjes",biet:"rode bieten bietjes rooie biet",wortel:"wortelen wortels peen",spruitkool:"spruiten spruitjes",boerenkool:"kale groenkool",prei:"porei",ui:"uien",sjalot:"sjalotten",bloemkool:"bloemkolen",witloof:"witlof chicoree",wittekool:"witte kool",rodekool:"rode kool blauwe kool",savooikool:"savooi savooiekool",kolrabi:"koolrabi",snijbiet:"bladbiet mangold",rucola:"raketsla rauke arugula",veldsla:"rapunzel lamsoor feldsalat",pompoen:"pompoenen butternut kalebas",komkommer:"komkommers slangenkomkommer",erwt:"erwten doperwt doperwten kapucijner tuinerwt",tuinboon:"tuinbonen dikke boon paardenboon",stokboon:"stokbonen snijboon snijbonen pronkboon",struikboon:"struikbonen sperzieboon sperziebonen princessenboon boontjes",suikermais:"mais maiskolf maiskolven",peterselie:"pieterselie",koriander:"cilantro",basilicum:"basil",bieslook:"ciboulette",dille:"dil",munt:"mint pepermunt",tijm:"thijm",rozemarijn:"rosmarijn",aardbei:"aardbeien",framboos:"frambozen",rodebes:"aalbes rode aalbes trosbes rode bessen",zwartebes:"zwarte aalbes cassis zwarte bessen",blauwebes:"bosbes bosbessen blueberry blauwe bessen",kruisbes:"stekelbes kruisbessen",braam:"bramen",rabarber:"rhubarb",knolselder:"selder knolselderij",pastinaak:"pastinaken witte wortel",appel:"appels appelboom",peer:"peren perenboom",pruim:"pruimen pruimenboom",aubergine:"eierplant aubergines",knoflook:"look",broccoli:"brocoli",sla:"salade kropsla ijsbergsla eikenbladsla",radijs:"radijsjes radijzen",spinazie:"spinach",salie:"salvia",oregano:"marjolein wilde marjolein"};
+function filtered(){return C.filter(c=>(S.type==="alle"||c.t===S.type)&&(S.diep==="alle"||c.d<=+S.diep)&&(S.plek==="alle"||c.pl.includes(S.plek))&&(!S.q||fold(c.n+" "+c.l+" "+c.c+" "+(SYN[c.id]||"")).includes(fold(S.q.trim()))));}
 function rel(a,b){const x=BY[a].buren.find(y=>y.id===b);return x?(x.t==="g"?"good":"bad"):"neutral";}
 
 /* ---------- Kaartjes ---------- */
@@ -1752,20 +1772,20 @@ function tile(c,tag){
 }
 
 /* ---------- Chrome: header, maanden, nav ---------- */
-const ICONS={nu:'<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>',alle:'<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',kal:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>',gids:'<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/><path d="M9 8h6"/>'};
+const ICONS={hulp:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7"/><path d="M12 17h.01"/>',nu:'<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>',alle:'<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',kal:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>',gids:'<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/><path d="M9 8h6"/>'};
 const GIC={sprout:'<path d="M12 21v-8"/><path d="M12 13c0-4 3-6 7-6 0 4-3 6-7 6z"/><path d="M12 15c0-3-2-5-6-5 0 3 2 5 6 5z"/>',soil:'<path d="M3 17h18M5 21h14M7 13c1-3 3-5 5-5s4 2 5 5"/>',seed:'<path d="M12 3c4 3 6 6 6 9a6 6 0 0 1-12 0c0-3 2-6 6-9z"/><path d="M12 9v8"/>',water:'<path d="M12 3s6 6 6 11a6 6 0 0 1-12 0c0-5 6-11 6-11z"/>',bug:'<ellipse cx="12" cy="14" rx="5" ry="6"/><path d="M12 8V5M8 4l2 3M16 4l-2 3M7 12H3M17 12h4M8 18l-3 3M16 18l3 3"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>',pair:'<circle cx="8" cy="12" r="5"/><circle cx="16" cy="12" r="5"/>',basket:'<path d="M4 10h16l-2 10H6z"/><path d="M8 10l4-6 4 6"/>',book:'<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M9 8h6M9 12h6"/>',pot:'<path d="M6 10h12l-1.5 10h-9z"/><path d="M12 10V4M12 6c0-2 2-3 4-3M12 7c0-2-2-3-4-3"/>'};
 function renderChrome(){
-  const T=[["nu","Nu"],["alle","Gewassen"],["kal","Kalender"],["gids","Gids"]];
+  const T=[["nu","Nu"],["alle","Gewassen"],["kal","Kalender"],["hulp","Hulp"],["gids","Gids"]];
   document.getElementById("nav").innerHTML=T.map(([k,v])=>`<button data-tab="${k}" ${S.tab===k?'aria-current="page"':""}><svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[k]}</svg>${v}</button>`).join("");
   const nu=S.tab==="nu";
   const gcat=S.tab==="gids"&&S.gc&&S.gc!=="start"?GIDS.find(g=>g.id===S.gc):null;const gstart=S.tab==="gids"&&S.gc==="start";
-  document.getElementById("h1").textContent=nu?MF[S.m-1].charAt(0).toUpperCase()+MF[S.m-1].slice(1):{alle:"Alle gewassen",kal:"Kalender",gids:gstart?"Startersgids":gcat?gcat.t:"Gids"}[S.tab];
-  const subs={nu:S.m===NOW?"Dit kan je nu doen in je moestuin.":"Dit kan je doen in "+MF[S.m-1]+".",alle:C.length+" groenten, fruit en kruiden voor België.",kal:"Wanneer je wat zaait, plant en oogst. De gele band is deze maand.",gids:gstart?SG[S.ch].t:gcat?gcat.d:"Begin hier en leer stap voor stap."};
+  document.getElementById("h1").textContent=nu?MF[S.m-1].charAt(0).toUpperCase()+MF[S.m-1].slice(1):{alle:"Alle gewassen",kal:"Kalender",hulp:(HELP.find(x=>x.id===S.hulp)||{t:"Hulp"}).t,gids:gstart?"Startersgids":gcat?gcat.t:"Gids"}[S.tab];
+  const subs={nu:S.m===NOW?"Dit kan je nu doen in je moestuin.":"Dit kan je doen in "+MF[S.m-1]+".",alle:C.length+" groenten, fruit en kruiden voor België.",kal:"Wanneer je wat zaait, plant en oogst. De gele band is deze maand.",hulp:(HELP.find(x=>x.id===S.hulp)||{s:"Wat gaat er mis met je plant?"}).s,gids:gstart?SG[S.ch].t:gcat?gcat.d:"Begin hier en leer stap voor stap."};
   document.getElementById("sub").textContent=subs[S.tab];
   const mo=document.getElementById("months");mo.hidden=!nu;
   mo.innerHTML=MN.map((n,i)=>`<button class="mo${i+1===NOW?" now":""}" data-mo="${i+1}" aria-pressed="${S.m===i+1}" aria-label="${MF[i]}">${n}</button>`).join("");
-  const sr=document.querySelector&&document.querySelector(".src");if(sr)sr.hidden=S.tab==="gids";
-  const bar=document.getElementById("bar");bar.hidden=S.tab==="gids";
+  const sr=document.querySelector&&document.querySelector(".src");if(sr)sr.hidden=S.tab==="gids"||S.tab==="hulp";
+  const bar=document.getElementById("bar");bar.hidden=S.tab==="gids"||S.tab==="hulp";
   const n=activeF();
   bar.innerHTML=(S.tab==="alle"?`<input type="search" id="q" placeholder="Zoek een gewas" value="${esc(S.q)}" aria-label="Zoek een gewas">`:"<span style='flex:1'></span>")+`<button class="chip" data-f="diep" data-v="${S.diep==="1"?"alle":"1"}" aria-pressed="${S.diep==="1"}">Alleen makkelijk</button><button class="btn" data-act="filter">Filter${n?` <b>${n}</b>`:""}</button>`;
 }
@@ -1789,8 +1809,80 @@ function viewAlle(){
   if(!l.length)return `<section class="sec" style="margin-top:14px"><div class="empty">Geen gewassen gevonden. Pas je zoekopdracht of filters aan.</div></section>`;
   const act=!!S.q||S.type!=="alle"||S.diep!=="alle"||S.plek!=="alle";
   const names=[...GROUPS,...new Set(l.map(c=>c.c).filter(g=>!GROUPS.includes(g)))].filter(g=>l.some(c=>c.c===g));
-  return `<div class="grps">${names.map(g=>{const arr=l.filter(c=>c.c===g);
-    return `<details class="grp" data-grp="${esc(g)}"${act||S.grp.has(g)?" open":""}><summary><span class="gt">${esc(g)}<small>${arr.length} ${arr.length===1?"gewas":"gewassen"}</small></span><span class="thumbs" aria-hidden="true">${arr.slice(0,3).map(c=>`<img src="${PIC[c.id]||""}" alt="" loading="lazy">`).join("")}</span></summary><div class="grid">${arr.map(c=>tile(c)).join("")}</div></details>`;}).join("")}</div>`;
+  const fq=S.q?fold(S.q.trim()):"";
+  const via=fq.length>=3?l.filter(c=>!fold(c.n+" "+c.l).includes(fq)&&fold(SYN[c.id]||"").includes(fq)):[];
+  const note=via.length?`<p class="credit" role="note" style="margin:10px 0 0">Je zocht "${esc(S.q.trim())}". Dat vind je onder ${via.map(c=>esc(c.n)).join(", ")}.</p>`:"";
+  return note+`<div class="grps">${names.map(g=>{const arr=l.filter(c=>c.c===g);
+    return `<details class="grp" data-grp="${esc(g)}"${act||S.grp.has(g)?" open":""}><summary><h2 class="gt">${esc(g)}<small>${arr.length} ${arr.length===1?"gewas":"gewassen"}</small></h2><span class="thumbs" aria-hidden="true">${arr.slice(0,3).map(c=>`<img src="${PIC[c.id]||""}" alt="" loading="lazy">`).join("")}</span></summary><div class="grid">${arr.map(c=>tile(c)).join("")}</div></details>`;}).join("")}</div>`;
+}
+
+/* ---------- Hulp: wat gaat er mis? ---------- */
+const KOOL=["boerenkool","spruitkool","broccoli","bloemkool","wittekool","rodekool","savooikool","kolrabi"];
+const HELP=[
+{id:"geel",t:"Gele bladeren",s:"Het blad wordt bleek of geel.",w:[
+ {t:"Te nat",h:"De grond blijft drassig of de pot staat in water. De plant is vaak slap en geel tegelijk.",c:"Steek je vinger 3 cm in de grond. Voelt die nat en plakkerig aan?",d:"Geef een paar dagen geen water. Zorg dat potten gaten onderaan hebben en niet in een bakje water staan.",l:["verzorging/water-geven"]},
+ {t:"Te droog",h:"Het blad hangt, wordt geel en droog aan de randen. De grond is hard.",c:"Is de grond 3 cm diep droog?",d:"Geef minder vaak, maar flink water, aan de voet en liefst 's ochtends. Een laagje mulch (stro of gras rond de plant) houdt vocht vast.",l:["verzorging/water-geven","grond/mulchen"]},
+ {t:"Tekort aan voeding",h:"De oudste, onderste bladeren worden gelijkmatig lichtgeel en de groei is traag. Vaak bij vraatzuchtige gewassen en in potten.",c:"Wanneer gaf je voor het laatst compost of mest?",d:"Werk compost in de grond of geef een organische meststof. In potten is de voorraad sneller op.",l:["grond/voeding","grond/compost"],g:["tomaat","courgette","pompoen","komkommer","prei"]},
+ {t:"Gewoon ouder blad",h:"Alleen de onderste, oudste bladeren verkleuren. De rest van de plant groeit gezond.",d:"Je hoeft niets te doen. Je mag die bladeren afknippen. Dit is normaal, zeker tegen het einde van het seizoen.",g:["tomaat"]},
+ {t:"Een plantenziekte",h:"Het geel gaat samen met bruine vlekken of wit poeder.",d:"Kijk bij 'Bruine of zwarte vlekken' of 'Witte aanslag'.",l:["plagen/plagen-overzicht"]}]},
+{id:"vlekken",t:"Bruine of zwarte vlekken",s:"Op bladeren, stengels of vruchten.",w:[
+ {t:"Phytophthora",h:"Bruine vlekken op blad en stengel, later harde bruine plekken op de vruchten. Vooral bij vochtig, warm weer.",c:"Zie je onderaan het blad ook een witte waas?",d:"Verwijder aangetaste delen en gooi ze bij het restafval, niet op de compost. Geef water aan de voet, plant ruimer en kies resistente rassen.",l:["plagen/phytophthora"],g:["tomaat","aardappel"]},
+ {t:"Neusrot",h:"Een zwarte, ingezakte plek onderaan de vrucht, soms al aan groene vruchten. Het is geen ziekte, maar komt door onregelmatig water.",d:"Geef regelmatig water en leg een laagje mulch (stro of gras) rond de plant. Verwijder aangetaste vruchten. De volgende zijn vaak weer goed.",l:["verzorging/tomaat-verzorgen","plagen/plagen-overzicht"],g:["tomaat","paprika"]},
+ {t:"Schade door zon, wind of vorst",h:"Droge, papierachtige plekken die plots verschijnen, na een zonnige dag, hitte of koude nacht. Ze worden niet groter.",d:"Wacht af: nieuw blad groeit gezond. Bescherm tegen vorst met doek of gaas en geef schaduw bij hitte.",l:["seizoen/ijsheiligen","seizoen/droogte-hitte"]},
+ {t:"Een andere schimmelziekte",h:"Vlekken met ringetjes of een gele rand, vooral in een natte zomer.",d:"Verwijder het zieke blad, geef water aan de voet en plant ruimer. Twijfel je? Kijk dan in het overzicht.",l:["plagen/plagen-overzicht"]}]},
+{id:"wit",t:"Witte aanslag",s:"Een wit poeder of witte pluisjes.",w:[
+ {t:"Meeldauw",h:"Wit poeder op de bovenkant van het blad. Vooral bij courgette, komkommer en erwt, aan het einde van de zomer.",c:"Veeg met je vinger: komt het poeder mee?",d:"Verwijder zwaar aangetaste bladeren, plant ruimer en geef water aan de voet. Aan het einde van het seizoen is het meestal niet erg.",l:["plagen/meeldauw"],g:["courgette","komkommer","erwt","pompoen"]},
+ {t:"Witte schimmel op zaaigrond",h:"Witte pluisjes op de aarde van een zaaibakje.",d:"Geef minder water en meer lucht. Zaailingen kunnen omvallen als het te vochtig blijft.",l:["zaaien/zaaigrond-licht"]}]},
+{id:"gaten",t:"Gaten in bladeren",s:"Aangevreten of doorzeefd blad.",w:[
+ {t:"Slakken",h:"Onregelmatige gaten en slijmsporen, vooral na regen en 's nachts. Vaak bij sla, courgette en bonen.",c:"Kijk 's avonds met een zaklamp.",d:"Ruim ze 's avonds op. Gebruik gaas of een rand rond je bak, of strooi slakkenkorrels met ijzerfosfaat.",l:["plagen/slakken"],g:["sla","courgette","spinazie","stokboon","struikboon"]},
+ {t:"Rupsen van het koolwitje",h:"Groene rupsen, gaten en zwarte keutels op kool. Gele eitjes onderaan het blad.",d:"Dek af met insectengaas en pluk rupsen weg.",l:["plagen/koolwitje"],g:KOOL},
+ {t:"Aardvlooien",h:"Veel kleine rondjes, als hagelschot, in jong blad van radijs, rucola of kool bij droog, warm weer.",d:"Houd de grond vochtig en dek af met insectengaas.",l:["plagen/plagen-overzicht"],g:["radijs","rucola","kolrabi"]},
+ {t:"Vogels en konijnen",h:"Jonge plantjes zijn aangevreten of afgebeten, soms verdwijnt een hele plant.",d:"Gebruik een net of gaas. Tegen konijnen is een omheining nodig.",l:["plagen/dieren"]}]},
+{id:"slap",t:"Slappe of verwelkende plant",s:"De plant hangt of lijkt te sterven.",w:[
+ {t:"Te droog",h:"De plant hangt en de grond is droog. Na water herstelt ze.",d:"Geef flink water aan de voet. In potten en bij hitte moet dat vaker.",l:["seizoen/droogte-hitte","verzorging/water-geven"]},
+ {t:"Te nat of rotte wortels",h:"De grond is nat, maar de plant is slap. Onderste blad geel en wortels bruin en zacht.",c:"Trek voorzichtig een kleine plant uit de grond en kijk naar de wortels.",d:"Stop met water geven en verbeter de afvoer. Een plant met rotte wortels is vaak niet te redden.",l:["verzorging/water-geven"]},
+ {t:"Middagwarmte",h:"De plant hangt midden op de dag en staat 's avonds weer recht. De grond is vochtig.",d:"Je hoeft niets te doen en geef zeker geen extra water. Wat schaduw kan helpen.",l:["seizoen/droogte-hitte"]},
+ {t:"Wortelvlieg",h:"Het loof van wortel of peterselie is slap of verkleurt. In de wortel zitten gangetjes.",d:"Dek af met gaas of gebruik een hoge bak.",l:["plagen/wortelvlieg"],g:["wortel","peterselie"]}]},
+{id:"geen-groei",t:"Geen groei",s:"De plant blijft klein.",w:[
+ {t:"Te koud of te vroeg",h:"De planten blijven klein en wachten. Vooral bij warmteminnende gewassen na het planten of zaaien in koude grond.",d:"Wacht op warmer weer of dek af. Zaai en plant warmteminnende gewassen pas na de ijsheiligen.",l:["seizoen/ijsheiligen","zaaien/zaaigrond-licht"],g:["tomaat","courgette","komkommer","paprika","aubergine","stokboon","basilicum"]},
+ {t:"Te weinig licht",h:"Lange, bleke, dunne stengels en zwakke groei.",d:"Kies een lichtere plek. Zaailingen horen dicht bij het raam of onder een lamp.",l:["beginnen/plek-kiezen","klein/schaduw"]},
+ {t:"Te weinig voeding of een te kleine pot",h:"Bleke bladeren en kleine vruchten, vooral bij planten in een pot.",d:"Geef voeding of verpot naar een grotere pot.",l:["grond/voeding","beginnen/pot-bak-grond"]},
+ {t:"Stress na het verplanten",h:"De plant is net uitgeplant en staat even stil. Dat duurt meestal een tot twee weken.",d:"Heb geduld en geef regelmatig water. Een volgende keer helpt het om jonge planten eerst een paar dagen buiten te laten wennen.",l:["zaaien/verspenen-afharden"]}]},
+{id:"geen-vrucht",t:"Bloemen zonder vruchten",s:"Veel bloei, weinig oogst.",w:[
+ {t:"Te weinig bestuiving",h:"Veel bloemen, maar vruchtjes verschrompelen. Bij courgette komen eerst mannelijke bloemen, zonder vruchtje eronder.",d:"Geduld. Lok bestuivers met bloemen en kruiden. Je kunt ook zelf een mannelijke bloem op een vrouwelijke bloem afstrijken.",l:["combineren/helpers"],g:["courgette","pompoen"]},
+ {t:"Te warm of te koud",h:"Bloemen vallen af bij erg warm weer of koude nachten.",d:"Geef schaduw en water bij hitte. Vruchten komen vaak terug als het weer normaal wordt.",l:["seizoen/droogte-hitte"],g:["tomaat","paprika","stokboon"]},
+ {t:"Te veel stikstof",h:"Groot, donkergroen blad, maar weinig bloemen of vruchten.",d:"Bemest minder met stikstof.",l:["grond/voeding"]}]},
+{id:"rotten",t:"Vruchten die rotten",s:"Zachte, bruine of beschimmelde vruchten.",w:[
+ {t:"Neusrot",h:"Een zwarte, ingezakte plek onderaan de vrucht.",d:"Geef regelmatig water en leg een laagje mulch (stro of gras) rond de plant.",l:["verzorging/tomaat-verzorgen"],g:["tomaat","paprika"]},
+ {t:"Phytophthora",h:"Harde bruine plekken op vruchten, vaak met bruine vlekken op het blad.",d:"Verwijder aangetaste delen, geef water aan de voet en kies resistente rassen.",l:["plagen/phytophthora"],g:["tomaat","aardappel"]},
+ {t:"Grijsschimmel op aardbeien",h:"Een grijs pluizig laagje op rijpe vruchten, vooral bij vochtig weer en vruchten op natte grond.",d:"Leg stro onder de planten, oogst vaak en haal aangetaste vruchten weg.",l:["plagen/plagen-overzicht"],g:["aardbei"]},
+ {t:"Contact met natte grond",h:"Vruchten die op de grond liggen rotten onderaan.",d:"Leg een plank of stro onder de vruchten.",l:["verzorging/water-geven"],g:["courgette","pompoen"]}]},
+{id:"kiemen-niet",t:"Zaadjes die niet kiemen",s:"Er komt niets op.",w:[
+ {t:"Te koud of te nat",h:"Er komt niets op en soms zijn de zaden rot. Sommige zaden hebben 2 tot 3 weken nodig.",d:"Wacht tot de grond warmer is en houd de grond vochtig, niet nat. Kijk hoeveel tijd jouw gewas nodig heeft om te kiemen.",l:["zaaien/kiemtijd","zaaien/zaaigrond-licht"]},
+ {t:"Te diep gezaaid of uitgedroogd",h:"Het zaad lag diep of de grond heeft een harde korst.",d:"Zaai ongeveer twee keer zo diep als het zaad dik is en houd de grond vochtig.",l:["zaaien/kiemtijd"]},
+ {t:"Oud of slecht bewaard zaad",h:"Maar weinig zaden komen op, ook bij goede omstandigheden.",c:"Leg 10 zaden op vochtig keukenpapier. Hoeveel kiemen er?",d:"Kiemen er weinig, koop dan vers zaad.",l:["zaaien/zaad-kopen"]},
+ {t:"Opgegeten",h:"De zaden zijn verdwenen, vooral erwten en bonen.",d:"Dek af met gaas of zaai voor in potjes.",l:["plagen/dieren"],g:["erwt","tuinboon","stokboon","struikboon"]}]},
+{id:"doorschieten",t:"Plant bloeit te vroeg",s:"De plant vormt een bloemstengel. Dit heet doorschieten.",w:[
+ {t:"Warmte en lange dagen",h:"Sla, spinazie, radijs of koriander vormen een bloemstengel en het blad wordt bitter.",d:"Zaai in een koelere periode, geef wat schaduw en water regelmatig. Oogst vroeg en zaai opnieuw.",l:["seizoen/droogte-hitte","zaaien/zaaien-binnen-buiten"],g:["sla","spinazie","radijs","koriander","rucola"]},
+ {t:"Te vroeg gezaaid na een koud voorjaar",h:"Bieten of uien gaan in het eerste jaar bloeien na een koude periode.",d:"Zaai of plant niet te vroeg. Kies rassen die minder snel doorschieten.",l:["zaaien/zaaien-binnen-buiten"],g:["biet","ui"]}]}
+];
+const artT=p=>{const [c,a]=p.split("/"),cat=GIDS.find(g=>g.id===c),x=cat&&cat.arts.find(y=>y.id===a);return x?x.t:null;};
+function viewHulp(){
+  const h=HELP.find(x=>x.id===S.hulp);
+  if(!h)return `<section class="sec" style="margin-top:14px"><p class="art-p">Kies wat je ziet. Je krijgt de mogelijke oorzaken en wat je eraan kunt doen. Eén probleem kan meerdere oorzaken hebben, lees ze dus allemaal.</p>
+   <div class="hgrid">${HELP.map(x=>`<button class="hbtn" data-hulp="${x.id}"><b>${esc(x.t)}</b><span>${esc(x.s)}</span></button>`).join("")}</div>
+   <div class="more"><b>Liever zelf zoeken?</b><div class="links"><button data-art="plagen/plagen-overzicht">Overzicht: plaag en aanpak</button><button data-art="kennis/faq">Veelgestelde vragen</button></div></div></section>`;
+  const gv=S.hg&&BY[S.hg]?S.hg:"";
+  const w=h.w.map((x,i)=>({x,i,fit:gv&&(x.g||[]).includes(gv)?0:1})).sort((a,b)=>a.fit-b.fit||a.i-b.i);
+  const opts=C.slice().sort((a,b)=>a.n.localeCompare(b.n)).map(c=>`<option value="${c.id}"${c.id===gv?" selected":""}>${esc(c.n)}</option>`).join("");
+  const links=x=>(x.l||[]).map(p=>[p,artT(p)]).filter(a=>a[1]);
+  return `<section class="sec" style="margin-top:14px"><button class="back" data-act="hback">‹ Alle problemen</button>
+   <p class="art-p">Dit zijn mogelijke oorzaken. Begin bij wat je herkent.</p>
+   <div class="hpick"><label for="hg">Welk gewas heb je? Dit is optioneel.</label><select id="hg"><option value="">Weet ik niet</option>${opts}</select></div>
+   <div class="hlist">${w.map(({x,fit})=>`<article class="hc"><h2>${esc(x.t)}</h2>${fit===0?`<span class="pill">Komt vaak voor bij ${esc(BY[gv].n.toLowerCase())}</span>`:""}
+    <p><b>Zo herken je het</b> ${esc(x.h)}</p>${x.c?`<p><b>Zo controleer je het</b> ${esc(x.c)}</p>`:""}<p><b>Zo los je het op</b> ${esc(x.d)}</p>
+    ${links(x).length?`<div class="links">${links(x).map(([p,t])=>`<button data-art="${p}" aria-label="Lees meer: ${esc(t)}">${esc(t)}</button>`).join("")}</div>`:""}</article>`).join("")}</div>
+   <p class="credit" style="margin-top:16px">Dit is een inschatting. Twijfel je? Vraag het aan een ervaren tuinier of lees verder in de Gids.</p></section>`;
 }
 
 /* ---------- Kalender ---------- */
@@ -1885,7 +1977,7 @@ function openArticle(path){
 /* ---------- Render ---------- */
 function render(){
   renderChrome();
-  document.getElementById("main").innerHTML={nu:viewNu,alle:viewAlle,kal:viewKal,gids:viewGids}[S.tab]();
+  document.getElementById("main").innerHTML={nu:viewNu,alle:viewAlle,kal:viewKal,hulp:viewHulp,gids:viewGids}[S.tab]();
   renderTray();
   document.getElementById("live").textContent=S.tab==="alle"?filtered().length+" gewassen":"";
 }
@@ -1908,8 +2000,8 @@ function openDetail(id){
   const good=c.buren.filter(x=>x.t==="g"),bad=c.buren.filter(x=>x.t==="s");
   const row=(arr,cls,sym)=>`<div class="bs ${cls}">${arr.map(x=>`<button data-open="${x.id}"><i aria-hidden="true">${sym}</i>${esc(nm(x.id))}</button>`).join("")}</div>`;
   const buren=(good.length||bad.length)?
-    `<div class="bsum">${good.length?`<h4 class="sub-h" style="margin-top:0">Groeit goed naast</h4>${row(good,"g","✓")}`:""}${bad.length?`<h4 class="sub-h">Liever niet naast</h4>${row(bad,"s","✕")}`:""}</div>`+
-    `<details class="dd"><summary>Waarom en hoe</summary>${good.length?`<h4 class="sub-h" style="margin-top:0">Groeit goed naast</h4>${good.map(buurCard).join("")}`:""}${bad.length?`<h4 class="sub-h">Liever niet naast</h4>${bad.map(buurCard).join("")}`:""}<p class="credit" style="margin-top:12px">Het label bij elke combinatie geeft aan hoe sterk het bewijs is. Zie de Gids voor uitleg.</p></details>`
+    `<div class="bsum">${good.length?`<h3 class="sub-h" style="margin-top:0">Groeit goed naast</h3>${row(good,"g","✓")}`:""}${bad.length?`<h3 class="sub-h">Liever niet naast</h3>${row(bad,"s","✕")}`:""}</div>`+
+    `<details class="dd"><summary>Waarom en hoe</summary>${good.length?`<h3 class="sub-h" style="margin-top:0">Groeit goed naast</h3>${good.map(buurCard).join("")}`:""}${bad.length?`<h3 class="sub-h">Liever niet naast</h3>${bad.map(buurCard).join("")}`:""}<p class="credit" style="margin-top:12px">Het label bij elke combinatie geeft aan hoe sterk het bewijs is. Zie de Gids voor uitleg.</p></details>`
     :`<p class="art-p" style="margin:0">Geen bijzondere buren bekend. ${esc(c.n)} groeit prima naast de meeste gewassen. Wissel wel jaarlijks van plek (${esc(c.fam)}).</p>`;
   const html=`<div class="hero"><img class="ph" src="${PIC[id]||""}" alt="${esc(c.n)}">${closeBtn}</div>
   <div class="pad">${p?`<p class="credit">Foto: ${esc(cr(p.c))}. <a href="${esc(p.u)}" target="_blank" rel="noopener">Bron</a></p>`:""}
@@ -1920,7 +2012,7 @@ function openDetail(id){
   <div style="margin-top:18px">
   ${fold("In het kort",`<ol class="steps">${c.st.map(s=>`<li><span>${esc(s)}</span></li>`).join("")}</ol>`)}
   ${fold("Met wie combineer je dit?",buren,true)}
-  ${fold("Tips en let op",`<h4 class="sub-h" style="margin-top:0">Tips</h4><ul class="bul">${c.tip.map(s=>`<li>${esc(s)}</li>`).join("")}</ul><h4 class="sub-h">Let op</h4><ul class="bul">${c.val.map(s=>`<li>${esc(s)}</li>`).join("")}</ul>`)}
+  ${fold("Tips en let op",`<h3 class="sub-h" style="margin-top:0">Tips</h3><ul class="bul">${c.tip.map(s=>`<li>${esc(s)}</li>`).join("")}</ul><h3 class="sub-h">Let op</h3><ul class="bul">${c.val.map(s=>`<li>${esc(s)}</li>`).join("")}</ul>`)}
   ${c.sub&&c.sub.length?fold("Soorten en rassen vergeleken",`<div class="scroll"><table><thead><tr><th>Soort</th><th>Voorbeelden</th><th>Kenmerken</th></tr></thead><tbody>${c.sub.map(s=>`<tr><td><b>${esc(s.n)}</b></td><td>${esc(s.ex)}</td><td>${esc(s.k)}</td></tr>`).join("")}</tbody></table></div>`):""}
   ${fold("Alle gegevens",`<table><tbody>
    <tr><th>Zon</th><td>${esc(c.zon)}</td></tr><tr><th>Potgrootte</th><td>${esc(c.pot)}</td></tr><tr><th>Duur</th><td>${esc(c.dagen)}</td></tr>
@@ -1972,10 +2064,11 @@ function openFilter(){
 document.addEventListener("click",e=>{
   const t=e.target.closest("button, .overlay");if(!t)return;
   if(t.id==="ov"){if(e.target===t)closeOv();return;}
-  if(t.dataset.tab){S.tab=t.dataset.tab;if(S.tab==="gids")S.gc=null;render();window.scrollTo(0,0);return;}
+  if(t.dataset.tab){S.tab=t.dataset.tab;if(S.tab==="gids")S.gc=null;if(S.tab==="hulp")S.hulp=null;render();window.scrollTo(0,0);return;}
   if(t.dataset.mo){S.m=+t.dataset.mo;S.more.clear();render();return;}
   if(t.dataset.more){const k=t.dataset.more;S.more.add(k);render();const b=document.querySelectorAll(`[data-sec="${k}"] .tile>button`)[6];if(b)b.focus();return;}
   if(t.dataset.f){S[t.dataset.f]=t.dataset.v;const open=!document.getElementById("ov").hidden;render();if(open)openFilter();return;}
+  if(t.dataset.hulp){S.hulp=t.dataset.hulp;S.hg="";render();window.scrollTo(0,0);document.getElementById("main").focus({preventScroll:true});return;}
   if(t.dataset.open){openDetail(t.dataset.open);return;}
   if(t.dataset.art){openArticle(t.dataset.art);return;}
   if(t.dataset.cat){S.gc=t.dataset.cat;render();window.scrollTo(0,0);return;}
@@ -1985,6 +2078,7 @@ document.addEventListener("click",e=>{
   const a=t.dataset.act;
   if(a==="close"){closeOv();return;}
   if(a==="filter"){openFilter();return;}
+  if(a==="hback"){S.hulp=null;S.hg="";render();window.scrollTo(0,0);document.getElementById("main").focus({preventScroll:true});return;}
   if(a==="gback"){S.gc=null;render();window.scrollTo(0,0);return;}
   if(a==="reset"){S.type=S.diep=S.plek="alle";render();openFilter();return;}
   if(a==="compare"&&S.cmp.size>1){openCompare();return;}
@@ -1992,6 +2086,7 @@ document.addEventListener("click",e=>{
 });
 document.addEventListener("input",e=>{if(e.target.id==="q"){S.q=e.target.value;const pos=e.target.selectionStart;render();const q=document.getElementById("q");q.focus();q.setSelectionRange(pos,pos);}});
 document.addEventListener("toggle",e=>{const d=e.target;if(!d.classList||!d.classList.contains("grp"))return;if(!(S.q||S.type!=="alle"||S.diep!=="alle"||S.plek!=="alle")){if(d.open)S.grp.add(d.dataset.grp);else S.grp.delete(d.dataset.grp);}},true);
+document.addEventListener("change",e=>{if(e.target.id==="hg"){S.hg=e.target.value;render();const g=document.getElementById("hg");if(g)g.focus();}});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!document.getElementById("ov").hidden)closeOv();});
 render();
 </script>
