@@ -11,6 +11,7 @@
   --leaf:#386F26; --leaf-soft:#DCEACB; --on-leaf:#FFFFFF;
   --sun:#855C00; --sun-soft:#F3E7BE; --soil:#7B5532;
   --tom:#B8372A; --tom-soft:#F4DDD6; --sky:#2F7391; --sky-soft:#D8E7EE;
+  --f-zaai:#2a78d6; --f-plant:#c8501f; --f-oogst:#0f8a63;
   --nav:#1F2617; --on-nav:#EAEEDF;
   --f-display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
   --f-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
@@ -20,12 +21,14 @@
   --leaf:#7CC25F; --leaf-soft:#233319; --on-leaf:#10170B;
   --sun:#E9B84B; --sun-soft:#3A3114; --soil:#C9A27A;
   --tom:#F0796A; --tom-soft:#3B1F1B; --sky:#74B6D4; --sky-soft:#17303C;
+  --f-zaai:#3987e5; --f-plant:#d95926; --f-oogst:#199e70;
   --nav:#0A0E07; --on-nav:#E9EEDD; color-scheme:dark;}}
 :root[data-theme="dark"]{
   --bg:#12170E; --surface:#1B2216; --ink:#E9EEDD; --muted:#A2AE92; --line:#2D3724;
   --leaf:#7CC25F; --leaf-soft:#233319; --on-leaf:#10170B;
   --sun:#E9B84B; --sun-soft:#3A3114; --soil:#C9A27A;
   --tom:#F0796A; --tom-soft:#3B1F1B; --sky:#74B6D4; --sky-soft:#17303C;
+  --f-zaai:#3987e5; --f-plant:#d95926; --f-oogst:#199e70;
   --nav:#0A0E07; --on-nav:#E9EEDD; color-scheme:dark;}
 *{box-sizing:border-box}
 button,a,input,summary,.tile{touch-action:manipulation}
@@ -108,12 +111,11 @@ details.dd>summary{cursor:pointer;font-weight:600;color:var(--leaf);padding-bloc
 .tile h3{font-size:1.1rem;margin-top:8px}
 .phw{display:block;position:relative}
 .tile .act{position:absolute;left:8px;bottom:8px;max-width:calc(100% - 16px);background:var(--surface);padding:3px 10px;border-radius:999px;font-size:.85rem;font-weight:600;line-height:1.35}
-.act .k-zb-t{color:var(--sky)} .act .k-zd-t{color:var(--leaf)} .act .k-pt-t{color:var(--sun)} .act .k-oo-t{color:var(--tom)}
+.act .pl{display:inline-flex;align-items:center;gap:6px;color:var(--ink)} .act .pl+.pl{margin-left:10px} .act i{display:inline-block;width:10px;height:10px;border-radius:50%;flex:none}
 .line{display:flex;gap:8px;align-items:center;font-size:.9rem;color:var(--muted);margin-top:4px;flex-wrap:wrap}
 .dots{display:inline-flex;gap:3px}
 .dots i{width:8px;height:8px;border-radius:50%;background:var(--line)}
-.dots i.on{background:var(--leaf)}
-.dots.d2 i.on{background:var(--sun)} .dots.d3 i.on{background:var(--tom)}
+.dots i.on{background:var(--ink)}
 .empty{padding:20px;border:1px dashed var(--line);border-radius:16px;color:var(--muted);margin-top:14px}
 .nav{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--nav);color:var(--on-nav);display:flex;justify-content:center;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px))}
 .nav-in{display:flex;width:100%;max-width:520px;gap:4px}
@@ -126,7 +128,7 @@ details.dd>summary{cursor:pointer;font-weight:600;color:var(--leaf);padding-bloc
 .tray .go:disabled{opacity:.5}
 .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.88rem;margin-block:10px;color:var(--muted)}
 .legend i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-right:6px}
-.k-zb{background:var(--sky)} .k-zd{background:var(--leaf)} .k-pt{background:var(--sun)} .k-oo{background:var(--tom)}
+.k-zb{background:transparent;border:2px solid var(--f-zaai)} .k-zd{background:var(--f-zaai)} .k-pt{background:var(--f-plant)} .k-oo{background:var(--f-oogst)}
 .scroll{overflow-x:auto;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
 table{border-collapse:collapse;width:100%;font-size:.9rem}
 th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
@@ -142,8 +144,8 @@ th{font-weight:600;color:var(--muted)}
 .cal .cell b.on,.mini b.on{opacity:1}
 .mini{display:grid;grid-template-columns:repeat(12,1fr);gap:3px;margin-top:8px}
 .mini div{display:flex;flex-direction:column;gap:2px;font-size:.7rem;text-align:center;color:var(--muted)}
-.mini b.k-zb{background:var(--sky)}.mini b.k-zd{background:var(--leaf)}.mini b.k-pt{background:var(--sun)}.mini b.k-oo{background:var(--tom)}
 .mini b{height:9px}
+.mini b.k-zb{background:transparent;border:2px solid var(--f-zaai)}.mini b.k-zd{background:var(--f-zaai)}.mini b.k-pt{background:var(--f-plant)}.mini b.k-oo{background:var(--f-oogst)}
 .overlay{position:fixed;inset:0;z-index:50;background:rgba(10,18,8,.55);display:flex;justify-content:center;align-items:flex-end;padding-top:env(safe-area-inset-top,0px)}
 .sheet{overscroll-behavior:contain;background:var(--bg);width:100%;max-width:760px;max-height:94%;overflow-y:auto;border-radius:24px 24px 0 0;padding-bottom:calc(28px + env(safe-area-inset-bottom,0px))}
 @media(min-width:760px){.overlay{align-items:center}.sheet{border-radius:24px;max-height:92%}}
@@ -748,7 +750,7 @@ const GIDS=[
 {id:"zaaien",t:"Zaaien en kweken",d:"Van zaadje tot plant",ic:"seed",arts:[
  {id:"zaaien-binnen-buiten",t:"Zaaien: binnen of buiten",min:3,s:"Welke gewassen je voorzaait en welke je direct buiten zaait.",b:[
   p("Sommige gewassen heb je vroeg nodig of hebben warmte nodig die er in maart nog niet is. Dan zaai je ze binnen voor."),
-  tb(["Direct buiten zaaien","Binnen voorzaaien"],[
+  tb(["Zaai buiten","Zaai in huis"],[
    ["Radijs, wortel, biet, erwt, tuinboon, spinazie, peterselie, dille, koriander, snijbiet, rucola","Tomaat, paprika, courgette, komkommer, pompoen, basilicum, prei, kool (voor vroege oogst)"],
    ["Stokbonen (na half mei)","Sla (voor een vroege oogst)"]]),
   tip("Wortelgewassen (wortel, biet, radijs) verplant je niet. Hun wortel groeit scheef of splitst als je ze verplaatst."),
@@ -1752,7 +1754,10 @@ PAIRS.forEach(([a,b,t,ev,why,how])=>{
 const PIC={};
 for(const id in PHOTOS)PIC[id]=PHOTOS[id].src;
 
-const KIND={zb:["Binnen voorzaaien","k-zb-t"],zd:["Buiten zaaien","k-zd-t"],pt:["Planten","k-pt-t"]};
+const FASEN=[["zb","Zaai in huis"],["zd","Zaai buiten"],["pt","Plant uit"],["oo","Oogst"]];
+const faseLabel=k=>(FASEN.find(f=>f[0]===k)||[])[1]||"";
+const KIND={zb:[faseLabel("zb")],zd:[faseLabel("zd")],pt:[faseLabel("pt")]};
+function legendHtml(){const x={zb:" (open)",zd:" (gevuld)"};return `<div class="legend">${FASEN.map(([k,l])=>`<span><i class="k-${k}"></i>${l}${x[k]||""}</span>`).join("")}</div>`;}
 const NOW=new Date().getMonth()+1;const cr=s=>String(s).split(" I\u0027d")[0].replace(/\s*\(.*?$/,"");
 const S={tab:"nu",m:NOW,type:"alle",diep:"alle",plek:"alle",q:"",cmp:new Set(),more:new Set(),grp:new Set(),hulp:null,hg:"",gc:null,ch:0};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -1772,8 +1777,8 @@ function rel(a,b){const x=BY[a].buren.find(y=>y.id===b);return x?(x.t==="g"?"goo
 function names(ids,max){const l=ids.slice(0,max).map(nm).join(", ");return l+(ids.length>max?" +"+(ids.length-max):"");}
 function tile(c,tag){
   const t=tag||[];
-  const act=t.map(k=>`<span class="${KIND[k][1]}">${KIND[k][0]}</span>`).join(", ");
-  const what=t.map(k=>KIND[k][0]).join(", ");
+  const act=t.map(k=>`<span class="pl"><i class="k-${k}" aria-hidden="true"></i>${faseLabel(k)}</span>`).join("");
+  const what=t.map(faseLabel).join(", ");
   return `<article class="tile"><button data-open="${c.id}" aria-label="${esc(c.n)}${what?", "+esc(what):""}, ${DIFF[c.d]}">
    <span class="phw"><img class="ph" src="${PIC[c.id]||""}" alt="" loading="lazy">${act?`<span class="act">${act}</span>`:""}</span>
    <h3>${esc(c.n)}</h3>
@@ -1905,7 +1910,7 @@ const tuinSave=()=>lsSet(TK,JSON.stringify(TUIN));
 const MKEY=new Date().getFullYear()+"-"+NOW;
 const doneSet=()=>new Set(Array.isArray(TUIN.done[MKEY])?TUIN.done[MKEY]:[]);
 const say=t=>setTimeout(()=>{const l=document.getElementById("live");if(l)l.textContent=t;},60);
-const TKIND={zb:"binnen voorzaaien",zd:"buiten zaaien",pt:"planten",oo:"oogsten"};
+const TKIND=Object.fromEntries(FASEN.map(([k,l])=>[k,l.toLowerCase()]));
 const inTuin=id=>TUIN.crops.includes(id);
 function tuinTasks(){const out=[];TUIN.crops.forEach(id=>{const c=BY[id];["zb","zd","pt","oo"].forEach(k=>{if(c[k].includes(NOW))out.push({id,k,key:k+":"+id,c});});});return out;}
 function tuinProg(){const ds=doneSet(),t=tuinTasks();return t.filter(x=>ds.has(x.key)).length+" van "+t.length+" gedaan";}
@@ -1942,13 +1947,13 @@ function track(c){
   const bar=(arr,k,row)=>runs(arr).map(([a,b])=>`<i class="${k}" style="grid-column:${a}/${b+1};grid-row:${row}"></i>`).join("");
   return `<span class="trk" aria-hidden="true"><span class="nowline" style="left:${(NOW-1)/12*100}%"></span>${bar(c.zb.filter(m=>!c.zd.includes(m)),"k-zb",1)}${bar(c.zd,"k-zd",1)}${bar(c.pt,"k-pt",2)}${bar(c.oo,"k-oo",3)}</span>`;
 }
-function textCal(c){return `Binnen voorzaaien ${ranges(c.zb)}. Buiten zaaien ${ranges(c.zd)}. Planten ${ranges(c.pt)}. Oogst ${ranges(c.oo)}.`;}
+function textCal(c){return FASEN.map(([k,l])=>`${l} ${ranges(c[k])}.`).join(" ");}
 function viewKal(){
   const l=filtered();
   const head=`<div class="mhead" aria-hidden="true">${MN.map((n,i)=>`<span class="${i+1===NOW?"now":""}">${n.slice(0,1).toUpperCase()}</span>`).join("")}</div>`;
   const qc=`<div class="qchips">${[["alle","Alles"],["groente","Groente"],["fruit","Fruit"],["kruid","Kruid"]].map(([v,t])=>`<button class="chip" data-f="type" data-v="${v}" data-stay="1" aria-pressed="${S.type===v}">${t}</button>`).join("")}</div>`;
   const groups=GROUPS.map(g=>({g,l:l.filter(c=>c.c===g).sort((a,b)=>a.n.localeCompare(b.n))})).filter(x=>x.l.length);
-  return `<div class="legend"><span><i class="k-zb"></i>Binnen voorzaaien</span><span><i class="k-zd"></i>Buiten zaaien</span><span><i class="k-pt"></i>Planten</span><span><i class="k-oo"></i>Oogst</span></div>${qc}
+  return `${legendHtml()}${qc}
   ${groups.map(x=>`<section class="cgrp"><h2>${x.g}<small>${x.l.length} gewassen</small></h2>${head}${x.l.map(c=>`<button class="crow" data-open="${c.id}" aria-label="${esc(c.n)}. ${textCal(c)}"><span class="nmr">${esc(c.n)} ${dots(c.d)}</span>${track(c)}</button>`).join("")}</section>`).join("")||'<div class="empty">Geen gewassen met deze filters.</div>'}
   <p class="p" style="color:var(--muted);margin-top:18px;font-size:.9rem">Elke rij heeft drie lijnen: bovenaan zaaien (blauw is binnen, groen is buiten), in het midden planten en onderaan oogsten. Tik op een gewas voor het stappenplan.</p>`;
 }
@@ -2058,7 +2063,7 @@ function openDetail(id){
   <div class="pad">${p?`<p class="credit">Foto: ${esc(cr(p.c))}. <a href="${esc(p.u)}" target="_blank" rel="noopener">Bron</a></p>`:""}
   <div class="head"><h2>${esc(c.n)}</h2><div class="lat" translate="no">${esc(c.l)}</div></div>
   <div class="facts4"><div><span>Niveau</span><b>${DIFF[c.d]}</b></div><div><span>Duur</span><b>${esc(short(c.dagen))}</b></div><div><span>Plek</span><b>${c.pl.join(", ")}</b></div><div><span>Ruimte</span><b>${esc(c.afst)}</b></div></div>
-  <div style="margin-top:18px"><div class="legend"><span><i class="k-zb"></i>Voorzaaien</span><span><i class="k-zd"></i>Zaaien</span><span><i class="k-pt"></i>Planten</span><span><i class="k-oo"></i>Oogst</span></div>${miniRow(c)}</div>
+  <div style="margin-top:18px">${legendHtml()}${miniRow(c)}</div>
   <div class="guide-cta"><button class="btn pri big" data-guide="${id}">Hoe teel ik dit? ›</button><span>Volledig stappenplan van voorbereiding tot oogst</span></div><div class="fbtn"><button class="btn${inTuin(id)?" pri":""}" data-tuin="${id}">${inTuin(id)?"In mijn tuin":"Zet in mijn tuin"}</button><button class="btn${S.cmp.has(id)?" pri":""}" data-cmp="${id}">${S.cmp.has(id)?"In vergelijking":"Zet in vergelijking"}</button></div>
   <div style="margin-top:18px">
   ${fold("In het kort",`<ol class="steps">${c.st.map(s=>`<li><span>${esc(s)}</span></li>`).join("")}</ol>`)}
@@ -2067,7 +2072,7 @@ function openDetail(id){
   ${c.sub&&c.sub.length?fold("Soorten en rassen vergeleken",`<div class="scroll"><table><thead><tr><th>Soort</th><th>Voorbeelden</th><th>Kenmerken</th></tr></thead><tbody>${c.sub.map(s=>`<tr><td><b>${esc(s.n)}</b></td><td>${esc(s.ex)}</td><td>${esc(s.k)}</td></tr>`).join("")}</tbody></table></div>`):""}
   ${fold("Alle gegevens",`<table><tbody>
    <tr><th>Zon</th><td>${esc(c.zon)}</td></tr><tr><th>Potgrootte</th><td>${esc(c.pot)}</td></tr><tr><th>Duur</th><td>${esc(c.dagen)}</td></tr>
-   <tr><th>Voorzaaien</th><td>${ranges(c.zb)}</td></tr><tr><th>Buiten zaaien</th><td>${ranges(c.zd)}</td></tr><tr><th>Planten</th><td>${ranges(c.pt)}</td></tr><tr><th>Oogst</th><td>${ranges(c.oo)}</td></tr>
+   ${FASEN.map(([k,l])=>`<tr><th>${l}</th><td>${ranges(c[k])}</td></tr>`).join("")}
    <tr><th>Water</th><td>${esc(c.w)}</td></tr><tr><th>Grond</th><td>${esc(c.g)}</td></tr><tr><th>Familie</th><td>${esc(c.fam)}</td></tr><tr><th>Levensduur</th><td>${esc(c.vast)}</td></tr></tbody></table>`)}
   </div>
   <p class="art-p" style="color:var(--muted)">${esc(c.wt)}</p></div>`;
@@ -2087,7 +2092,7 @@ function openGuide(id){
   showSheet(`<div class="art"><button class="x" style="top:18px" data-act="close" aria-label="Sluiten">×</button>
    <div class="rmeta">Teeltgids</div><h2>Hoe teel ik ${esc(c.n.toLowerCase())}?</h2><p class="rsub">${esc(c.l)}. Van voorbereiding tot oogst.</p>
    ${facts}<figure class="figure">${geoSvg(c)}</figure>
-   <div style="margin-top:6px"><div class="legend"><span><i class="k-zb"></i>Voorzaaien</span><span><i class="k-zd"></i>Zaaien</span><span><i class="k-pt"></i>Planten</span><span><i class="k-oo"></i>Oogst</span></div>${miniRow(c)}</div>
+   <div style="margin-top:6px">${legendHtml()}${miniRow(c)}</div>
    ${body}${nb}
    <div class="pager" style="margin-top:22px"><button class="btn" data-open="${id}">‹ Terug naar ${esc(c.n.toLowerCase())}</button></div></div>`);
 }
@@ -2099,7 +2104,7 @@ function openCompare(){
   showSheet(`<div class="pad" style="padding-top:18px;position:relative"><div class="head" style="padding-top:0"><h2>Vergelijking</h2></div><button class="x" style="top:14px" data-act="close" aria-label="Sluiten">×</button>
   <div class="scroll" style="margin-top:14px"><table><thead><tr><th></th>${l.map(c=>`<th style="color:var(--ink)">${esc(c.n)}</th>`).join("")}</tr></thead><tbody>
   ${row("Niveau",c=>DIFF[c.d])}${row("Soort",c=>esc(c.t))}${row("Zon",c=>esc(c.zon))}${row("Plek",c=>c.pl.join(", "))}${row("Pot",c=>esc(c.pot))}${row("Plantafstand",c=>esc(c.afst))}${row("Duur",c=>esc(c.dagen))}
-  ${row("Voorzaaien",c=>ranges(c.zb))}${row("Buiten zaaien",c=>ranges(c.zd))}${row("Planten",c=>ranges(c.pt))}${row("Oogst",c=>ranges(c.oo))}${row("Levensduur",c=>esc(c.vast))}
+  ${FASEN.map(([k,l])=>row(l,c=>ranges(c[k]))).join("")}${row("Levensduur",c=>esc(c.vast))}
   ${row("Goed naast",c=>c.goed.map(nm).join(", ")||"-")}${row("Liever niet naast",c=>c.slecht.map(nm).join(", ")||"-")}</tbody></table></div>
   <h3 style="margin-top:22px;font-size:1.2rem">Passen ze samen?</h3><div>${pairs}</div></div>`);
 }

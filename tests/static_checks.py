@@ -21,5 +21,10 @@ def check(naam: str, ok: bool, detail: str = "") -> None:
 # --- Taak 0: uitgangspositie
 check("sleutels", SRC.count('"mt-tuin-v1"') >= 1 and SRC.count('"sg-ch"') >= 1)
 
+# --- Taak 1: kleuren en labels
+check("labels", SRC.count("Binnen voorzaaien") == 0, f"{SRC.count('Binnen voorzaaien')} keer")
+for hx in ["#2a78d6", "#c8501f", "#0f8a63", "#3987e5", "#d95926", "#199e70"]:
+    check("palet " + hx, hx in SRC.lower())
+
 if __name__ == "__main__":
     sys.exit(1 if FAILS else 0)
