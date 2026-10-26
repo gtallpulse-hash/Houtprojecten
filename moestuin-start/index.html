@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html lang="nl-BE"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#EAEEDF" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#12170E" media="(prefers-color-scheme: dark)"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Moestuin Start</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -8,8 +8,8 @@
    Onderaan een vaste navigatiebalk met 4 knoppen; filters zitten achter één knop. */
 :root{
   --bg:#EAEEDF; --surface:#F7F8F0; --ink:#1F2617; --muted:#5A654D; --line:#D1D9C1;
-  --leaf:#3D7A2A; --leaf-soft:#DCEACB; --on-leaf:#FFFFFF;
-  --sun:#B07A00; --sun-soft:#F3E7BE; --soil:#7B5532;
+  --leaf:#386F26; --leaf-soft:#DCEACB; --on-leaf:#FFFFFF;
+  --sun:#855C00; --sun-soft:#F3E7BE; --soil:#7B5532;
   --tom:#B8372A; --tom-soft:#F4DDD6; --sky:#2F7391; --sky-soft:#D8E7EE;
   --nav:#1F2617; --on-nav:#EAEEDF;
   --f-display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
@@ -28,6 +28,10 @@
   --tom:#F0796A; --tom-soft:#3B1F1B; --sky:#74B6D4; --sky-soft:#17303C;
   --nav:#0A0E07; --on-nav:#E9EEDD; color-scheme:dark;}
 *{box-sizing:border-box}
+button,a,input,summary,.tile{touch-action:manipulation}
+.skip{position:absolute;left:12px;top:-60px;z-index:100;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-weight:600;text-decoration:none}
+.skip:focus{top:12px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--f-body);padding-inline:16px;padding-block:0 120px}
 .wrap{max-width:1040px;margin-inline:auto}
 h1,h2,h3,h4{font-family:var(--f-display);line-height:1.12;text-wrap:balance;margin:0;font-weight:700}
@@ -39,15 +43,22 @@ button{font:inherit;color:inherit;cursor:pointer}
 .top p{margin:6px 0 0;color:var(--muted);font-size:1.05rem;max-width:44ch}
 .months{display:flex;gap:6px;overflow-x:auto;padding-block:14px 4px;scrollbar-width:none}
 .months::-webkit-scrollbar{display:none}
-.mo{border:0;background:transparent;padding:7px 12px;border-radius:999px;font-weight:600;color:var(--muted);flex:none}
+.mo{border:0;background:transparent;padding:11px 14px;min-height:44px;border-radius:999px;font-weight:600;color:var(--muted);flex:none}
 .mo[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
 .mo.now:not([aria-pressed="true"]){box-shadow:inset 0 0 0 2px var(--sun)}
-.bar{display:flex;gap:8px;align-items:center;padding-block:10px 4px}
-.bar input[type=search]{flex:1;min-width:0;padding:11px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit}
+.bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding-block:10px 4px}
+.bar input[type=search]{flex:1 1 180px;min-width:0;padding:11px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit}
 .btn{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:10px 16px;font-weight:600;display:inline-flex;gap:8px;align-items:center}
 .btn.pri{background:var(--leaf);border-color:var(--leaf);color:var(--on-leaf)}
 .btn b{background:var(--leaf);color:var(--on-leaf);border-radius:999px;min-width:20px;height:20px;font-size:.78rem;display:inline-grid;place-items:center;padding-inline:5px}
 .sec{margin-top:32px}
+.morewrap{margin-top:16px;display:flex;justify-content:center}
+.bs{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.bs button{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 16px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-weight:500}
+.bs i{font-style:normal;font-weight:700;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:.8rem;flex:none}
+.bs.g i{background:var(--leaf-soft);color:var(--leaf)} .bs.s i{background:var(--tom-soft);color:var(--tom)}
+details.dd{margin-top:14px}
+details.dd>summary{cursor:pointer;font-weight:600;color:var(--leaf);padding-block:10px;min-height:44px}
 .sec>h2{font-size:1.5rem}
 .sec>h2 small{display:block;font:400 .95rem var(--f-body);color:var(--muted);margin-top:4px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:18px 12px;margin-top:14px}
@@ -57,10 +68,10 @@ button{font:inherit;color:inherit;cursor:pointer}
 .tile>button:focus-visible{outline:3px solid var(--sky);outline-offset:4px;border-radius:16px}
 .ph{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:16px;background:var(--leaf-soft)}
 .tile h3{font-size:1.1rem;margin-top:8px}
-.tile .lat{font-style:italic;color:var(--muted);font-size:.84rem;overflow-wrap:anywhere}
-.tile .act{font-size:.84rem;font-weight:600;margin-top:2px}
+.phw{display:block;position:relative}
+.tile .act{position:absolute;left:8px;bottom:8px;max-width:calc(100% - 16px);background:var(--surface);padding:3px 10px;border-radius:999px;font-size:.85rem;font-weight:600;line-height:1.35}
 .act .k-zb-t{color:var(--sky)} .act .k-zd-t{color:var(--leaf)} .act .k-pt-t{color:var(--sun)} .act .k-oo-t{color:var(--tom)}
-.line{display:flex;gap:8px;align-items:center;font-size:.86rem;color:var(--muted);margin-top:4px;flex-wrap:wrap}
+.line{display:flex;gap:8px;align-items:center;font-size:.9rem;color:var(--muted);margin-top:4px;flex-wrap:wrap}
 .dots{display:inline-flex;gap:3px}
 .dots i{width:8px;height:8px;border-radius:50%;background:var(--line)}
 .dots i.on{background:var(--leaf)}
@@ -68,7 +79,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .empty{padding:20px;border:1px dashed var(--line);border-radius:16px;color:var(--muted);margin-top:14px}
 .nav{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--nav);color:var(--on-nav);display:flex;justify-content:center;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px))}
 .nav-in{display:flex;width:100%;max-width:520px;gap:4px}
-.nav button{flex:1;border:0;background:transparent;color:inherit;opacity:.65;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;border-radius:14px;font-size:.78rem;font-weight:600}
+.nav button{flex:1;border:0;background:transparent;color:inherit;opacity:.65;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;border-radius:14px;font-size:.85rem;font-weight:600}
 .nav button svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .nav button[aria-current="page"]{opacity:1;background:rgba(255,255,255,.12)}
 .tray{position:fixed;left:12px;right:12px;bottom:calc(76px + env(safe-area-inset-bottom,0px));z-index:35;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:10px 12px;display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;max-width:600px;margin-inline:auto;font-size:.92rem}
@@ -96,14 +107,14 @@ th{font-weight:600;color:var(--muted)}
 .mini b.k-zb{background:var(--sky)}.mini b.k-zd{background:var(--leaf)}.mini b.k-pt{background:var(--sun)}.mini b.k-oo{background:var(--tom)}
 .mini b{height:9px}
 .overlay{position:fixed;inset:0;z-index:50;background:rgba(10,18,8,.55);display:flex;justify-content:center;align-items:flex-end;padding-top:env(safe-area-inset-top,0px)}
-.sheet{background:var(--bg);width:100%;max-width:760px;max-height:94%;overflow-y:auto;border-radius:24px 24px 0 0;padding-bottom:calc(28px + env(safe-area-inset-bottom,0px))}
+.sheet{overscroll-behavior:contain;background:var(--bg);width:100%;max-width:760px;max-height:94%;overflow-y:auto;border-radius:24px 24px 0 0;padding-bottom:calc(28px + env(safe-area-inset-bottom,0px))}
 @media(min-width:760px){.overlay{align-items:center}.sheet{border-radius:24px;max-height:92%}}
 @media(prefers-reduced-motion:no-preference){.sheet{animation:up .22s ease-out}@keyframes up{from{transform:translateY(24px);opacity:.4}to{transform:none;opacity:1}}}
 .sheet .pad{padding-inline:18px}
 .hero{position:relative}
 .hero .ph{border-radius:24px 24px 0 0;aspect-ratio:16/10;max-height:340px}
 .x{position:absolute;top:12px;right:12px;border:0;background:var(--surface);color:var(--ink);border-radius:50%;width:42px;height:42px;font-size:1.3rem;line-height:1}
-.credit{font-size:.78rem;color:var(--muted);margin:6px 0 0}
+.credit{font-size:.85rem;color:var(--muted);margin:6px 0 0}
 .credit a{color:inherit}
 .head{padding-block:16px 4px}
 .head h2{font-size:clamp(1.9rem,6vw,2.6rem);letter-spacing:-.01em}
@@ -126,7 +137,7 @@ details.fold>div{padding-bottom:18px}
 .links{display:flex;gap:6px;flex-wrap:wrap}
 .links button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 13px;font-size:.9rem}
 .chips{display:flex;gap:6px;flex-wrap:wrap}
-.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 14px;font-weight:500}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:11px 14px;min-height:44px;font-weight:500}
 .chip[aria-pressed="true"]{background:var(--leaf);border-color:var(--leaf);color:var(--on-leaf);font-weight:600}
 .pill{font-size:.8rem;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--leaf-soft);color:var(--leaf);display:inline-block}
 .pill.sun{background:var(--sun-soft);color:var(--sun)} .pill.tom{background:var(--tom-soft);color:var(--tom)} .pill.plain{background:var(--surface);color:var(--muted);border:1px solid var(--line)}
@@ -230,20 +241,22 @@ details.fold>div{padding-bottom:18px}
 .art .facts4{margin-top:18px}
 </style>
 
+<a class="skip" href="#main">Ga naar inhoud</a>
 <div class="wrap">
   <header class="top">
     <div class="brand"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21v-8"/><path d="M12 13c0-4 3-6 7-6 0 4-3 6-7 6z"/><path d="M12 15c0-3-2-5-6-5 0 3 2 5 6 5z"/></svg>Moestuin Start</div>
     <h1 id="h1"></h1>
     <p id="sub"></p>
   </header>
-  <div class="months" id="months" aria-label="Kies een maand"></div>
+  <div class="months" id="months" role="group" aria-label="Kies een maand"></div>
   <div class="bar" id="bar"></div>
-  <main id="main"></main>
+  <main id="main" tabindex="-1"></main>
+  <div id="live" class="sr" role="status" aria-live="polite"></div>
   <p class="src">Gegevens zijn gemiddelden voor Vlaanderen. De eerste vorst valt gemiddeld tussen half oktober en begin november, de laatste rond half april. Plant vorstgevoelige gewassen pas na de ijsheiligen (11-13 mei). Controleer bij twijfel het zaadzakje van je ras. Foto's komen van Wikimedia Commons met vrije licenties. De fotograaf staat onder elke foto in het detailscherm.</p>
 </div>
 
 <nav class="nav" aria-label="Hoofdmenu"><div class="nav-in" id="nav"></div></nav>
-<div class="overlay" id="ov" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
+<div class="overlay" id="ov" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-t"></div></div>
 <div class="tray" id="tray" hidden></div>
 
 <script>
@@ -1701,7 +1714,7 @@ for(const id in PHOTOS)PIC[id]=PHOTOS[id].src;
 
 const KIND={zb:["Binnen voorzaaien","k-zb-t"],zd:["Buiten zaaien","k-zd-t"],pt:["Planten","k-pt-t"]};
 const NOW=new Date().getMonth()+1;const cr=s=>String(s).split(" I\u0027d")[0].replace(/\s*\(.*?$/,"");
-const S={tab:"nu",m:NOW,type:"alle",diep:"alle",plek:"alle",q:"",cmp:new Set(),gc:null,ch:0};
+const S={tab:"nu",m:NOW,type:"alle",diep:"alle",plek:"alle",q:"",cmp:new Set(),more:new Set(),gc:null,ch:0};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function ranges(arr){if(!arr||!arr.length)return "-";const s=new Set(arr);if(s.size===12)return "heel jaar";let st=1;while(s.has(st))st++;const out=[];let run=null;for(let k=1;k<=12;k++){const m=((st+k-1)%12)+1;if(s.has(m)){if(!run){run=[m,m];out.push(run);}else run[1]=m;}else run=null;}return out.map(x=>x[0]===x[1]?MN[x[0]-1]:MN[x[0]-1]+"-"+MN[x[1]-1]).join(", ");}
 const nm=id=>BY[id].n;
@@ -1716,13 +1729,13 @@ function rel(a,b){const x=BY[a].buren.find(y=>y.id===b);return x?(x.t==="g"?"goo
 /* ---------- Kaartjes ---------- */
 function names(ids,max){const l=ids.slice(0,max).map(nm).join(", ");return l+(ids.length>max?" +"+(ids.length-max):"");}
 function tile(c,tag){
-  const act=(tag||[]).map(k=>`<span class="${KIND[k][1]}">${KIND[k][0]}</span>`).join(", ");
-  const nb=(c.goed.length?`<div class="nb"><b class="g">Goed naast:</b> ${esc(names(c.goed,3))}</div>`:"")+(c.slecht.length?`<div class="nb"><b class="s">Niet naast:</b> ${esc(names(c.slecht,2))}</div>`:"");
-  return `<article class="tile"><button data-open="${c.id}" aria-label="${esc(c.n)}, ${DIFF[c.d]}">
-   <img class="ph" src="${PIC[c.id]||""}" alt="" loading="lazy">
-   <h3>${esc(c.n)}</h3><div class="lat">${esc(c.l)}</div>
-   ${act?`<div class="act">${act}</div>`:""}
-   <div class="line">${dots(c.d)}<span>${DIFF[c.d]}</span><span>${esc(short(c.dagen))}</span></div>${nb}
+  const t=tag||[];
+  const act=t.map(k=>`<span class="${KIND[k][1]}">${KIND[k][0]}</span>`).join(", ");
+  const what=t.map(k=>KIND[k][0]).join(", ");
+  return `<article class="tile"><button data-open="${c.id}" aria-label="${esc(c.n)}${what?", "+esc(what):""}, ${DIFF[c.d]}">
+   <span class="phw"><img class="ph" src="${PIC[c.id]||""}" alt="" loading="lazy">${act?`<span class="act">${act}</span>`:""}</span>
+   <h3>${esc(c.n)}</h3>
+   <div class="line">${dots(c.d)}<span>${DIFF[c.d]}</span></div>
   </button></article>`;
 }
 
@@ -1742,7 +1755,7 @@ function renderChrome(){
   const sr=document.querySelector&&document.querySelector(".src");if(sr)sr.hidden=S.tab==="gids";
   const bar=document.getElementById("bar");bar.hidden=S.tab==="gids";
   const n=activeF();
-  bar.innerHTML=(S.tab==="alle"?`<input type="search" id="q" placeholder="Zoek een gewas" value="${esc(S.q)}" aria-label="Zoek een gewas">`:"<span style='flex:1'></span>")+`<button class="btn" data-act="filter">Filter${n?` <b>${n}</b>`:""}</button>`;
+  bar.innerHTML=(S.tab==="alle"?`<input type="search" id="q" placeholder="Zoek een gewas" value="${esc(S.q)}" aria-label="Zoek een gewas">`:"<span style='flex:1'></span>")+`<button class="chip" data-f="diep" data-v="${S.diep==="1"?"alle":"1"}" aria-pressed="${S.diep==="1"}">Alleen makkelijk</button><button class="btn" data-act="filter">Filter${n?` <b>${n}</b>`:""}</button>`;
 }
 
 /* ---------- Nu / Alle ---------- */
@@ -1751,10 +1764,12 @@ function viewNu(){
   const st=list.filter(c=>starts(c,m).length).sort(byEase);
   const oo=list.filter(c=>c.oo.includes(m)).sort(byEase);
   const kom=list.filter(c=>starts(c,nx).length&&!starts(c,m).length).sort(byEase);
-  const sec=(t,sub,arr,tagFn,msg)=>`<section class="sec"><h2>${t}<small>${sub}</small></h2>${arr.length?`<div class="grid">${arr.map(c=>tile(c,tagFn?tagFn(c):null)).join("")}</div>`:`<div class="empty">${msg}</div>`}</section>`;
-  return sec("Starten",`${st.length} gewassen om te zaaien of te planten`,st,c=>starts(c,m),"Er valt in "+MF[m-1]+" niets te starten. Kijk bij Volgende maand.")+
-   sec("Oogsten",`${oo.length} gewassen klaar in ${MF[m-1]}`,oo,null,"Er is in "+MF[m-1]+" niets te oogsten met deze filters.")+
-   sec("Volgende maand",`Wat start in ${MF[nx-1]}`,kom,c=>starts(c,nx),"In "+MF[nx-1]+" komt er niets nieuws bij.");
+  const LIM=6;
+  const sec=(key,t,sub,arr,tagFn,msg)=>{const all=S.more.has(key)||arr.length<=LIM+1,shown=all?arr:arr.slice(0,LIM);
+    return `<section class="sec" data-sec="${key}"><h2>${t}<small>${sub}</small></h2>${arr.length?`<div class="grid">${shown.map(c=>tile(c,tagFn?tagFn(c):null)).join("")}</div>${all?"":`<div class="morewrap"><button class="btn" data-more="${key}">Toon alle ${arr.length}</button></div>`}`:`<div class="empty">${msg}</div>`}</section>`;};
+  return sec("st","Starten",`${st.length} gewassen om te zaaien of te planten`,st,c=>starts(c,m),"Er valt in "+MF[m-1]+" niets te starten. Kijk bij Volgende maand.")+
+   sec("oo","Oogsten",`${oo.length} gewassen klaar in ${MF[m-1]}`,oo,null,"Er is in "+MF[m-1]+" niets te oogsten met deze filters.")+
+   sec("kom","Volgende maand",`Wat start in ${MF[nx-1]}`,kom,c=>starts(c,nx),"In "+MF[nx-1]+" komt er niets nieuws bij.");
 }
 function viewAlle(){
   const l=filtered().sort((a,b)=>a.n.localeCompare(b.n));
@@ -1823,7 +1838,7 @@ function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
 function viewGids(){
   if(S.gc==="start"){
     const ch=SG[S.ch]||SG[0];
-    const steps=`<div class="steps-nav" role="tablist">${SG.map((c,i)=>`<button data-ch="${i}" aria-current="${i===S.ch?"step":"false"}" aria-label="Hoofdstuk ${i+1}: ${esc(c.t)}">${i+1}</button>`).join("")}</div>`;
+    const steps=`<div class="steps-nav" role="group" aria-label="Hoofdstukken">${SG.map((c,i)=>`<button data-ch="${i}" aria-current="${i===S.ch?"step":"false"}" aria-label="Hoofdstuk ${i+1}: ${esc(c.t)}">${i+1}</button>`).join("")}</div>`;
     const prev=S.ch>0?`<button class="btn" data-ch="${S.ch-1}">‹ ${esc(SG[S.ch-1].t)}</button>`:"<span></span>";
     const next=S.ch<SG.length-1?`<button class="btn pri" data-ch="${S.ch+1}">Volgende: ${esc(SG[S.ch+1].t)} ›</button>`:`<button class="btn pri" data-act="gback">Klaar. Naar de Gids</button>`;
     return `<button class="back" data-act="gback">‹ Gids</button>${steps}
@@ -1856,6 +1871,7 @@ function render(){
   renderChrome();
   document.getElementById("main").innerHTML={nu:viewNu,alle:viewAlle,kal:viewKal,gids:viewGids}[S.tab]();
   renderTray();
+  document.getElementById("live").textContent=S.tab==="alle"?filtered().length+" gewassen":"";
 }
 function renderTray(){
   const t=document.getElementById("tray");t.hidden=!S.cmp.size||!document.getElementById("ov").hidden;
@@ -1863,8 +1879,10 @@ function renderTray(){
   t.innerHTML=`<span>${S.cmp.size} in vergelijking: ${[...S.cmp].map(nm).join(", ")}</span><span><button class="clr" data-act="clear">Wissen</button> <button class="go" data-act="compare" ${S.cmp.size<2?"disabled":""}>${S.cmp.size<2?"Kies er nog één":"Vergelijk"}</button></span>`;
 }
 function tagList(arr){return arr.length?`<div class="links">${arr.map(i=>`<button data-open="${i}">${esc(nm(i))}</button>`).join("")}</div>`:"<span style='color:var(--muted)'>Niets bijzonders.</span>";}
-function showSheet(html){const sh=document.getElementById("sheet");sh.innerHTML=html;sh.scrollTop=0;document.getElementById("ov").hidden=false;document.body.style.overflow="hidden";document.getElementById("tray").hidden=true;const f=sh.querySelector("[data-act=close]");if(f)f.focus();}
-function closeOv(){document.getElementById("ov").hidden=true;document.body.style.overflow="";renderTray();}
+let lastFocus=null;
+function setBg(off){for(const e of document.querySelectorAll(".wrap,.nav,.tray"))e.inert=off;}
+function showSheet(html){const sh=document.getElementById("sheet"),ov=document.getElementById("ov");if(ov.hidden){const a=document.activeElement;lastFocus=a&&a!==document.body?{el:a,open:a.getAttribute("data-open")}:null;}sh.innerHTML=html;sh.scrollTop=0;const h=sh.querySelector("h2");if(h)h.id="sheet-t";ov.hidden=false;setBg(true);document.body.style.overflow="hidden";document.getElementById("tray").hidden=true;const f=sh.querySelector("[data-act=close]");if(f)f.focus();}
+function closeOv(){document.getElementById("ov").hidden=true;setBg(false);document.body.style.overflow="";renderTray();if(lastFocus){let t=lastFocus.el;if(!document.contains(t)&&lastFocus.open)t=document.querySelector(`[data-open="${lastFocus.open}"]`);if(t&&t.focus)t.focus();lastFocus=null;}}
 const closeBtn='<button class="x" data-act="close" aria-label="Sluiten">×</button>';
 function miniRow(c){return `<div class="mini">${MN.map((n,i)=>{const m=i+1;return `<div><span>${n.slice(0,1).toUpperCase()}</span>`+["zb","zd","pt"].map(k=>`<b class="${c[k].includes(m)?"on k-"+k:""}"></b>`).join("")+`<b class="${c.oo.includes(m)?"on k-oo":""}"></b></div>`;}).join("")}</div>`;}
 
@@ -1872,12 +1890,14 @@ function openDetail(id){
   const c=BY[id];if(!c)return;const p=PHOTOS[id];
   const fold=(t,body,open)=>`<details class="fold"${open?" open":""}><summary>${t}</summary><div>${body}</div></details>`;
   const good=c.buren.filter(x=>x.t==="g"),bad=c.buren.filter(x=>x.t==="s");
+  const row=(arr,cls,sym)=>`<div class="bs ${cls}">${arr.map(x=>`<button data-open="${x.id}"><i aria-hidden="true">${sym}</i>${esc(nm(x.id))}</button>`).join("")}</div>`;
   const buren=(good.length||bad.length)?
-    (good.length?`<h4 class="sub-h" style="margin-top:0">Groeit goed naast</h4>${good.map(buurCard).join("")}`:"")+(bad.length?`<h4 class="sub-h">Liever niet naast</h4>${bad.map(buurCard).join("")}`:"")+`<p class="credit" style="margin-top:12px">Het label bij elke combinatie geeft aan hoe sterk het bewijs is. Zie de Gids voor uitleg.</p>`
+    `<div class="bsum">${good.length?`<h4 class="sub-h" style="margin-top:0">Groeit goed naast</h4>${row(good,"g","✓")}`:""}${bad.length?`<h4 class="sub-h">Liever niet naast</h4>${row(bad,"s","✕")}`:""}</div>`+
+    `<details class="dd"><summary>Waarom en hoe</summary>${good.length?`<h4 class="sub-h" style="margin-top:0">Groeit goed naast</h4>${good.map(buurCard).join("")}`:""}${bad.length?`<h4 class="sub-h">Liever niet naast</h4>${bad.map(buurCard).join("")}`:""}<p class="credit" style="margin-top:12px">Het label bij elke combinatie geeft aan hoe sterk het bewijs is. Zie de Gids voor uitleg.</p></details>`
     :`<p class="art-p" style="margin:0">Geen bijzondere buren bekend. ${esc(c.n)} groeit prima naast de meeste gewassen. Wissel wel jaarlijks van plek (${esc(c.fam)}).</p>`;
-  const html=`<div class="hero"><img class="ph" src="${PIC[id]||""}" alt="">${closeBtn}</div>
+  const html=`<div class="hero"><img class="ph" src="${PIC[id]||""}" alt="${esc(c.n)}">${closeBtn}</div>
   <div class="pad">${p?`<p class="credit">Foto: ${esc(cr(p.c))}. <a href="${esc(p.u)}" target="_blank" rel="noopener">Bron</a></p>`:""}
-  <div class="head"><h2>${esc(c.n)}</h2><div class="lat">${esc(c.l)}</div></div>
+  <div class="head"><h2>${esc(c.n)}</h2><div class="lat" translate="no">${esc(c.l)}</div></div>
   <div class="facts4"><div><span>Niveau</span><b>${DIFF[c.d]}</b></div><div><span>Duur</span><b>${esc(short(c.dagen))}</b></div><div><span>Plek</span><b>${c.pl.join(", ")}</b></div><div><span>Ruimte</span><b>${esc(c.afst)}</b></div></div>
   <div style="margin-top:18px"><div class="legend"><span><i class="k-zb"></i>Voorzaaien</span><span><i class="k-zd"></i>Zaaien</span><span><i class="k-pt"></i>Planten</span><span><i class="k-oo"></i>Oogst</span></div>${miniRow(c)}</div>
   <div class="guide-cta"><button class="btn pri big" data-guide="${id}">Hoe teel ik dit? ›</button><span>Volledig stappenplan van voorbereiding tot oogst</span></div><div class="fbtn"><button class="btn${S.cmp.has(id)?" pri":""}" data-cmp="${id}">${S.cmp.has(id)?"In vergelijking":"Zet in vergelijking"}</button></div>
@@ -1937,7 +1957,8 @@ document.addEventListener("click",e=>{
   const t=e.target.closest("button, .overlay");if(!t)return;
   if(t.id==="ov"){if(e.target===t)closeOv();return;}
   if(t.dataset.tab){S.tab=t.dataset.tab;if(S.tab==="gids")S.gc=null;render();window.scrollTo(0,0);return;}
-  if(t.dataset.mo){S.m=+t.dataset.mo;render();return;}
+  if(t.dataset.mo){S.m=+t.dataset.mo;S.more.clear();render();return;}
+  if(t.dataset.more){const k=t.dataset.more;S.more.add(k);render();const b=document.querySelectorAll(`[data-sec="${k}"] .tile>button`)[6];if(b)b.focus();return;}
   if(t.dataset.f){S[t.dataset.f]=t.dataset.v;const open=!document.getElementById("ov").hidden;render();if(open)openFilter();return;}
   if(t.dataset.open){openDetail(t.dataset.open);return;}
   if(t.dataset.art){openArticle(t.dataset.art);return;}
