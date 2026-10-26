@@ -152,7 +152,7 @@
 - Indeling (paden als `catId/artId`; een pad zonder categorievoorvoegsel hoort bij de categorie die er direct vóór staat):
   - `begin` (5): beginnen/waar-begin-ik, plek-kiezen, pot-bak-grond, gereedschap, eerste-jaar.
   - `doen` (31) in zes `subs`: Zaaien en planten (zaaien/zaaien-binnen-buiten, zaaigrond-licht, verspenen-afharden, kiemtijd, zaad-kopen, plantafstand, plantjes-kopen); Verzorgen (verzorging/water-geven, regenwater, onkruid, steun, tomaat-verzorgen, snoeien, weinig-tijd, plus grond/mulchen); Grond en voeding (grond/compost, potgrond, groenbemesters); Oogsten en bewaren (oogsten/oogst-wanneer, bewaren, invriezen, drogen, zaad-bewaren); Seizoen en kleine ruimtes (seizoen/kas-koude-bak, winter-groenten, klein/balkon, schaduw, verticaal); Slim combineren (combineren/tussenteelt, drie-zusters, helpers).
-  - `waarom` (12): grond/grondsoorten, ph-kalk, voeding; seizoen/klimaat, ijsheiligen, vier-seizoenen, droogte-hitte; combineren/combi-hoe, vruchtwisseling; kennis/families, groenten-groepen, soort-rassen.
+  - `waarom` (12): grond/grondsoorten, ph-kalk, voeding; seizoen/klimaat, ijsheiligen, vier-seizoenen, droogte-hitte; combineren/combi-hoe, vruchtwisseling; kennis/families, groenten-groepen, soorten-rassen.
   - `naslag` (4): combineren/combi-goed, combi-slecht; kennis/woordenlijst, faq. De secties "Buren in één oogopslag" (`overview()`) en "Bronnen en controle" staan op deze pagina na de artikels.
   - `PLAGEN` (8): plagen/slakken, bladluis, koolwitje, wortelvlieg, phytophthora, meeldauw, dieren, plagen-overzicht.
 - Gids-startpagina: de Startersgids-kaart blijft; daarna vier groepskaarten (`begin`, `doen`, `waarom`, `naslag`) en de kaart "Als het misgaat". De "Buren"- en "Bronnen"-secties verlaten de startpagina.

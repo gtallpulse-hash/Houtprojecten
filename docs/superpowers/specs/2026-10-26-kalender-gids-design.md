@@ -181,7 +181,7 @@ Artikel-id's en paden blijven gelijk. Alleen de weergave verandert; de gegevens 
 - Seizoen en kleine ruimtes (5): kas-koude-bak, winter-groenten, balkon, schaduw, verticaal
 - Slim combineren (3): tussenteelt, drie-zusters, helpers
 
-**Weten waarom (12)**: grondsoorten, ph-kalk, voeding, klimaat, ijsheiligen, vier-seizoenen, droogte-hitte, combi-hoe, vruchtwisseling, families, groenten-groepen, soort-rassen.
+**Weten waarom (12)**: grondsoorten, ph-kalk, voeding, klimaat, ijsheiligen, vier-seizoenen, droogte-hitte, combi-hoe, vruchtwisseling, families, groenten-groepen, soorten-rassen.
 
 **Naslag (4)**: combi-goed, combi-slecht, woordenlijst, faq.
 

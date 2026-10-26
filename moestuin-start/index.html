@@ -95,6 +95,8 @@ details.grp>.grid{padding:0 14px 18px;margin-top:4px}
 .stile>.btn{align-self:flex-start}
 .kswitch{display:flex;gap:6px;flex-wrap:wrap;padding-block:10px 0}
 .hint{margin:14px 0 0;padding:10px 14px;border-radius:12px;background:var(--surface);border:1px solid var(--line);font-size:.95rem}
+.gsub{font-size:1.2rem;margin:24px 0 0}
+.hsub{font-size:1.3rem;margin:28px 0 0}
 .morewrap{margin-top:16px;display:flex;justify-content:center}
 .bs{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
 .bs button{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 16px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-weight:500}
@@ -1800,7 +1802,7 @@ function renderChrome(){
   const T=[["kal","Kalender"],["alle","Gewassen"],["tuin","Tuin"],["hulp","Hulp"],["gids","Gids"]];
   document.getElementById("nav").innerHTML=T.map(([k,v])=>`<button data-tab="${k}" ${S.tab===k?'aria-current="page"':""}><svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[k]}</svg>${v}</button>`).join("");
   const maand=S.tab==="kal"&&S.kv==="maand";
-  const gcat=S.tab==="gids"&&S.gc&&S.gc!=="start"?GIDS.find(g=>g.id===S.gc):null;const gstart=S.tab==="gids"&&S.gc==="start";
+  const gcat=S.tab==="gids"&&S.gc&&S.gc!=="start"?GROEPEN.find(g=>g.id===S.gc):null;const gstart=S.tab==="gids"&&S.gc==="start";
   document.getElementById("h1").textContent=maand?MF[S.m-1].charAt(0).toUpperCase()+MF[S.m-1].slice(1):{alle:"Alle gewassen",kal:"Jaaroverzicht",tuin:"Mijn tuin",hulp:(HELP.find(x=>x.id===S.hulp)||{t:"Hulp"}).t,gids:gstart?"Startersgids":gcat?gcat.t:"Gids"}[S.tab];
   const subs={alle:C.length+" groenten, fruit en kruiden voor België.",kal:S.kv==="maand"?(S.m===NOW?"Dit kan je nu doen in je moestuin.":"Dit kan je doen in "+MF[S.m-1]+"."):"Wanneer je wat zaait, plant en oogst. De gele band is deze maand.",tuin:TUIN.crops.length?TUIN.crops.length+" "+(TUIN.crops.length===1?"gewas":"gewassen")+" in je tuin.":"Je tuin is nog leeg.",hulp:(HELP.find(x=>x.id===S.hulp)||{s:"Wat gaat er mis met je plant?"}).s,gids:gstart?SG[S.ch].t:gcat?gcat.d:"Begin hier en leer stap voor stap."};
   document.getElementById("sub").textContent=subs[S.tab];
@@ -1899,7 +1901,7 @@ function viewHulp(){
   const h=HELP.find(x=>x.id===S.hulp);
   if(!h)return `<section class="sec" style="margin-top:14px"><p class="art-p">Kies wat je ziet. Je krijgt de mogelijke oorzaken en wat je eraan kunt doen. Eén probleem kan meerdere oorzaken hebben, lees ze dus allemaal.</p>
    <div class="hgrid">${HELP.map(x=>`<button class="hbtn" data-hulp="${x.id}"><b>${esc(x.t)}</b><span>${esc(x.s)}</span></button>`).join("")}</div>
-   <div class="more"><b>Liever zelf zoeken?</b><div class="links"><button data-art="plagen/plagen-overzicht">Overzicht: plaag en aanpak</button><button data-art="kennis/faq">Veelgestelde vragen</button></div></div></section>`;
+   <h2 class="hsub">Plagen en ziektes opzoeken</h2><div class="acards">${PLAGEN.map(artCard).join("")}</div></section>`;
   const gv=S.hg&&BY[S.hg]?S.hg:"";
   const w=h.w.map((x,i)=>({x,i,fit:gv&&(x.g||[]).includes(gv)?0:1})).sort((a,b)=>a.fit-b.fit||a.i-b.i);
   const opts=C.slice().sort((a,b)=>a.n.localeCompare(b.n)).map(c=>`<option value="${c.id}"${c.id===gv?" selected":""}>${esc(c.n)}</option>`).join("");
@@ -2014,6 +2016,29 @@ function overview(){
 }
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+/* ---------- Gids: taakgroepen ---------- */
+const P=(c,...ids)=>ids.map(i=>c+"/"+i);
+const GROEPEN=[
+ {id:"begin",t:"Begin hier",d:"Plek, materiaal en je eerste jaar",ic:"sprout",subs:[{arts:P("beginnen","waar-begin-ik","plek-kiezen","pot-bak-grond","gereedschap","eerste-jaar")}]},
+ {id:"doen",t:"Zo doe je het",d:"Stap voor stap zaaien, verzorgen en oogsten",ic:"pot",subs:[
+  {t:"Zaaien en planten",arts:P("zaaien","zaaien-binnen-buiten","zaaigrond-licht","verspenen-afharden","kiemtijd","zaad-kopen","plantafstand","plantjes-kopen")},
+  {t:"Verzorgen",arts:P("verzorging","water-geven","regenwater","onkruid","steun","tomaat-verzorgen","snoeien","weinig-tijd").concat(P("grond","mulchen"))},
+  {t:"Grond en voeding",arts:P("grond","compost","potgrond","groenbemesters")},
+  {t:"Oogsten en bewaren",arts:P("oogsten","oogst-wanneer","bewaren","invriezen","drogen","zaad-bewaren")},
+  {t:"Seizoen en kleine ruimtes",arts:P("seizoen","kas-koude-bak","winter-groenten").concat(P("klein","balkon","schaduw","verticaal"))},
+  {t:"Slim combineren",arts:P("combineren","tussenteelt","drie-zusters","helpers")}]},
+ {id:"waarom",t:"Weten waarom",d:"Uitleg over grond, klimaat en combineren",ic:"book",subs:[{arts:P("grond","grondsoorten","ph-kalk","voeding").concat(P("seizoen","klimaat","ijsheiligen","vier-seizoenen","droogte-hitte"),P("combineren","combi-hoe","vruchtwisseling"),P("kennis","families","groenten-groepen","soorten-rassen"))}]},
+ {id:"naslag",t:"Naslag",d:"Combinaties, woordenlijst en veelgestelde vragen",ic:"basket",subs:[{arts:P("combineren","combi-goed","combi-slecht").concat(P("kennis","woordenlijst","faq"))}]}
+];
+const PLAGEN=P("plagen","slakken","bladluis","koolwitje","wortelvlieg","phytophthora","meeldauw","dieren","plagen-overzicht");
+const artByPath=p=>{const [c,a]=p.split("/"),cat=GIDS.find(g=>g.id===c),x=cat&&cat.arts.find(y=>y.id===a);return x?{cat,a:x}:null;};
+const artCard=p=>{const r=artByPath(p);return r?`<button class="acard" data-art="${p}"><b>${esc(r.a.t)}</b><span>${esc(r.a.s)}</span><small>${r.a.min} min lezen</small></button>`:"";};
+function naslagExtra(){
+  return `<section class="sec"><h2>Buren in één oogopslag<small>Welke gewassen bij elkaar passen. Tik op een gewas voor uitleg waarom en hoe.</small></h2><div style="margin-top:14px">${overview()}</div></section>
+   <section class="sec srcs"><h2>Bronnen en controle</h2>
+    <p class="art-p">De zaai-, plant- en oogstperiodes zijn vergeleken met de Belgische zaaikalenders van <a href="https://www.hubo.be/nl/hulp-en-advies/tuin/moestuin/zaaikalender/" target="_blank" rel="noopener">Hubo</a> en <a href="https://www.tuinadvies.be/tuininfo/tuinonderhoud-kalender/tuinkalender/zaaien-het-hele-jaar-door/" target="_blank" rel="noopener">Tuinadvies</a>. Daarbij zijn de periodes voor tomaat, wortel, prei en spruitkool aangepast.</p>
+    <p class="art-p">Overige teeltinformatie (afstanden, water, grond) komt uit algemene tuinbouwkennis en is niet voor elk gewas apart bij een bron nagekeken. Bij combinaties staat het bewijs per combinatie. Foto's komen van Wikimedia Commons met vrije licenties, met de fotograaf bij elke foto.</p></section>`;
+}
 function viewGids(){
   if(S.gc==="start"){
     const ch=SG[S.ch]||SG[0];
@@ -2024,21 +2049,17 @@ function viewGids(){
      <article class="reader"><div class="rmeta">Hoofdstuk ${S.ch+1} van ${SG.length}</div><h2>${esc(ch.t)}</h2><p class="rsub">${esc(ch.s)}</p>${blocks(ch.b)}</article>
      <div class="pager">${prev}${next}</div>`;
   }
-  const cat=S.gc?GIDS.find(g=>g.id===S.gc):null;
-  if(cat){
-    return `<button class="back" data-act="gback">‹ Alle onderwerpen</button><div class="acards">${cat.arts.map(a=>`<button class="acard" data-art="${cat.id}/${a.id}"><b>${esc(a.t)}</b><span>${esc(a.s)}</span><small>${a.min} min lezen</small></button>`).join("")}</div>`;
+  const gr=S.gc?GROEPEN.find(g=>g.id===S.gc):null;
+  if(gr){
+    const body=gr.subs.map(x=>(x.t?`<h2 class="gsub">${esc(x.t)}</h2>`:"")+`<div class="acards">${x.arts.map(artCard).join("")}</div>`).join("");
+    return `<button class="back" data-act="gback">‹ Gids</button>${body}${gr.id==="naslag"?naslagExtra():""}`;
   }
   const last=parseInt(lsGet("sg-ch")||"0",10)||0;
-  const n=GIDS.reduce((s,g)=>s+g.arts.length,0);
   return `<section class="hero-card"><div><b class="hc-t">Startersgids</b><p>${SG.length} hoofdstukken in de juiste volgorde, van plek kiezen tot oogsten. Rustig te lezen in ongeveer 40 minuten. Wat niet nodig is, staat onder 'Meer weten'.</p>
     <div class="hc-row"><button class="btn pri" data-ch="${last}" data-start="1">${last>0?`Ga verder bij hoofdstuk ${last+1}`:"Begin met hoofdstuk 1"}</button>${last>0?`<button class="btn" data-ch="0" data-start="1">Van voor af aan</button>`:""}</div></div>
     <ol class="hc-list">${SG.map((c,i)=>`<li><button data-ch="${i}" data-start="1">${esc(c.t)}</button></li>`).join("")}</ol></section>
-   <section class="sec"><h2>Achtergrond en naslag<small>${n} korte artikels voor wie meer wil weten. Je hebt ze niet nodig om te beginnen.</small></h2>
-   <div class="gcats">${GIDS.map(g=>`<button class="gcat" data-cat="${g.id}"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true">${GIC[g.ic]||GIC.sprout}</svg></span><span><b>${esc(g.t)}</b><span>${esc(g.d)}</span><em>${g.arts.length} artikels</em></span></button>`).join("")}</div></section>
-   <section class="sec"><h2>Buren in één oogopslag<small>Welke gewassen bij elkaar passen. Tik op een gewas voor uitleg waarom en hoe.</small></h2><div style="margin-top:14px">${overview()}</div></section>
-   <section class="sec srcs"><h2>Bronnen en controle</h2>
-    <p class="art-p">De zaai-, plant- en oogstperiodes zijn vergeleken met de Belgische zaaikalenders van <a href="https://www.hubo.be/nl/hulp-en-advies/tuin/moestuin/zaaikalender/" target="_blank" rel="noopener">Hubo</a> en <a href="https://www.tuinadvies.be/tuininfo/tuinonderhoud-kalender/tuinkalender/zaaien-het-hele-jaar-door/" target="_blank" rel="noopener">Tuinadvies</a>. Daarbij zijn de periodes voor tomaat, wortel, prei en spruitkool aangepast.</p>
-    <p class="art-p">Overige teeltinformatie (afstanden, water, grond) komt uit algemene tuinbouwkennis en is niet voor elk gewas apart bij een bron nagekeken. Bij combinaties staat het bewijs per combinatie. Foto's komen van Wikimedia Commons met vrije licenties, met de fotograaf bij elke foto.</p></section>`;
+   <section class="sec"><h2>Kies waarmee je verder wilt<small>Kort en praktisch. Je hebt ze niet nodig om te beginnen.</small></h2>
+   <div class="gcats">${GROEPEN.map(g=>`<button class="gcat" data-cat="${g.id}"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true">${GIC[g.ic]||GIC.sprout}</svg></span><span><b>${esc(g.t)}</b><span>${esc(g.d)}</span><em>${g.subs.reduce((n,x)=>n+x.arts.length,0)} artikels</em></span></button>`).join("")}<button class="gcat" data-act="tohulp"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true">${GIC.bug}</svg></span><span><b>Als het misgaat</b><span>Gele bladeren, vlekken, plagen en meer</span><em>Naar Hulp</em></span></button></div></section>`;
 }
 function openArticle(path){
   const [cid,aid]=path.split("/"),cat=GIDS.find(g=>g.id===cid),a=cat&&cat.arts.find(x=>x.id===aid);if(!a)return;
@@ -2154,6 +2175,7 @@ document.addEventListener("click",e=>{
   if(a==="filter"){openFilter();return;}
   if(a==="export"){tuinExport();return;}
   if(a==="import"){document.getElementById("tfile").click();return;}
+  if(a==="tohulp"){S.tab="hulp";S.hulp=null;render();window.scrollTo(0,0);return;}
   if(a==="hback"){S.hulp=null;S.hg="";render();window.scrollTo(0,0);document.getElementById("main").focus({preventScroll:true});return;}
   if(a==="gback"){S.gc=null;render();window.scrollTo(0,0);return;}
   if(a==="reset"){S.type=S.diep=S.plek="alle";render();openFilter();return;}

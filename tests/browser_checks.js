@@ -266,6 +266,84 @@ checks.zoekJaar = async () => {
   return { ok: !!ok };
 };
 
+const gids = async () => { resetFilters(); S.tab = "gids"; S.gc = null; render(); await sleep(100); };
+
+checks.groepen = async () => {
+  const fouten = [];
+  const alle = GROEPEN.flatMap((g) => g.subs.flatMap((x) => x.arts)).concat(PLAGEN);
+  const uit = new Set(GIDS.flatMap((g) => g.arts.map((a) => g.id + "/" + a.id)));
+  if (alle.length !== 60 || new Set(alle).size !== 60) fouten.push("aantal " + alle.length + "/" + new Set(alle).size);
+  if (alle.some((p) => !uit.has(p) || !artByPath(p))) fouten.push("onbekend pad: " + alle.filter((p) => !uit.has(p)).join(","));
+  const tel = GROEPEN.map((g) => g.subs.reduce((n, x) => n + x.arts.length, 0));
+  if (JSON.stringify(tel) !== "[5,31,12,4]") fouten.push("per groep " + tel);
+  if (PLAGEN.length !== 8) fouten.push("plagen " + PLAGEN.length);
+  return { ok: fouten.length === 0, detail: fouten.join(", ") };
+};
+
+checks.gidsStart = async () => {
+  await gids();
+  const fouten = [];
+  if (!document.querySelector(".hero-card")) fouten.push("geen Startersgids");
+  if (document.querySelectorAll(".gcat").length !== 5) fouten.push("kaarten " + document.querySelectorAll(".gcat").length);
+  if (document.getElementById("main").innerText.includes("Buren in één oogopslag")) fouten.push("Buren staat nog op de startpagina");
+  if (!document.querySelector('[data-act="tohulp"]')) fouten.push("geen Als het misgaat");
+  return { ok: fouten.length === 0, detail: fouten.join(", ") };
+};
+
+checks.groepPaginas = async () => {
+  const fouten = [];
+  const verwacht = { begin: 5, doen: 31, waarom: 12, naslag: 4 };
+  for (const [id, n] of Object.entries(verwacht)) {
+    await gids();
+    document.querySelector(`[data-cat="${id}"]`).click(); await sleep(150);
+    const k = document.querySelectorAll("#main .acard").length;
+    if (k !== n) fouten.push(`${id}: ${k}`);
+    if (id === "doen" && document.querySelectorAll("#main h2").length !== 6) fouten.push("subkoppen " + document.querySelectorAll("#main h2").length);
+    if (id === "naslag" && (!document.querySelector("#main table") || !document.getElementById("main").innerText.includes("Bronnen en controle"))) fouten.push("naslag-blokken");
+  }
+  return { ok: fouten.length === 0, detail: fouten.join(", ") };
+};
+
+checks.alleArtikels = async () => {
+  const fouten = [];
+  const alle = GROEPEN.flatMap((g) => g.subs.flatMap((x) => x.arts)).concat(PLAGEN);
+  for (const p of alle) {
+    openArticle(p);
+    const t = document.getElementById("sheet-t");
+    if (!t || !t.textContent.trim()) fouten.push(p);
+    closeOv();
+  }
+  const links = new Set();
+  for (let i = 0; i < SG.length; i++) {
+    S.tab = "gids"; S.gc = "start"; S.ch = i; render();
+    document.querySelectorAll("#main [data-art]").forEach((b) => links.add(b.dataset.art));
+  }
+  for (const p of links) if (!artByPath(p)) fouten.push("Meer weten: " + p);
+  S.gc = null;
+  return { ok: fouten.length === 0, detail: fouten.slice(0, 5).join(", ") + ` (${links.size} Meer weten-links)` };
+};
+
+checks.naarHulp = async () => {
+  await gids();
+  document.querySelector('[data-act="tohulp"]').click(); await sleep(150);
+  return { ok: S.tab === "hulp" && document.getElementById("h1").textContent === "Hulp" };
+};
+
+checks.hulpPlagen = async () => {
+  S.tab = "hulp"; S.hulp = null; render(); await sleep(100);
+  const b = [...document.querySelectorAll('#main button[data-art^="plagen/"]')];
+  const paden = b.map((x) => x.dataset.art).sort();
+  const ok = b.length === 8 && JSON.stringify(paden) === JSON.stringify([...PLAGEN].sort()) && paden.every((p) => artByPath(p));
+  return { ok, detail: String(b.length) };
+};
+
+checks.terug = async () => {
+  await gids();
+  document.querySelector('[data-cat="doen"]').click(); await sleep(100);
+  document.querySelector('[data-act="gback"]').click(); await sleep(100);
+  return { ok: document.querySelectorAll(".gcat").length === 5 && S.gc === null };
+};
+
 export async function runAll(names) {
   const out = {};
   for (const naam of names || Object.keys(checks)) {
