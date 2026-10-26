@@ -26,5 +26,11 @@ check("labels", SRC.count("Binnen voorzaaien") == 0, f"{SRC.count('Binnen voorza
 for hx in ["#2a78d6", "#c8501f", "#0f8a63", "#3987e5", "#d95926", "#199e70"]:
     check("palet " + hx, hx in SRC.lower())
 
+# --- Taak 2: tabs en weergave Deze maand
+check("teksten", re.search(r"pagina Nu|Open Nu|op Nu|Open de pagina Nu", SRC) is None)
+check("geenNuTab", '["nu","Nu"]' not in SRC and "viewNu" not in SRC)
+check("standaard", 'S={tab:"kal"' in SRC and 'kv:"maand"' in SRC)
+check("sleutels blijven", SRC.count('"mt-tuin-v1"') >= 1 and SRC.count('"sg-ch"') >= 1)
+
 if __name__ == "__main__":
     sys.exit(1 if FAILS else 0)

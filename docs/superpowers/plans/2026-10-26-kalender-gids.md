@@ -99,7 +99,7 @@
 - Tabs: `[["kal","Kalender"],["alle","Gewassen"],["tuin","Tuin"],["hulp","Hulp"],["gids","Gids"]]`. De sleutel `nu` verdwijnt uit tabs, `ICONS` en dispatcher. De kop is in "maand" de maandnaam met hoofdletter en in "jaar" "Jaaroverzicht". Maandkiezer alleen in `kal` + `maand`.
 
 **Hinttabel (exact)**
-- 2 en 3: "Zaai warmteminnende gewassen alleen binnen. Buiten is het nog te koud voor de meeste."
+- 2 en 3: "Warmteminnende gewassen zoals tomaat en paprika zaai je nu alleen binnen."
 - 4: "De laatste nachtvorst valt gemiddeld rond half april, maar kan later komen."
 - 5: "Plant vorstgevoelige gewassen pas na de ijsheiligen (11 tot 13 mei)."
 - 10 en 11: "De eerste vorst valt gemiddeld tussen half oktober en begin november."

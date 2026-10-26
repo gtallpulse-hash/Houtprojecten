@@ -143,7 +143,7 @@ Eén zin, alleen waar tijd of vorst telt. Bron: bestaande Gids-artikels "Het kli
 
 | Maanden | Inhoud (concept, nog te controleren) |
 |---|---|
-| feb, mrt | Zaai warmteminnende gewassen alleen binnen. Buiten is het nog te koud voor de meeste. |
+| feb, mrt | Warmteminnende gewassen zoals tomaat en paprika zaai je nu alleen binnen. |
 | apr | De laatste nachtvorst valt gemiddeld rond half april, maar kan later komen. |
 | mei | Plant vorstgevoelige gewassen pas na de ijsheiligen (11 tot 13 mei). |
 | okt, nov | De eerste vorst valt gemiddeld tussen half oktober en begin november. |

@@ -56,6 +56,7 @@ export const checks = {
 checks.fasekleuren = async () => {
   const fails = [];
   await go("kal");
+  S.kv = "jaar"; render(); await sleep(100);
   for (const mode of ["light", "dark"]) {
     theme(mode);
     await sleep(100);
@@ -73,6 +74,7 @@ checks.fasekleuren = async () => {
 
 checks.legendaTekst = async () => {
   await go("kal");
+  S.kv = "jaar"; render(); await sleep(100);
   const t = document.querySelector(".legend").innerText;
   const ok = ["Zaai in huis (open)", "Zaai buiten (gevuld)", "Plant uit", "Oogst"].every((x) => t.includes(x));
   return { ok, detail: t.replace(/\s+/g, " | ") };
@@ -123,6 +125,73 @@ checks.miniOpen = async () => {
   const ok = !!e && css(e, "backgroundColor") === "rgba(0, 0, 0, 0)" && css(e, "borderTopWidth") === "2px";
   closeOv();
   return { ok };
+};
+
+const maandNaam = (m) => MF[m - 1].charAt(0).toUpperCase() + MF[m - 1].slice(1);
+const resetFilters = () => { S.q = ""; S.type = "alle"; S.diep = "alle"; S.plek = "alle"; S.more.clear(); };
+
+checks.tabs = async () => {
+  const labels = [...document.querySelectorAll("#nav button")].map((b) => b.textContent.trim());
+  const ok = JSON.stringify(labels) === JSON.stringify(["Kalender", "Gewassen", "Tuin", "Hulp", "Gids"]);
+  return { ok, detail: labels.join(",") };
+};
+
+checks.maand = async () => {
+  const fouten = [];
+  resetFilters(); S.tab = "kal"; S.kv = "maand"; S.m = NOW; render(); await sleep(150);
+  if (document.getElementById("h1").textContent !== maandNaam(NOW)) fouten.push("h1");
+  const secs = [...document.querySelectorAll("[data-sec]")].map((e) => e.dataset.sec);
+  const volgorde = ["zb", "zd", "pt", "oo"].filter((k) => secs.includes(k));
+  if (JSON.stringify(secs) !== JSON.stringify(volgorde)) fouten.push("volgorde " + secs);
+  if (document.querySelectorAll("[data-sec] .act").length) fouten.push("pillen in maandweergave");
+  for (const k of secs) {
+    const n = faseLijst(k, NOW).length, sec = document.querySelector(`[data-sec="${k}"]`);
+    const tegels = sec.querySelectorAll(".tile").length, knop = sec.querySelector("[data-more]");
+    if (n === 0) fouten.push("lege sectie " + k);
+    if (n > 7 && (tegels !== 6 || !knop || !knop.textContent.includes("Toon alle " + n))) fouten.push("limiet " + k);
+    if (n <= 7 && (tegels !== n || knop)) fouten.push("alles " + k);
+  }
+  const lang = secs.find((k) => faseLijst(k, NOW).length > 7);
+  if (lang) {
+    document.querySelector(`[data-sec="${lang}"] [data-more]`).click(); await sleep(150);
+    const sec = document.querySelector(`[data-sec="${lang}"]`);
+    if (sec.querySelectorAll(".tile").length !== faseLijst(lang, NOW).length) fouten.push("toon alle");
+    if (document.activeElement !== sec.querySelectorAll(".tile > button")[6]) fouten.push("focus na toon alle");
+  }
+  resetFilters();
+  return { ok: fouten.length === 0, detail: fouten.join(", ") };
+};
+
+checks.hint = async () => {
+  const fouten = [];
+  S.tab = "kal"; S.kv = "maand"; resetFilters();
+  for (const k of Object.keys(HINT)) {
+    S.m = +k; render(); await sleep(50);
+    const h = document.querySelector("p.hint");
+    if (!h || h.textContent !== "Let op: " + HINT[k]) fouten.push("maand " + k);
+  }
+  S.m = 1; render(); await sleep(50);
+  if (document.querySelector("p.hint")) fouten.push("hint in januari");
+  S.m = NOW; render();
+  return { ok: fouten.length === 0, detail: fouten.join(", ") };
+};
+
+checks.leeg = async () => {
+  S.tab = "kal"; S.kv = "maand"; S.m = NOW; S.q = "zzzz"; render(); await sleep(100);
+  const e = document.querySelector("#main .empty");
+  const txt = e ? e.innerText.trim() : "";
+  const ok = !document.querySelector("[data-sec]") && txt.startsWith("In ") && txt.endsWith("Kies een andere maand.");
+  resetFilters(); render();
+  return { ok, detail: txt.slice(0, 120) };
+};
+
+checks.focusSchakelaar = async () => {
+  S.tab = "kal"; S.kv = "maand"; render(); await sleep(100);
+  document.querySelector('[data-kv="jaar"]').click(); await sleep(150);
+  const ok1 = document.activeElement && document.activeElement.dataset.kv === "jaar" && S.kv === "jaar";
+  document.querySelector('[data-kv="maand"]').click(); await sleep(150);
+  const ok2 = document.activeElement && document.activeElement.dataset.kv === "maand" && S.kv === "maand";
+  return { ok: !!(ok1 && ok2) };
 };
 
 export async function runAll(names) {

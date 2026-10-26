@@ -93,6 +93,8 @@ details.grp>.grid{padding:0 14px 18px;margin-top:4px}
 .tasks .lnk{min-height:44px;padding:0 10px}
 .stile{display:flex;flex-direction:column;gap:8px}
 .stile>.btn{align-self:flex-start}
+.kswitch{display:flex;gap:6px;flex-wrap:wrap;padding-block:10px 0}
+.hint{margin:14px 0 0;padding:10px 14px;border-radius:12px;background:var(--surface);border:1px solid var(--line);font-size:.95rem}
 .morewrap{margin-top:16px;display:flex;justify-content:center}
 .bs{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
 .bs button{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 16px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-weight:500}
@@ -289,6 +291,7 @@ details.fold>div{padding-bottom:18px}
     <p id="sub"></p>
   </header>
   <section class="ctl" aria-label="Maand en zoeken">
+  <div id="kv" class="kswitch" role="group" aria-label="Weergave"></div>
   <div class="months" id="months" role="group" aria-label="Kies een maand"></div>
   <div class="bar" id="bar"></div>
   </section>
@@ -644,7 +647,7 @@ const GIDS=[
   h("Stap 1: kies een plek"),p("Zoek de plek met de meeste zon, minstens 5 à 6 uur per dag. Lees hiervoor ook het artikel over de plek kiezen."),
   h("Stap 2: begin klein"),p("Eén tot twee bakken van 1 m², of een tiental potten, is genoeg. Je kan altijd uitbreiden."),
   h("Stap 3: kies 5 gewassen"),p("Kies gewassen die snel resultaat geven en vergevend zijn: radijs, sla, courgette, stokbonen en bieslook. Voeg een tomaat toe als je er zin in hebt. Je vindt ze in de Startgids bovenaan."),
-  h("Stap 4: volg de kalender"),p("Open de pagina Nu en kijk wat deze maand kan. Begin met wat daar bovenaan staat."),
+  h("Stap 4: volg de kalender"),p("Open de Kalender en kijk wat deze maand kan. Begin met wat daar bovenaan staat."),
   h("Stap 5: noteer wat je doet"),p("Schrijf zaaidatum en resultaat op een briefje of in je gsm. Volgend jaar weet je dan wat werkte."),
   tip("Mislukt er iets? Dat is normaal. Elke ervaren tuinier heeft planten zien mislukken. Wat je leert van een mislukking onthoud je beter dan een succes.")]},
  {id:"plek-kiezen",t:"Een plek kiezen",min:3,s:"Zon, wind, water en afstand tot je deur.",b:[
@@ -693,7 +696,7 @@ const GIDS=[
    ["Oktober","Plant knoflook en zaai tuinbonen. Oogst pompoen, prei en late groenten. Leg compost op leeggekomen grond."],
    ["November","Plant fruitbomen en bessen. Zet dekking op wintergewassen."],
    ["December","Rust uit. Schrijf op wat je geleerd hebt."]]),
-  tip("Dit is een eenvoudig schema. Op de pagina Nu staat altijd de actuele lijst voor de maand.")]}
+  tip("Dit is een eenvoudig schema. In de Kalender staat altijd de actuele lijst voor de maand.")]}
 ]},
 {id:"grond",t:"Grond en voeding",d:"Grondsoorten, compost, pH en meststoffen",ic:"soil",arts:[
  {id:"grondsoorten",t:"Je grond leren kennen",min:4,s:"Zand, leem, klei: hoe herken je ze en wat betekent dat?",b:[
@@ -1090,7 +1093,7 @@ const SG=[
  h("Wat kan je verwachten?"),
  ul(["Je eerste jaar levert minder op dan je hoopt, maar meer dan je denkt. Eén courgetteplant geeft al wekenlang vruchten.","Je leert elke maand iets bij. Dat hoort erbij.","Mislukkingen zijn normaal. Wat je leert van een mislukte tomaat onthoud je beter dan een gelukte.","Een moestuin vraagt ongeveer 2 tot 4 uur per week in het seizoen voor 10 m². Een paar potten vragen veel minder."]),
  h("Drie regels voor beginners"),
- ol(["Begin klein. Twee bakken of een tiental potten zijn genoeg.","Kies gewassen die vergevend zijn: radijs, sla, courgette, bonen, bieslook.","Volg het seizoen. Planten doen het beste op hun eigen moment. De pagina Nu en de Kalender helpen je daarbij."]),
+ ol(["Begin klein. Twee bakken of een tiental potten zijn genoeg.","Kies gewassen die vergevend zijn: radijs, sla, courgette, bonen, bieslook.","Volg het seizoen. Planten doen het beste op hun eigen moment. De Kalender helpt je daarbij."]),
  tip("Je hoeft niet alles te weten. Dit boekje is gemaakt om stap voor stap te lezen. Wat niet nodig is, staat onder 'Meer weten'."),
  more([["art","beginnen/waar-begin-ik","Waar begin ik?"],["art","verzorging/weinig-tijd","Weinig tijd of op vakantie"],["art","kennis/faq","Veelgestelde vragen"]])]},
 {id:"s2",t:"Kies je plek",s:"Zon, wind, water en afstand.",b:[
@@ -1135,7 +1138,7 @@ const SG=[
   ["Aardbei","Vaste plant, leuke oogst","Plant in augustus of maart"],
   ["Tomaat (struik of cherry)","Je favoriet, iets meer aandacht","Zaai in maart, plant half mei"]]),
  h("Hoe gebruik je de kalender?"),
- ol(["Open Nu. Je ziet wat deze maand kan.","Kies een gewas met niveau Makkelijk.","Tik op het gewas en daarna op Hoe teel ik dit? voor het volledige verhaal.","Open Kalender om te zien wanneer je wat doet."]),
+ ol(["Open de Kalender. Je ziet wat deze maand kan.","Kies een gewas met niveau Makkelijk.","Tik op het gewas en daarna op Hoe teel ik dit? voor het volledige verhaal.","Kijk in het Jaaroverzicht om te zien wanneer je wat doet."]),
  tip("Begin met drie gewassen als vijf te veel lijkt. Je kan altijd bijzaaien."),
  more([["crop","radijs","Radijs"],["crop","sla","Sla"],["crop","courgette","Courgette"],["crop","stokboon","Stokboon"],["crop","bieslook","Bieslook"],["crop","aardbei","Aardbei"],["crop","tomaat","Tomaat"]])]},
 {id:"s6",t:"Zaaien of plantjes kopen",s:"Twee manieren om te beginnen.",b:[
@@ -1219,7 +1222,7 @@ const SG=[
  more([["art","oogsten/bewaren","Bewaren"],["art","grond/groenbemesters","Groenbemesters"],["art","seizoen/winter-groenten","Wintergroenten"],["art","seizoen/vier-seizoenen","Seizoen per seizoen"]])]},
 {id:"s13",t:"Jouw eerste jaar: maandplan",s:"Een eenvoudig schema om te volgen.",b:[
  ill("jaar"),
- p("Dit is een rustig jaarplan. Op de pagina Nu staat altijd de lijst voor de huidige maand."),
+ p("Dit is een rustig jaarplan. In de Kalender staat altijd de lijst voor de huidige maand."),
  tb(["Maand","Wat je doet"],[
   ["Januari-februari","Plannen, zaad bestellen, aardappelen voorkiemen, grond voorbereiden."],
   ["Maart","Zaai tomaat binnen. Zaai radijs, erwten en tuinbonen buiten. Plant ui en aardappel."],
@@ -1231,7 +1234,7 @@ const SG=[
   ["December","Rust uit en plan."]]),
  h("Je checklist voor de start"),
  ul(["Plek gekozen met minstens 5 uur zon.","Opstelling gekozen: pot, bak of grond.","Grond of potgrond met compost klaar.","Drie tot zeven gewassen gekozen.","Zaad of plantjes besteld.","Gieter, schep en labels klaar."]),
- tip("Begin deze maand. Open Nu en kies iets dat nu kan. Een moestuin leer je door te doen."),
+ tip("Begin deze maand. Open de Kalender en kies iets dat nu kan. Een moestuin leer je door te doen."),
  more([["art","beginnen/eerste-jaar","Je eerste jaar maand per maand"]])]}
 ];
 
@@ -1759,7 +1762,7 @@ const faseLabel=k=>(FASEN.find(f=>f[0]===k)||[])[1]||"";
 const KIND={zb:[faseLabel("zb")],zd:[faseLabel("zd")],pt:[faseLabel("pt")]};
 function legendHtml(){const x={zb:" (open)",zd:" (gevuld)"};return `<div class="legend">${FASEN.map(([k,l])=>`<span><i class="k-${k}"></i>${l}${x[k]||""}</span>`).join("")}</div>`;}
 const NOW=new Date().getMonth()+1;const cr=s=>String(s).split(" I\u0027d")[0].replace(/\s*\(.*?$/,"");
-const S={tab:"nu",m:NOW,type:"alle",diep:"alle",plek:"alle",q:"",cmp:new Set(),more:new Set(),grp:new Set(),hulp:null,hg:"",gc:null,ch:0};
+const S={tab:"kal",kv:"maand",m:NOW,type:"alle",diep:"alle",plek:"alle",q:"",cmp:new Set(),more:new Set(),grp:new Set(),hulp:null,hg:"",gc:null,ch:0};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function ranges(arr){if(!arr||!arr.length)return "-";const s=new Set(arr);if(s.size===12)return "heel jaar";let st=1;while(s.has(st))st++;const out=[];let run=null;for(let k=1;k<=12;k++){const m=((st+k-1)%12)+1;if(s.has(m)){if(!run){run=[m,m];out.push(run);}else run[1]=m;}else run=null;}return out.map(x=>x[0]===x[1]?MN[x[0]-1]:MN[x[0]-1]+"-"+MN[x[1]-1]).join(", ");}
 const nm=id=>BY[id].n;
@@ -1787,37 +1790,43 @@ function tile(c,tag){
 }
 
 /* ---------- Chrome: header, maanden, nav ---------- */
-const ICONS={tuin:'<path d="M12 21v-8"/><path d="M12 13c0-4 3-6 7-6 0 4-3 6-7 6z"/><path d="M12 15c0-3-2-5-6-5 0 3 2 5 6 5z"/>',hulp:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7"/><path d="M12 17h.01"/>',nu:'<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>',alle:'<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',kal:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>',gids:'<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/><path d="M9 8h6"/>'};
+const ICONS={tuin:'<path d="M12 21v-8"/><path d="M12 13c0-4 3-6 7-6 0 4-3 6-7 6z"/><path d="M12 15c0-3-2-5-6-5 0 3 2 5 6 5z"/>',hulp:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7"/><path d="M12 17h.01"/>',alle:'<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',kal:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>',gids:'<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/><path d="M9 8h6"/>'};
 const GIC={sprout:'<path d="M12 21v-8"/><path d="M12 13c0-4 3-6 7-6 0 4-3 6-7 6z"/><path d="M12 15c0-3-2-5-6-5 0 3 2 5 6 5z"/>',soil:'<path d="M3 17h18M5 21h14M7 13c1-3 3-5 5-5s4 2 5 5"/>',seed:'<path d="M12 3c4 3 6 6 6 9a6 6 0 0 1-12 0c0-3 2-6 6-9z"/><path d="M12 9v8"/>',water:'<path d="M12 3s6 6 6 11a6 6 0 0 1-12 0c0-5 6-11 6-11z"/>',bug:'<ellipse cx="12" cy="14" rx="5" ry="6"/><path d="M12 8V5M8 4l2 3M16 4l-2 3M7 12H3M17 12h4M8 18l-3 3M16 18l3 3"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>',pair:'<circle cx="8" cy="12" r="5"/><circle cx="16" cy="12" r="5"/>',basket:'<path d="M4 10h16l-2 10H6z"/><path d="M8 10l4-6 4 6"/>',book:'<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M9 8h6M9 12h6"/>',pot:'<path d="M6 10h12l-1.5 10h-9z"/><path d="M12 10V4M12 6c0-2 2-3 4-3M12 7c0-2-2-3-4-3"/>'};
 function renderChrome(){
-  const T=[["nu","Nu"],["alle","Gewassen"],["kal","Kalender"],["tuin","Tuin"],["hulp","Hulp"],["gids","Gids"]];
+  const T=[["kal","Kalender"],["alle","Gewassen"],["tuin","Tuin"],["hulp","Hulp"],["gids","Gids"]];
   document.getElementById("nav").innerHTML=T.map(([k,v])=>`<button data-tab="${k}" ${S.tab===k?'aria-current="page"':""}><svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[k]}</svg>${v}</button>`).join("");
-  const nu=S.tab==="nu";
+  const maand=S.tab==="kal"&&S.kv==="maand";
   const gcat=S.tab==="gids"&&S.gc&&S.gc!=="start"?GIDS.find(g=>g.id===S.gc):null;const gstart=S.tab==="gids"&&S.gc==="start";
-  document.getElementById("h1").textContent=nu?MF[S.m-1].charAt(0).toUpperCase()+MF[S.m-1].slice(1):{alle:"Alle gewassen",kal:"Kalender",tuin:"Mijn tuin",hulp:(HELP.find(x=>x.id===S.hulp)||{t:"Hulp"}).t,gids:gstart?"Startersgids":gcat?gcat.t:"Gids"}[S.tab];
-  const subs={nu:S.m===NOW?"Dit kan je nu doen in je moestuin.":"Dit kan je doen in "+MF[S.m-1]+".",alle:C.length+" groenten, fruit en kruiden voor België.",kal:"Wanneer je wat zaait, plant en oogst. De gele band is deze maand.",tuin:TUIN.crops.length?TUIN.crops.length+" "+(TUIN.crops.length===1?"gewas":"gewassen")+" in je tuin.":"Je tuin is nog leeg.",hulp:(HELP.find(x=>x.id===S.hulp)||{s:"Wat gaat er mis met je plant?"}).s,gids:gstart?SG[S.ch].t:gcat?gcat.d:"Begin hier en leer stap voor stap."};
+  document.getElementById("h1").textContent=maand?MF[S.m-1].charAt(0).toUpperCase()+MF[S.m-1].slice(1):{alle:"Alle gewassen",kal:"Jaaroverzicht",tuin:"Mijn tuin",hulp:(HELP.find(x=>x.id===S.hulp)||{t:"Hulp"}).t,gids:gstart?"Startersgids":gcat?gcat.t:"Gids"}[S.tab];
+  const subs={alle:C.length+" groenten, fruit en kruiden voor België.",kal:S.kv==="maand"?(S.m===NOW?"Dit kan je nu doen in je moestuin.":"Dit kan je doen in "+MF[S.m-1]+"."):"Wanneer je wat zaait, plant en oogst. De gele band is deze maand.",tuin:TUIN.crops.length?TUIN.crops.length+" "+(TUIN.crops.length===1?"gewas":"gewassen")+" in je tuin.":"Je tuin is nog leeg.",hulp:(HELP.find(x=>x.id===S.hulp)||{s:"Wat gaat er mis met je plant?"}).s,gids:gstart?SG[S.ch].t:gcat?gcat.d:"Begin hier en leer stap voor stap."};
   document.getElementById("sub").textContent=subs[S.tab];
-  const mo=document.getElementById("months");mo.hidden=!nu;
+  const kv=document.getElementById("kv");kv.hidden=S.tab!=="kal";
+  kv.innerHTML=[["maand","Deze maand"],["jaar","Jaaroverzicht"]].map(([v,t])=>`<button class="chip" data-kv="${v}" aria-pressed="${S.kv===v}">${t}</button>`).join("");
+  const mo=document.getElementById("months");mo.hidden=!maand;
   mo.innerHTML=MN.map((n,i)=>`<button class="mo${i+1===NOW?" now":""}" data-mo="${i+1}" aria-pressed="${S.m===i+1}" aria-label="${MF[i]}">${n}</button>`).join("");
+  {const a=mo.querySelector('[aria-pressed="true"]');if(a&&!mo.hidden)mo.scrollLeft=a.getBoundingClientRect().left-mo.getBoundingClientRect().left+mo.scrollLeft-(mo.clientWidth-a.offsetWidth)/2;}
   const sr=document.querySelector&&document.querySelector(".src");if(sr)sr.hidden=["gids","hulp","tuin"].includes(S.tab);
   const bar=document.getElementById("bar");bar.hidden=["gids","hulp","tuin"].includes(S.tab);
   const n=activeF();
   bar.innerHTML=(S.tab==="alle"?`<input type="search" id="q" placeholder="Zoek een gewas" value="${esc(S.q)}" aria-label="Zoek een gewas">`:"<span style='flex:1'></span>")+`<button class="chip" data-f="diep" data-v="${S.diep==="1"?"alle":"1"}" aria-pressed="${S.diep==="1"}">Alleen makkelijk</button><button class="btn" data-act="filter">Filter${n?` <b>${n}</b>`:""}</button>`;
 }
 
-/* ---------- Nu / Alle ---------- */
-function viewNu(){
-  const list=filtered(),m=S.m,nx=m%12+1;
-  const st=list.filter(c=>starts(c,m).length).sort(byEase);
-  const oo=list.filter(c=>c.oo.includes(m)).sort(byEase);
-  const kom=list.filter(c=>starts(c,nx).length&&!starts(c,m).length).sort(byEase);
-  const LIM=6;
-  const sec=(key,t,sub,arr,tagFn,msg)=>{const all=S.more.has(key)||arr.length<=LIM+1,shown=all?arr:arr.slice(0,LIM);
-    return `<section class="sec" data-sec="${key}"><h2>${t}<small>${sub}</small></h2>${arr.length?`<div class="grid">${shown.map(c=>tile(c,tagFn?tagFn(c):null)).join("")}</div>${all?"":`<div class="morewrap"><button class="btn" data-more="${key}">Toon alle ${arr.length}</button></div>`}`:`<div class="empty">${msg}</div>`}</section>`;};
-  return sec("st","Starten",`${st.length} gewassen om te zaaien of te planten`,st,c=>starts(c,m),"Er valt in "+MF[m-1]+" niets te starten. Kijk bij Volgende maand.")+
-   sec("oo","Oogsten",`${oo.length} gewassen klaar in ${MF[m-1]}`,oo,null,"Er is in "+MF[m-1]+" niets te oogsten met deze filters.")+
-   sec("kom","Volgende maand",`Wat start in ${MF[nx-1]}`,kom,c=>starts(c,nx),"In "+MF[nx-1]+" komt er niets nieuws bij.");
+/* ---------- Kalender: Deze maand ---------- */
+const HINT={2:"Warmteminnende gewassen zoals tomaat en paprika zaai je nu alleen binnen.",3:"Warmteminnende gewassen zoals tomaat en paprika zaai je nu alleen binnen.",4:"De laatste nachtvorst valt gemiddeld rond half april, maar kan later komen.",5:"Plant vorstgevoelige gewassen pas na de ijsheiligen (11 tot 13 mei).",10:"De eerste vorst valt gemiddeld tussen half oktober en begin november.",11:"De eerste vorst valt gemiddeld tussen half oktober en begin november."};
+const hintVoor=m=>HINT[m]||"";
+const faseLijst=(k,m)=>filtered().filter(c=>c[k].includes(m)).sort(byEase);
+const LIM=6;
+function fSec(key,t,arr){const all=S.more.has(key)||arr.length<=LIM+1,shown=all?arr:arr.slice(0,LIM);
+  return `<section class="sec" data-sec="${key}"><h2>${esc(t)}<small>${arr.length} gewassen</small></h2><div class="grid">${shown.map(c=>tile(c,null)).join("")}</div>${all?"":`<div class="morewrap"><button class="btn" data-more="${key}">Toon alle ${arr.length}</button></div>`}</section>`;}
+function viewMaand(){
+  const m=S.m,mn=MF[m-1];
+  const fase=FASEN.map(([k,l])=>({k,l,arr:faseLijst(k,m)})).filter(f=>f.arr.length);
+  const h=hintVoor(m),hint=h?`<p class="hint" role="note">Let op: ${esc(h)}</p>`:"";
+  if(!fase.length)return hint+`<div class="empty">In ${mn} is er niets te doen met deze filters. Kies een andere maand.</div>`;
+  const geenZaai=!fase.some(f=>f.k!=="oo");
+  return hint+(geenZaai?`<div class="empty">In ${mn} valt er niets te zaaien of planten. Kijk bij oogst, of kies een andere maand.</div>`:"")+fase.map(f=>fSec(f.k,f.l,f.arr)).join("");
 }
+function viewKal(){return S.kv==="jaar"?viewJaar():viewMaand();}
 const GROUPS=["Vruchtgroente","Bladgroente","Wortelgroente","Koolgroente","Uigewas","Knolgewas","Peulvrucht","Vaste groente","Kruid","Klein fruit","Boomfruit"];
 function viewAlle(){
   const l=filtered().sort((a,b)=>a.n.localeCompare(b.n));
@@ -1948,14 +1957,14 @@ function track(c){
   return `<span class="trk" aria-hidden="true"><span class="nowline" style="left:${(NOW-1)/12*100}%"></span>${bar(c.zb.filter(m=>!c.zd.includes(m)),"k-zb",1)}${bar(c.zd,"k-zd",1)}${bar(c.pt,"k-pt",2)}${bar(c.oo,"k-oo",3)}</span>`;
 }
 function textCal(c){return FASEN.map(([k,l])=>`${l} ${ranges(c[k])}.`).join(" ");}
-function viewKal(){
+function viewJaar(){
   const l=filtered();
   const head=`<div class="mhead" aria-hidden="true">${MN.map((n,i)=>`<span class="${i+1===NOW?"now":""}">${n.slice(0,1).toUpperCase()}</span>`).join("")}</div>`;
   const qc=`<div class="qchips">${[["alle","Alles"],["groente","Groente"],["fruit","Fruit"],["kruid","Kruid"]].map(([v,t])=>`<button class="chip" data-f="type" data-v="${v}" data-stay="1" aria-pressed="${S.type===v}">${t}</button>`).join("")}</div>`;
   const groups=GROUPS.map(g=>({g,l:l.filter(c=>c.c===g).sort((a,b)=>a.n.localeCompare(b.n))})).filter(x=>x.l.length);
   return `${legendHtml()}${qc}
   ${groups.map(x=>`<section class="cgrp"><h2>${x.g}<small>${x.l.length} gewassen</small></h2>${head}${x.l.map(c=>`<button class="crow" data-open="${c.id}" aria-label="${esc(c.n)}. ${textCal(c)}"><span class="nmr">${esc(c.n)} ${dots(c.d)}</span>${track(c)}</button>`).join("")}</section>`).join("")||'<div class="empty">Geen gewassen met deze filters.</div>'}
-  <p class="p" style="color:var(--muted);margin-top:18px;font-size:.9rem">Elke rij heeft drie lijnen: bovenaan zaaien (blauw is binnen, groen is buiten), in het midden planten en onderaan oogsten. Tik op een gewas voor het stappenplan.</p>`;
+  <p class="p" style="color:var(--muted);margin-top:18px;font-size:.9rem">Elke rij heeft drie lijnen: bovenaan zaaien (een open balk is in huis, een gevulde balk is buiten), in het midden uitplanten en onderaan oogsten. Tik op een gewas voor het stappenplan.</p>`;
 }
 
 /* ---------- Gids ---------- */
@@ -2033,7 +2042,7 @@ function openArticle(path){
 /* ---------- Render ---------- */
 function render(){
   renderChrome();
-  document.getElementById("main").innerHTML={nu:viewNu,alle:viewAlle,kal:viewKal,tuin:viewTuin,hulp:viewHulp,gids:viewGids}[S.tab]();
+  document.getElementById("main").innerHTML={alle:viewAlle,kal:viewKal,tuin:viewTuin,hulp:viewHulp,gids:viewGids}[S.tab]();
   renderTray();
   document.getElementById("live").textContent=S.tab==="alle"?filtered().length+" gewassen":"";
 }
@@ -2124,6 +2133,7 @@ document.addEventListener("click",e=>{
   if(t.dataset.mo){S.m=+t.dataset.mo;S.more.clear();render();return;}
   if(t.dataset.more){const k=t.dataset.more;S.more.add(k);render();const b=document.querySelectorAll(`[data-sec="${k}"] .tile>button`)[6];if(b)b.focus();return;}
   if(t.dataset.f){S[t.dataset.f]=t.dataset.v;const open=!document.getElementById("ov").hidden;render();if(open)openFilter();return;}
+  if(t.dataset.kv){S.kv=t.dataset.kv;S.more.clear();render();window.scrollTo(0,0);const b=document.querySelector('[data-kv="'+S.kv+'"]');if(b)b.focus();return;}
   if(t.dataset.tuin){const id=t.dataset.tuin,i=TUIN.crops.indexOf(id),inSheet=!!t.closest("#sheet");if(i>=0)TUIN.crops.splice(i,1);else TUIN.crops.push(id);tuinSave();render();if(inSheet)openDetail(id);say(BY[id].n+(i>=0?" is uit je tuin gehaald.":" staat nu in je tuin."));return;}
   if(t.dataset.tplek){TUIN.plek=t.dataset.tplek;tuinSave();render();const b=document.querySelector('[data-tplek="'+TUIN.plek+'"]');if(b)b.focus();return;}
   if(t.dataset.hulp){S.hulp=t.dataset.hulp;S.hg="";render();window.scrollTo(0,0);document.getElementById("main").focus({preventScroll:true});return;}
