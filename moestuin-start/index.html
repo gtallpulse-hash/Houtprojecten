@@ -11,6 +11,7 @@
   --leaf:#386F26; --leaf-soft:#DCEACB; --on-leaf:#FFFFFF;
   --sun:#855C00; --sun-soft:#F3E7BE; --soil:#7B5532;
   --tom:#B8372A; --tom-soft:#F4DDD6; --sky:#2F7391; --sky-soft:#D8E7EE;
+  --f-zaai:#2a78d6; --f-plant:#c8501f; --f-oogst:#0f8a63;
   --nav:#1F2617; --on-nav:#EAEEDF;
   --f-display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
   --f-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
@@ -20,12 +21,14 @@
   --leaf:#7CC25F; --leaf-soft:#233319; --on-leaf:#10170B;
   --sun:#E9B84B; --sun-soft:#3A3114; --soil:#C9A27A;
   --tom:#F0796A; --tom-soft:#3B1F1B; --sky:#74B6D4; --sky-soft:#17303C;
+  --f-zaai:#3987e5; --f-plant:#d95926; --f-oogst:#199e70;
   --nav:#0A0E07; --on-nav:#E9EEDD; color-scheme:dark;}}
 :root[data-theme="dark"]{
   --bg:#12170E; --surface:#1B2216; --ink:#E9EEDD; --muted:#A2AE92; --line:#2D3724;
   --leaf:#7CC25F; --leaf-soft:#233319; --on-leaf:#10170B;
   --sun:#E9B84B; --sun-soft:#3A3114; --soil:#C9A27A;
   --tom:#F0796A; --tom-soft:#3B1F1B; --sky:#74B6D4; --sky-soft:#17303C;
+  --f-zaai:#3987e5; --f-plant:#d95926; --f-oogst:#199e70;
   --nav:#0A0E07; --on-nav:#E9EEDD; color-scheme:dark;}
 *{box-sizing:border-box}
 button,a,input,summary,.tile{touch-action:manipulation}
@@ -90,6 +93,10 @@ details.grp>.grid{padding:0 14px 18px;margin-top:4px}
 .tasks .lnk{min-height:44px;padding:0 10px}
 .stile{display:flex;flex-direction:column;gap:8px}
 .stile>.btn{align-self:flex-start}
+.kswitch{display:flex;gap:6px;flex-wrap:wrap;padding-block:10px 0}
+.hint{margin:14px 0 0;padding:10px 14px;border-radius:12px;background:var(--surface);border:1px solid var(--line);font-size:.95rem}
+.gsub{font-size:1.2rem;margin:24px 0 0}
+.hsub{font-size:1.3rem;margin:28px 0 0}
 .morewrap{margin-top:16px;display:flex;justify-content:center}
 .bs{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
 .bs button{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 16px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-weight:500}
@@ -108,12 +115,11 @@ details.dd>summary{cursor:pointer;font-weight:600;color:var(--leaf);padding-bloc
 .tile h3{font-size:1.1rem;margin-top:8px}
 .phw{display:block;position:relative}
 .tile .act{position:absolute;left:8px;bottom:8px;max-width:calc(100% - 16px);background:var(--surface);padding:3px 10px;border-radius:999px;font-size:.85rem;font-weight:600;line-height:1.35}
-.act .k-zb-t{color:var(--sky)} .act .k-zd-t{color:var(--leaf)} .act .k-pt-t{color:var(--sun)} .act .k-oo-t{color:var(--tom)}
+.act .pl{display:inline-flex;align-items:center;gap:6px;color:var(--ink)} .act .pl+.pl{margin-left:10px} .act i{display:inline-block;width:10px;height:10px;border-radius:50%;flex:none}
 .line{display:flex;gap:8px;align-items:center;font-size:.9rem;color:var(--muted);margin-top:4px;flex-wrap:wrap}
 .dots{display:inline-flex;gap:3px}
 .dots i{width:8px;height:8px;border-radius:50%;background:var(--line)}
-.dots i.on{background:var(--leaf)}
-.dots.d2 i.on{background:var(--sun)} .dots.d3 i.on{background:var(--tom)}
+.dots i.on{background:var(--ink)}
 .empty{padding:20px;border:1px dashed var(--line);border-radius:16px;color:var(--muted);margin-top:14px}
 .nav{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--nav);color:var(--on-nav);display:flex;justify-content:center;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px))}
 .nav-in{display:flex;width:100%;max-width:520px;gap:4px}
@@ -126,7 +132,7 @@ details.dd>summary{cursor:pointer;font-weight:600;color:var(--leaf);padding-bloc
 .tray .go:disabled{opacity:.5}
 .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.88rem;margin-block:10px;color:var(--muted)}
 .legend i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-right:6px}
-.k-zb{background:var(--sky)} .k-zd{background:var(--leaf)} .k-pt{background:var(--sun)} .k-oo{background:var(--tom)}
+.k-zb{background:transparent;border:2px solid var(--f-zaai)} .k-zd{background:var(--f-zaai)} .k-pt{background:var(--f-plant)} .k-oo{background:var(--f-oogst)}
 .scroll{overflow-x:auto;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
 table{border-collapse:collapse;width:100%;font-size:.9rem}
 th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
@@ -142,8 +148,8 @@ th{font-weight:600;color:var(--muted)}
 .cal .cell b.on,.mini b.on{opacity:1}
 .mini{display:grid;grid-template-columns:repeat(12,1fr);gap:3px;margin-top:8px}
 .mini div{display:flex;flex-direction:column;gap:2px;font-size:.7rem;text-align:center;color:var(--muted)}
-.mini b.k-zb{background:var(--sky)}.mini b.k-zd{background:var(--leaf)}.mini b.k-pt{background:var(--sun)}.mini b.k-oo{background:var(--tom)}
 .mini b{height:9px}
+.mini b.k-zb{background:transparent;border:2px solid var(--f-zaai)}.mini b.k-zd{background:var(--f-zaai)}.mini b.k-pt{background:var(--f-plant)}.mini b.k-oo{background:var(--f-oogst)}
 .overlay{position:fixed;inset:0;z-index:50;background:rgba(10,18,8,.55);display:flex;justify-content:center;align-items:flex-end;padding-top:env(safe-area-inset-top,0px)}
 .sheet{overscroll-behavior:contain;background:var(--bg);width:100%;max-width:760px;max-height:94%;overflow-y:auto;border-radius:24px 24px 0 0;padding-bottom:calc(28px + env(safe-area-inset-bottom,0px))}
 @media(min-width:760px){.overlay{align-items:center}.sheet{border-radius:24px;max-height:92%}}
@@ -151,7 +157,7 @@ th{font-weight:600;color:var(--muted)}
 .sheet .pad{padding-inline:18px}
 .hero{position:relative}
 .hero .ph{border-radius:24px 24px 0 0;aspect-ratio:16/10;max-height:340px}
-.x{position:absolute;top:12px;right:12px;border:0;background:var(--surface);color:var(--ink);border-radius:50%;width:42px;height:42px;font-size:1.3rem;line-height:1}
+.x{position:absolute;top:12px;right:12px;border:0;background:var(--surface);color:var(--ink);border-radius:50%;width:44px;height:44px;font-size:1.3rem;line-height:1}
 .credit{font-size:.85rem;color:var(--muted);margin:6px 0 0}
 .credit a{color:inherit}
 .head{padding-block:16px 4px}
@@ -173,7 +179,7 @@ details.fold>div{padding-bottom:18px}
 .bul{margin:0;padding-left:1.2rem;display:flex;flex-direction:column;gap:6px}
 .sub-h{font-size:1rem;margin:14px 0 6px}
 .links{display:flex;gap:6px;flex-wrap:wrap}
-.links button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 13px;font-size:.9rem}
+.links button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 13px;font-size:.9rem;min-height:44px}
 .chips{display:flex;gap:6px;flex-wrap:wrap}
 .chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:11px 14px;min-height:44px;font-weight:500}
 .chip[aria-pressed="true"]{background:var(--leaf);border-color:var(--leaf);color:var(--on-leaf);font-weight:600}
@@ -195,14 +201,18 @@ details.fold>div{padding-bottom:18px}
 .cgrp>h2 small{font:400 .88rem var(--f-body);color:var(--muted)}
 .mhead{display:grid;grid-template-columns:repeat(12,1fr);font-size:.72rem;color:var(--muted);text-align:center;margin-top:10px}
 .mhead .now{color:var(--ink);font-weight:700}
+.mhead .now::before{content:"nu";display:block;font-size:.62rem;line-height:1}
+details.grp.cg>summary{min-height:56px}
+details.grp.cg>.cbody{padding:0 14px 10px}
 @media(min-width:760px){.mhead{margin-left:178px}}
-.crow{display:block;width:100%;text-align:left;border:0;background:transparent;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.crow{display:block;width:100%;min-height:44px;text-align:left;border:0;background:transparent;padding:4px 0;border-bottom:1px solid var(--line);cursor:pointer}
 .crow:hover .nmr{color:var(--leaf)}
-.crow .nmr{font-weight:600;display:flex;gap:8px;align-items:center}
+.crow .nmr{font-weight:600;display:flex;gap:10px;align-items:baseline;line-height:1.3}
+.niv{font-weight:400;color:var(--muted);font-size:.85rem}
 @media(min-width:760px){.crow{display:grid;grid-template-columns:166px 1fr;gap:12px;align-items:center}}
-.trk{position:relative;display:grid;grid-template-columns:repeat(12,1fr);grid-auto-rows:9px;row-gap:3px;margin-top:6px;background-image:repeating-linear-gradient(to right,var(--line) 0,var(--line) 1px,transparent 1px,transparent calc(100% / 12))}
+.trk{position:relative;display:grid;grid-template-columns:repeat(12,1fr);grid-auto-rows:8px;row-gap:2px;margin-top:3px;background-image:repeating-linear-gradient(to right,var(--line) 0,var(--line) 1px,transparent 1px,transparent calc(100% / 12))}
 @media(min-width:760px){.trk{margin-top:0}}
-.trk i{display:block;border-radius:5px;position:relative;z-index:1}
+.trk i{display:block;border-radius:4px;position:relative;z-index:1}
 .nowline{position:absolute;top:-2px;bottom:-2px;width:calc(100% / 12);background:var(--sun-soft);border-radius:4px;z-index:0}
 .gcats{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-top:14px}
 .gcat{all:unset;box-sizing:border-box;cursor:pointer;background:var(--surface);border-radius:18px;padding:16px;display:flex;gap:14px;align-items:flex-start}
@@ -212,7 +222,7 @@ details.fold>div{padding-bottom:18px}
 .gcat b{font:700 1.1rem var(--f-display);display:block}
 .gcat span{display:block;color:var(--muted);font-size:.9rem;margin-top:2px}
 .gcat em{font-style:normal;font-size:.8rem;color:var(--leaf);font-weight:600;display:block;margin-top:6px}
-.back{border:0;background:transparent;color:var(--leaf);font-weight:600;padding:6px 0;margin-top:8px}
+.back{border:0;background:transparent;color:var(--leaf);font-weight:600;padding:6px 0;margin-top:8px;min-height:44px}
 .acards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;margin-top:14px}
 .acard{all:unset;box-sizing:border-box;cursor:pointer;background:var(--surface);border-radius:16px;padding:14px 16px;display:block}
 .acard:focus-visible{outline:3px solid var(--sky);outline-offset:3px}
@@ -235,7 +245,7 @@ details.fold>div{padding-bottom:18px}
 .buur .bh{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
 .buur p{margin:6px 0 0;font-size:.94rem}
 .buur p b{font-weight:600}
-.lnk{all:unset;cursor:pointer;font:700 1rem var(--f-display);color:var(--ink);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.lnk{all:unset;cursor:pointer;font:700 1rem var(--f-display);color:var(--ink);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px;min-height:44px;display:inline-flex;align-items:center}
 .lnk:hover{text-decoration-color:var(--leaf)}
 .lnk:focus-visible{outline:3px solid var(--sky);border-radius:4px}
 .pg{margin-top:6px}
@@ -251,7 +261,7 @@ details.fold>div{padding-bottom:18px}
 .more>b{font-family:var(--f-display);display:block;margin-bottom:8px}
 .steps-nav{display:flex;gap:6px;overflow-x:auto;padding-block:12px 4px;scrollbar-width:none}
 .steps-nav::-webkit-scrollbar{display:none}
-.steps-nav button{flex:none;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-weight:600}
+.steps-nav button{flex:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-weight:600}
 .steps-nav button[aria-current="step"]{background:var(--leaf);border-color:var(--leaf);color:var(--on-leaf)}
 .reader{margin-top:10px;max-width:70ch}
 .reader h2,.art h2{font-size:clamp(1.8rem,6vw,2.5rem);letter-spacing:-.01em}
@@ -267,7 +277,7 @@ details.fold>div{padding-bottom:18px}
 .hero-card .btn.pri{background:var(--on-leaf);color:var(--leaf);border-color:var(--on-leaf)}
 .hc-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
 .hc-list{margin:0;padding-left:1.4rem;display:flex;flex-direction:column;gap:2px;font-size:.95rem}
-.hc-list button{all:unset;cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(255,255,255,.4)}
+.hc-list button{all:unset;cursor:pointer;min-height:44px;display:inline-flex;align-items:center;text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(255,255,255,.4)}
 .hc-list button:focus-visible{outline:3px solid var(--on-leaf);border-radius:4px}
 .guide-cta{margin-top:18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 .guide-cta span{color:var(--muted);font-size:.9rem}
@@ -287,12 +297,13 @@ details.fold>div{padding-bottom:18px}
     <p id="sub"></p>
   </header>
   <section class="ctl" aria-label="Maand en zoeken">
+  <div id="kv" class="kswitch" role="group" aria-label="Weergave"></div>
   <div class="months" id="months" role="group" aria-label="Kies een maand"></div>
   <div class="bar" id="bar"></div>
   </section>
   <main id="main" tabindex="-1"></main>
   <div id="live" class="sr" role="status" aria-live="polite"></div>
-  <footer><p class="src">Gegevens zijn gemiddelden voor Vlaanderen. De eerste vorst valt gemiddeld tussen half oktober en begin november, de laatste rond half april. Plant vorstgevoelige gewassen pas na de ijsheiligen (11-13 mei). Controleer bij twijfel het zaadzakje van je ras. Foto's komen van Wikimedia Commons met vrije licenties. De fotograaf staat onder elke foto in het detailscherm.</p></footer>
+  <footer><p class="src">Gegevens zijn gemiddelden voor Vlaanderen. In Ukkel viel de laatste vorst gemiddeld op 27 maart en de eerste op 21 november (KMI, 1991 tot 2020). Plant vorstgevoelige gewassen pas na de ijsheiligen (11-13 mei). Controleer bij twijfel het zaadzakje van je ras. Foto's komen van Wikimedia Commons met vrije licenties. De fotograaf staat onder elke foto in het detailscherm.</p></footer>
 </div>
 
 <nav class="nav" aria-label="Hoofdmenu"><div class="nav-in" id="nav"></div></nav>
@@ -642,7 +653,7 @@ const GIDS=[
   h("Stap 1: kies een plek"),p("Zoek de plek met de meeste zon, minstens 5 à 6 uur per dag. Lees hiervoor ook het artikel over de plek kiezen."),
   h("Stap 2: begin klein"),p("Eén tot twee bakken van 1 m², of een tiental potten, is genoeg. Je kan altijd uitbreiden."),
   h("Stap 3: kies 5 gewassen"),p("Kies gewassen die snel resultaat geven en vergevend zijn: radijs, sla, courgette, stokbonen en bieslook. Voeg een tomaat toe als je er zin in hebt. Je vindt ze in de Startgids bovenaan."),
-  h("Stap 4: volg de kalender"),p("Open de pagina Nu en kijk wat deze maand kan. Begin met wat daar bovenaan staat."),
+  h("Stap 4: volg de kalender"),p("Open de Kalender en kijk wat deze maand kan. Begin met wat daar bovenaan staat."),
   h("Stap 5: noteer wat je doet"),p("Schrijf zaaidatum en resultaat op een briefje of in je gsm. Volgend jaar weet je dan wat werkte."),
   tip("Mislukt er iets? Dat is normaal. Elke ervaren tuinier heeft planten zien mislukken. Wat je leert van een mislukking onthoud je beter dan een succes.")]},
  {id:"plek-kiezen",t:"Een plek kiezen",min:3,s:"Zon, wind, water en afstand tot je deur.",b:[
@@ -691,7 +702,7 @@ const GIDS=[
    ["Oktober","Plant knoflook en zaai tuinbonen. Oogst pompoen, prei en late groenten. Leg compost op leeggekomen grond."],
    ["November","Plant fruitbomen en bessen. Zet dekking op wintergewassen."],
    ["December","Rust uit. Schrijf op wat je geleerd hebt."]]),
-  tip("Dit is een eenvoudig schema. Op de pagina Nu staat altijd de actuele lijst voor de maand.")]}
+  tip("Dit is een eenvoudig schema. In de Kalender staat altijd de actuele lijst voor de maand.")]}
 ]},
 {id:"grond",t:"Grond en voeding",d:"Grondsoorten, compost, pH en meststoffen",ic:"soil",arts:[
  {id:"grondsoorten",t:"Je grond leren kennen",min:4,s:"Zand, leem, klei: hoe herken je ze en wat betekent dat?",b:[
@@ -720,12 +731,15 @@ const GIDS=[
   p("Je meet de pH met een goedkope teststrip of grondtest. Is de grond te zuur, dan bekalk je in het najaar. Is hij te kalkrijk voor blauwe bes, kweek je ze in een pot met zure potgrond en geef je regenwater."),
   tip("Kool met knolvoet (verdikte wortels) is meestal een teken van te zure grond. Kalk en vruchtwisseling helpen.")]},
  {id:"voeding",t:"Voeding: stikstof, fosfor en kalium",min:4,s:"Wat elke voedingsstof doet en wat je ziet als er te weinig is.",b:[
-  p("Planten hebben drie hoofdvoedingsstoffen nodig. Op meststoffen staan de letters N, P en K."),
+  h("Wat doe ik"),
+  p("Geef je planten de voeding die ze nodig hebben, niet meer. Op meststoffen staan de letters N, P en K."),
+  h("Hoe doe ik dat"),
   tb(["Stof","Waarvoor","Tekort herken je aan"],[
    ["Stikstof (N)","Bladgroei en groene kleur","Bleke, gele onderste bladeren, trage groei"],
    ["Fosfor (P)","Wortels, bloei en vruchten","Paarsachtig blad, weinig bloei"],
    ["Kalium (K)","Vruchten, smaak, weerstand","Bruine bladranden, zwakke vruchten"]]),
-  h("Wie vraagt wat?"),ul(["Veel voeding (zware eters): kool, pompoen, courgette, tomaat, prei, aardappel.","Matig: sla, spinazie, wortel, ui, biet, snijbiet.","Weinig: peulvruchten (erwt, boon). Die maken zelf stikstof via knolletjes aan hun wortels. Kruiden zoals tijm en rozemarijn ook."]),
+  p("Wie vraagt veel, matig of weinig voeding?"),ul(["Veel voeding (zware eters): kool, pompoen, courgette, tomaat, prei, aardappel.","Matig: sla, spinazie, wortel, ui, biet, snijbiet.","Weinig: peulvruchten (erwt, boon). Die maken zelf stikstof via knolletjes aan hun wortels. Kruiden zoals tijm en rozemarijn ook."]),
+  h("Waar let ik op"),
   tip("Compost voedt langzaam en goed. Een organische moestuinmest in het voorjaar en tomatenvoeding tijdens de bloei volstaan meestal."),
   warn("Te veel stikstof geeft veel blad en weinig vruchten, en trekt bladluis aan. Meer is niet beter.")]},
  {id:"potgrond",t:"Potgrond of tuingrond",min:2,s:"Waarom je ze niet door elkaar haalt.",b:[
@@ -746,13 +760,15 @@ const GIDS=[
   warn("Leg mulch niet vers en dik tegen de stengel. Dat geeft rotting en nodigt slakken uit. Laat 2 cm vrij rond de plant.")]}
 ]},
 {id:"zaaien",t:"Zaaien en kweken",d:"Van zaadje tot plant",ic:"seed",arts:[
- {id:"zaaien-binnen-buiten",t:"Zaaien: binnen of buiten",min:3,s:"Welke gewassen je voorzaait en welke je direct buiten zaait.",b:[
-  p("Sommige gewassen heb je vroeg nodig of hebben warmte nodig die er in maart nog niet is. Dan zaai je ze binnen voor."),
-  tb(["Direct buiten zaaien","Binnen voorzaaien"],[
-   ["Radijs, wortel, biet, erwt, tuinboon, spinazie, peterselie, dille, koriander, snijbiet, rucola","Tomaat, paprika, courgette, komkommer, pompoen, basilicum, prei, kool (voor vroege oogst)"],
-   ["Stokbonen (na half mei)","Sla (voor een vroege oogst)"]]),
-  tip("Wortelgewassen (wortel, biet, radijs) verplant je niet. Hun wortel groeit scheef of splitst als je ze verplaatst."),
-  p("Voorzaaien doe je 6 tot 8 weken voor de uitplantdatum, vaak half maart tot half april. Gebruik zaaigrond en een lichte plaats.")]},
+ {id:"zaaien-binnen-buiten",t:"Zaaien: binnen of buiten",min:3,s:"Welke gewassen je in huis zaait en welke je direct buiten zaait.",bron:"IVN, factsheet Zaaien (2022); Leefmilieu Brussel, infofiche Teelttechnieken (2013)",nagekeken:"2026-10",b:[
+  h("Wat doe ik"),
+  p("Kies per gewas: zaai het in huis in een potje, of direct buiten in de grond. Zo begin je op het juiste moment."),
+  tb(["Zaai buiten","Zaai in huis"],[
+   ["Radijs, spinazie, rode biet, erwt, peterselie, rucola, sla","Tomaat, komkommer, courgette, basilicum, broccoli, sla (voor een vroege oogst)"]]),
+  h("Hoe doe ik dat"),
+  ol(["Zaai in huis in zaaigrond en zet de potjes op een lichte plaats.","Hard de plantjes af voor je ze uitplant: zet ze een paar dagen buiten, eerst kort en dan steeds langer.","Plant ze uit als ze ongeveer 10 cm groot zijn of twee tot drie echte bladeren hebben."]),
+  h("Waar let ik op"),
+  ul(["Tot half mei (de ijsheiligen) kan het buiten nog vriezen. Zet gevoelige planten pas daarna buiten.","Spinazie, radijs en wortel kunnen al in het vroege voorjaar buiten. Hun jonge plantjes verdragen wat vorst.","Is de grond nog erg koud? Dek ze af met doorzichtig plastic. Zo warmt de grond sneller op."])]},
  {id:"zaaigrond-licht",t:"Zaaigrond, licht en warmte",min:3,s:"Waarom je plantjes lang en slap worden, en hoe je dat voorkomt.",b:[
   p("Kiemplanten hebben drie dingen nodig: vocht, warmte en licht."),
   ul(["Vocht: houd de grond vochtig, maar niet nat. Gebruik een plantenspuit.","Warmte: tomaat, paprika en courgette kiemen bij 20 tot 25 °C. Sla, spinazie en erwten kiemen al bij 10 °C.","Licht: zodra de eerste blaadjes boven zijn, willen ze het zo lichtrijk mogelijk."]),
@@ -763,51 +779,56 @@ const GIDS=[
   h("Afharden"),p("Plantjes die binnen opgroeiden, moeten wennen aan zon, wind en temperatuurverschillen. Zet ze 7 tot 10 dagen eerst enkele uren per dag buiten in de schaduw, daarna steeds langer en meer in de zon."),
   tip("Sla je afharden over, dan krijgen je plantjes een schok. Ze kunnen verbranden of stagneren."),
   warn("Zet vorstgevoelige planten niet buiten voor half mei. Een late nachtvorst kan een hele tomatenaanplant doden.")]},
- {id:"kiemtijd",t:"Zaaidiepte en kiemtijd per gewas",min:4,s:"Een overzicht dat je kan raadplegen bij het zaaien.",b:[
-  p("Dit zijn gemiddelden. Het zaadzakje is altijd de baas."),
-  tb(["Gewas","Zaaidiepte","Kiemt na","Kiemtemperatuur"],[
-   ["Tomaat","0,5 cm","5 tot 10 dagen","20 tot 25 °C"],
-   ["Paprika","0,5 tot 1 cm","10 tot 20 dagen","25 tot 28 °C"],
-   ["Courgette, komkommer","2 tot 3 cm","5 tot 10 dagen","20 °C of meer"],
-   ["Pompoen","2 tot 3 cm","5 tot 10 dagen","20 °C of meer"],
-   ["Radijs","1 cm","3 tot 5 dagen","10 °C of meer"],
-   ["Sla","0,5 cm (licht bedekken)","3 tot 7 dagen","10 tot 20 °C (boven 25 °C kiemt sla slecht)"],
-   ["Spinazie","2 tot 3 cm","7 tot 14 dagen","10 tot 18 °C"],
-   ["Wortel","1 cm","10 tot 21 dagen","10 tot 25 °C"],
-   ["Rode biet","2 cm","7 tot 14 dagen","10 tot 25 °C"],
-   ["Erwt","3 tot 4 cm","7 tot 14 dagen","5 °C of meer"],
-   ["Tuinboon","5 cm","10 tot 20 dagen","5 °C of meer"],
-   ["Stokboon","3 tot 4 cm","7 tot 10 dagen","15 °C of meer"],
-   ["Prei, ui","1 cm","10 tot 14 dagen","10 tot 20 °C"],
-   ["Peterselie","1 cm","14 tot 28 dagen","15 tot 20 °C"],
-   ["Basilicum","0,5 cm","5 tot 10 dagen","20 tot 25 °C"],
-   ["Koriander, dille","1 cm","7 tot 14 dagen","15 tot 20 °C"]]),
-  tip("Zaaidiepte is ongeveer 2 à 3 keer de dikte van het zaadje. Heel fijn zaad (sla, wortel) nauwelijks bedekken.")]},
+ {id:"kiemtijd",t:"Zaaidiepte en kiemtijd per gewas",min:4,s:"Een overzicht dat je kan raadplegen bij het zaaien.",bron:"Leefmilieu Brussel, infofiche Teelttechnieken (2013); UC Master Gardener, Seed germination temperature and timing",nagekeken:"2026-10",b:[
+  h("Wat doe ik"),
+  p("Zaai elk zaad op de juiste diepte en in grond die warm genoeg is. Dan komt het snel en gelijk op. Hoe groter het zaad, hoe dieper je het zaait."),
+  h("Hoe doe ik dat"),
+  tb(["Zaadgrootte","Voorbeelden","Zaaidiepte"],[
+   ["Klein","tomaat, sla, wortel, prei, ui, kool","0,5 tot 1 cm"],
+   ["Middelgroot","spinazie, radijs, komkommer, rode biet","1 tot 2 cm"],
+   ["Groot","erwt, boon, pompoen, courgette","1,5 tot 3 cm"],
+   ["Zeer groot","tuinboon","2 tot 5 cm"]]),
+  tb(["Gewas","Kiemt na (in warme grond)","Beste bodemtemperatuur"],[
+   ["Tomaat","6 tot 8 dagen","18 tot 29 °C"],
+   ["Paprika","ongeveer 12 dagen","18 tot 24 °C"],
+   ["Radijs","3 tot 4 dagen","18 tot 29 °C"],
+   ["Sla","ongeveer 3 dagen","16 tot 24 °C"],
+   ["Wortel","6 tot 7 dagen","18 tot 29 °C"],
+   ["Spinazie","ongeveer 6 dagen","18 tot 24 °C"],
+   ["Rode biet","5 tot 6 dagen","18 tot 29 °C"],
+   ["Erwt","ongeveer 8 dagen","18 tot 24 °C"],
+   ["Ui","4 tot 5 dagen","18 tot 29 °C"],
+   ["Komkommer","3 tot 6 dagen","18 tot 35 °C"]]),
+  h("Waar let ik op"),
+  ul(["Koude grond vertraagt het kiemen sterk. In het voorjaar kan wortel twee tot drie weken nodig hebben (bij 10 °C ongeveer 17 dagen).","In zandgrond zaai je dieper dan in kleigrond.","Dit zijn gemiddelden. Het zaadzakje is altijd de baas: volg de diepte en afstand op het zakje van jouw ras.","Elk gewas is een beetje anders: kijk ook op de gewaspagina en op het zaadzakje voor de diepte van jouw gewas. Lichtkiemers zoals sla bedek je nauwelijks."])]},
  {id:"zaad-kopen",t:"Zaad kopen en bewaren",min:3,s:"Waar je op let, en hoelang zaad meegaat.",b:[
   h("Waar op letten"),ul(["Kijk naar de uiterste zaaidatum op het zakje.","Kies rassen die bij jouw klimaat passen: 'vroeg', 'buiten' of 'koude-tolerant' voor Vlaanderen.","F1 betekent hybride: sterk en gelijkmatig, maar je kan er geen zaad van bewaren.","Biologisch zaad is niet bewerkt of ontsmet."]),
   h("Hoelang kan zaad bewaard worden?"),
   tb(["Gewas","Ongeveer"],[["Ui, prei, peterselie, pastinaak","1 tot 2 jaar"],["Erwt, boon, wortel, biet, radijs, koriander","2 tot 3 jaar"],["Tomaat, sla, kool, komkommer, courgette","4 tot 5 jaar"]]),
   p("Bewaar zaad koel, droog en donker, bijvoorbeeld in een doos in de kelder. Zaad dat te lang bewaard werd kiemt slechter: zaai dan wat dichter."),
   tip("Test oud zaad met 10 zaadjes in vochtig keukenpapier. Kiemen er meer dan 7, dan kan je het nog gebruiken.")]},
- {id:"plantafstand",t:"Plantafstanden en rijen",min:3,s:"Hoeveel ruimte elk gewas nodig heeft.",b:[
-  p("Planten die te dicht staan concurreren om licht, water en voeding en zijn gevoeliger voor ziektes. Planten die te ver staan, laten ruimte voor onkruid."),
-  tb(["Gewas","Tussen planten","Tussen rijen"],[
-   ["Radijs","3 tot 5 cm","10 tot 15 cm"],["Wortel","4 tot 5 cm","20 tot 25 cm"],["Sla","20 tot 30 cm","25 tot 30 cm"],["Spinazie","10 cm","20 cm"],
-   ["Ui","10 cm","25 cm"],["Prei","15 cm","30 cm"],["Tomaat","50 tot 60 cm","80 cm"],["Courgette","80 tot 100 cm","100 cm"],
-   ["Pompoen","1 tot 1,5 m","1,5 m"],["Stokboon","10 cm (rond een stok)","60 cm"],["Aardappel","30 tot 35 cm","60 tot 75 cm"],["Spruitkool","60 cm","60 cm"],["Aardbei","30 tot 40 cm","50 cm"]]),
-  tip("Smalle rijen zijn voor snelle gewassen. Plan de ruimte voor het volwassen formaat, niet voor het plantje dat je nu in je hand hebt.")]},
+ {id:"plantafstand",t:"Plantafstanden en rijen",min:3,s:"Hoeveel ruimte elk gewas nodig heeft.",bron:"Leefmilieu Brussel, infofiche Gemakkelijke groenten (2013); Tuinadvies.be, Groenten zaaikalender",nagekeken:"2026-10",b:[
+  h("Wat doe ik"),
+  p("Geef elke plant genoeg ruimte voor haar volwassen formaat. Staan planten te dicht op elkaar, dan blijven ze nat. Dun ze dan uit."),
+  tb(["Gewas","Rijafstand x plantafstand"],[
+   ["Radijs","10 tot 15 cm x 2 tot 3 cm"],["Sla","25 x 25 cm"],["Wortel","30 x 5 cm"],["Ui","20 x 10 cm"],["Prei","40 x 15 cm"],
+   ["Courgette","100 x 100 cm (ongeveer 1 m² per plant)"],["Spruitkool","60 tot 70 x 60 cm"],["Pompoen","2 tot 3 m² per plant"]]),
+  h("Hoe doe ik dat"),
+  ol(["Zaai in rijen met de rijafstand uit de tabel.","Dun na het opkomen uit tot de plantafstand uit de tabel. De afstand tussen de planten is belangrijker dan hun grootte.","Druk met je vinger de grond aan rond de plant die blijft staan."]),
+  h("Waar let ik op"),
+  ul(["Tomaat, spinazie, erwt en andere gewassen staan niet in de tabel. Volg daarvoor het zaadzakje.","Dit zijn richtwaarden uit twee bronnen. Het Tuinadvies-overzicht is ouder en de bronnen verschillen soms een paar centimeter.","Plan de ruimte voor de volwassen plant, niet voor het plantje dat je nu in je hand hebt.","Op de gewaspagina staat de ruimte per gewas. Die kan een paar centimeter afwijken van deze tabel; volg bij twijfel het zaadzakje."])]},
  {id:"plantjes-kopen",t:"Plantjes kopen: waar je op let",min:2,s:"Een gezonde plant herken je zo.",b:[
   ul(["Stevige, kortbebladerde plant, niet lang en slap.","Groene bladeren, geen gele of bruine vlekken.","Geen insecten onder de bladeren (kijk goed).","Witte wortels die onderaan door de pot kijken, geen dichte kluwen.","Kies kleine, stevige plantjes boven grote met bloemen of vruchten: die verplanten slechter."]),
   tip("Koop plantjes pas als je ze kan planten. Wachten in een te kleine pot stresseert ze.")]}
 ]},
 {id:"verzorging",t:"Water en verzorging",d:"Gieten, wieden, steunen en snoeien",ic:"water",arts:[
- {id:"water-geven",t:"Water geven",min:4,s:"Hoe, wanneer en hoeveel.",b:[
-  p("Meer planten sterven aan fout water geven dan aan te weinig. Drie regels."),
-  ol(["Geef liever zelden en veel dan elke dag een beetje. Zo gaan de wortels dieper.","Geef water aan de voet en niet over de bladeren, vooral bij tomaat (schimmel).","Geef water in de ochtend. 's Avonds blijft het nat en trekt slakken aan."]),
-  h("Hoeveel?"),p("Als ruwe richtlijn heeft een moestuin in een droge periode ongeveer 10 tot 15 liter per m² per week nodig. Zandgrond heeft meer nodig, kleigrond minder. Potten drogen veel sneller uit: in de zomer soms dagelijks."),
-  h("De vingertest"),p("Steek je vinger 3 cm in de grond. Is hij droog? Geef water. Is hij vochtig? Wacht."),
-  tip("Een laag mulch vermindert de verdamping sterk. Een druppelslang met timer geeft water precies waar het moet zijn."),
-  warn("Onregelmatig water geeft problemen: tomaat barst en krijgt neusrot, wortel splijt, sla wordt bitter.")]},
+ {id:"water-geven",t:"Water geven",min:4,s:"Hoe, wanneer en hoeveel.",bron:"Hubo, Water geven in de tuin; Leefmilieu Brussel, infofiches Irrigatie en Teelttechnieken (2013)",nagekeken:"2026-10",b:[
+  h("Wat doe ik"),
+  p("Geef water aan de wortels, niet over de bladeren. Geef liever eens flink water dan elke dag een beetje."),
+  h("Hoe doe ik dat"),
+  ol(["Controleer eerst de grond: voel met je hand de aarde op 10 cm diepte. Voelt ze koel aan, dan hoef je niet te gieten.","Geef water in de vroege ochtend, of aan het einde van de dag. Giet aan de voet, zodat het blad droog blijft.","Giet aan de voet van de plant met een gieter met mondstuk. Vermijd een harde waterstraal.","Geef genoeg water zodat het diep in de grond trekt. Eén keer per week flink water geven werkt beter dan dagelijks een kwartiertje."]),
+  h("Waar let ik op"),
+  ul(["Geef geen water in de volle middagzon. Een groot deel verdampt voordat de wortels het kunnen opnemen.","Water over het blad geeft schimmel, vooral bij tomaat, aardappel en bonen.","Een laag mulch van minstens 5 cm (bijvoorbeeld maaisel of stro) houdt de grond vochtig. Let in vochtig weer wel op: slakken schuilen graag in mulch en de plantvoet kan gaan rotten.","Laat de grond niet uitdrogen. Zelfs een lichte droogte kan een plant blijvend schaden.","Dit geldt voor volle grond. Potten en bakken drogen sneller uit en hebben bij warm weer vaker water nodig."])]},
  {id:"regenwater",t:"Regenwater en druppelslang",min:2,s:"Slim omgaan met water.",b:[
   ul(["Regenwater is zacht en ideaal voor je planten, zeker voor blauwe bes.","Een regenton van 200 tot 500 L vult snel. Zet hem onder een afvoerpijp.","Een druppelslang geeft water traag aan de wortel af. Dit bespaart tot de helft en voorkomt natte bladeren.","Een gieter met broes is ideaal voor kiemplanten."]),
   tip("In Vlaanderen zijn droge zomers steeds gewoner. Een regenton is een goede investering.")]},
@@ -837,10 +858,13 @@ const GIDS=[
   tip("Een kleine tuin die je goed verzorgt, haalt het van een grote die je laat verkommeren.")]}
 ]},
 {id:"plagen",t:"Plagen en ziektes",d:"Herkennen en voorkomen",ic:"bug",arts:[
- {id:"slakken",t:"Slakken",min:3,s:"De grootste vijand van jonge plantjes.",b:[
-  p("Slakken eten jonge sla, courgette, bonen en spinazie. Vooral na regen zijn ze actief, 's nachts."),
-  ul(["Zoek ze 's avonds of vroeg in de ochtend met een lamp en raap ze op.","Plaats bierbakjes: de slakken verdrinken erin.","Maak barrières met koperband of zand. Het werkt beperkt.","Gebruik slakkenkorrels op basis van ijzerfosfaat (veilig voor huisdieren en egels), nooit metaldehyde.","Moedig natuurlijke vijanden aan: egels, padden, merels, loopkevers.","Kweek in hoge bakken of potten op een verhoging."]),
-  tip("Giet 's ochtends en niet 's avonds. Een droge grond 's nachts is minder aantrekkelijk voor slakken.")]},
+ {id:"slakken",t:"Slakken",min:3,s:"De grootste vijand van jonge plantjes.",bron:"Velt, Slakken ecologisch bestrijden",nagekeken:"2026-10",b:[
+  h("Wat doe ik"),
+  p("Slakken eten jonge sla, courgette, bonen en spinazie. Begin vroeg in het voorjaar, wanneer slakken hun eerste eieren leggen, en combineer meerdere maatregelen."),
+  h("Hoe doe ik dat"),
+  ol(["Controleer tuinafval en mulch regelmatig. Daar schuilen slakken.","Zoek ze 's avonds of bij vochtig weer met een zaklamp en raap ze op.","Strooi scherpe materialen zoals zand, eierschalen of houtas rond kwetsbare planten.","Graaf een bierval in: een beker tot aan de rand ingegraven, half gevuld met bier en met een afdakje.","Lukt het zo niet, gebruik dan spaarzaam slakkenkorrels met ijzerfosfaat, ongeveer 30 korrels per m²."]),
+  h("Waar let ik op"),
+  ul(["Koop geen slakkenkorrels met metaldehyde. Die zijn giftig voor onder meer vogels, egels en honden.","In een bierval kunnen ook nuttige loopkevers terechtkomen.","Lok natuurlijke vijanden aan: egels, lijsters, kikkers, padden en loopkevers.","Op droge grond bewegen slakken moeilijker. Oppervlakkig schoffelen helpt."])]},
  {id:"bladluis",t:"Bladluis en nuttige insecten",min:3,s:"Wie je vrienden zijn.",b:[
   p("Bladluizen zitten in groepjes op jonge scheuten en onder bladeren. Ze zuigen sap en scheiden honingdauw uit."),
   h("Wat doe je?"),ul(["Spuit ze weg met een krachtige waterstraal.","Wrijf kleine kolonies tussen je vingers.","Geef geen overschot aan stikstof: dat trekt bladluis aan.","Laat nuttige insecten hun werk doen."]),
@@ -854,11 +878,13 @@ const GIDS=[
   p("De wortelvlieg legt eitjes naast wortel, peterselie of pastinaak. De larven vreten gangen in de wortel. Wortelvlieg vliegt laag (tot 60 cm) en vooral in mei en augustus."),
   ul(["Dek af met fijn gaas tot minstens 60 cm hoogte of kweek wortelen in hoge bakken.","Zaai niet te vroeg: de vlieg vliegt vooral in mei en augustus. Een late zaai (juni) of een zaai onder gaas helpt.","Dun uit 's avonds of bij regenweer: de geur van beschadigde wortels trekt wortelvlieg aan.","Plant ui, prei of knoflook ernaast. Onderzoek geeft een wisselend effect."]),
   p("De uivlieg doet hetzelfde bij uien. De aanpak is gelijkaardig: gaas, en wisselteelt.")]},
- {id:"phytophthora",t:"Phytophthora bij tomaat en aardappel",min:4,s:"Dé ziekte van natte zomers.",b:[
-  p("Phytophthora infestans is een schimmelachtig organisme dat aardappel en tomaat aantast. Het vlamt op bij warm en vochtig weer en kan in enkele dagen een hele aanplant verwoesten."),
-  h("Herkennen"),ul(["Donkerbruine, vettige vlekken op bladeren, vaak met een witte rand onderaan.","Stengels worden bruin.","Vruchten krijgen harde bruine plekken."]),
-  h("Voorkomen"),ul(["Kies resistente rassen: bij tomaat bijvoorbeeld Philovita F1 of Crimson Crush F1, bij aardappel Sarpo Mira.","Houd het blad droog: giet aan de voet, zet tomaten onder een overkapping.","Plant ruim, haal onderste bladeren weg voor luchtcirculatie.","Zet tomaat en aardappel ver uit elkaar en wissel elk jaar van plek.","Verwijder aangetaste planten direct, niet op de composthoop."]),
-  warn("Een besmette plant is niet te redden. Verwijder hem om andere planten te sparen.")]},
+ {id:"phytophthora",t:"Phytophthora bij tomaat en aardappel",min:4,s:"De ziekte van natte zomers.",bron:"RHS, Tomato blight (Britse bron; de adviezen over afvoer en wisselteelt komen daaruit)",nagekeken:"2026-10",b:[
+  h("Wat doe ik"),
+  p("Phytophthora infestans is een schimmelachtig organisme dat tomaat en aardappel aantast. Voorkom het, want als gewone tuinier kun je het niet bestrijden."),
+  h("Hoe doe ik dat"),
+  ol(["Kies, waar mogelijk, resistente rassen. Ze zijn niet volledig immuun, maar doen het vaak goed als andere rassen uitvallen.","Houd het blad droog: giet aan de voet en zet buitentomaten onder een overkapping.","Wissel van plek. Zet na een besmetting tomaat minstens vier jaar niet terug op dezelfde plek (RHS), en plant daar ook geen aardappel.","Haal aangetaste planten meteen weg. Gooi ze niet op je eigen composthoop. Begraaf ze diep of gooi ze bij het restafval."]),
+  h("Waar let ik op"),
+  ul(["Herkennen: bruine, waterige vlekken op blad en stengel. Bij vochtig weer zie je onderaan het blad soms een witte schimmellaag. Op vruchten komen waterige bruine plekken.","De ziekte komt vooral bij warm en nat weer, als het blad urenlang nat blijft.","Een paar zieke bladeren wegknippen houdt de ziekte niet tegen.","Vruchten van aangetaste planten kunnen al besmet zijn. Gebruik ze snel."])]},
  {id:"meeldauw",t:"Meeldauw",min:2,s:"Het witte poeder op courgette en komkommer.",b:[
   p("Echte meeldauw verschijnt als wit poeder op het blad van courgette, pompoen, komkommer en erwt. Het komt vooral aan het einde van een droge, warme zomer."),
   ul(["Plant niet te dicht en geef regelmatig water aan de voet.","Haal aangetaste bladeren weg.","Kies rassen met resistentie.","Spuit eventueel verdunde melk (1 deel op 9 delen water), dat werkt beperkt."]),
@@ -877,20 +903,24 @@ const GIDS=[
    ["Doorschieten","Sla, spinazie, koriander","Plant bloeit voortijdig","Zaai op koelere momenten, schaduw"]])]}
 ]},
 {id:"seizoen",t:"Seizoenen en klimaat",d:"Het Vlaamse jaar",ic:"sun",arts:[
- {id:"klimaat",t:"Het klimaat in Vlaanderen",min:3,s:"Wat je mag verwachten.",b:[
-  p("Vlaanderen heeft een zeeklimaat: milde winters en gematigde zomers. Het ondervindt vaak regen, maar steeds vaker ook droge periodes. De regio maakt verschil."),
-  tb(["Streek","Eigenschap"],[["Kust","Zachter, meer wind, later in het voorjaar warm"],["Polders en laagland","Wat vochtig, vlak, soms koude lucht in lage plekken"],["Kempen","Zand, droger, vaker nachtvorst in het voorjaar"],["Hoogland (Haspengouw, Ardennen)","Kouder, later in het voorjaar"]]),
-  p("Gemiddeld valt de laatste vorst rond half april en de eerste vorst tussen half oktober en begin november. Dat laat je ongeveer 6 tot 7 maanden vorstvrij."),
-  tip("Je eigen tuin heeft een eigen microklimaat. Een zuidmuur kan 2 tot 3 weken voorsprong geven.")]},
- {id:"ijsheiligen",t:"De ijsheiligen en vorst",min:3,s:"Waarom 15 mei zo belangrijk is.",b:[
-  p("De ijsheiligen zijn Mamertus, Pancratius en Servatius, op 11, 12 en 13 mei. Volgens de volkswijsheid is de kans op nachtvorst daarna klein. De wijsheid klopt vaak, maar niet altijd."),
-  tb(["Gewas","Verdraagt vorst?"],[
-   ["Tomaat, paprika, courgette, komkommer, pompoen, basilicum, stokboon","Nee. Plant pas na half mei"],
-   ["Aardappel","Loof vriest af bij vorst, maar groeit vaak terug"],
-   ["Sla, spinazie, erwt, tuinbonen, radijs, wortel","Ja, lichte vorst is geen probleem"],
-   ["Prei, boerenkool, spruitkool, veldsla","Ja, ze overwinteren"]]),
-  tip("Heb je een vorstwaarschuwing? Dek de plantjes af met een oud laken of vliesdoek. Dat geeft enkele graden bescherming."),
-  p("Kijk voor het uitplanten van tomaat naar de weersvoorspelling en wacht liever een week te lang dan te kort.")]},
+ {id:"klimaat",t:"Vorst: wat je mag verwachten",min:3,s:"De gemiddelde eerste en laatste vorst.",bron:"KMI, klimaatstatistieken Ukkel (referentieperiode 1991 tot 2020); IVN, factsheet Zaaien (2022)",nagekeken:"2026-10",b:[
+  h("Wat doe ik"),
+  p("Gebruik de gemiddelde vorstdata als richtlijn voor je planning, niet als zekerheid."),
+  tb(["Wat","Gemiddeld in Ukkel (1991 tot 2020)"],[["Laatste vorst in het voorjaar","27 maart"],["Eerste vorst in het najaar","21 november"]]),
+  h("Hoe doe ik dat"),
+  ol(["Gebruik deze data als startpunt voor je zaai- en plantplanning.","Voor vorstgevoelige planten houd je half mei aan als grens (zie de ijsheiligen).","Controleer vlak voor het uitplanten de weersvoorspelling voor de komende nachten."]),
+  h("Waar let ik op"),
+  ul(["Dit zijn gemiddelden van het weerstation in Ukkel. Op andere plekken kunnen ze afwijken.","Een gemiddelde zegt niet wanneer de laatste vorst valt in jouw jaar. Tot half mei kan het buiten nog vriezen (IVN).","Het zijn gemiddelden over dertig jaar (1991 tot 2020), geen voorspelling voor dit jaar."])]},
+ {id:"ijsheiligen",t:"De ijsheiligen en vorst",min:3,s:"Waarom half mei zo belangrijk is.",bron:"IVN, factsheet Zaaien (2022); KNMI, Laatste nachtvorst valt steeds vroeger",nagekeken:"2026-10",b:[
+  h("Wat doe ik"),
+  p("Zet vorstgevoelige planten pas na de ijsheiligen buiten. Dat zijn Mamertus, Pancratius en Servatius, op 11, 12 en 13 mei. Sommige bronnen rekenen ook 14 mei mee."),
+  tb(["Gewas","Buiten zetten"],[
+   ["Tomaat, komkommer, paprika, courgette","Pas na de ijsheiligen (half mei)"],
+   ["Spinazie, radijs, wortel","Je kunt ze al vroeg zaaien. Jonge plantjes verdragen wat vorst."]]),
+  h("Hoe doe ik dat"),
+  ol(["Kijk rond half mei naar de weersvoorspelling voor de komende nachten.","Staat er vorst in de voorspelling? Dek de plantjes af met vliesdoek.","Zet je planten buiten als de nachten mild blijven."]),
+  h("Waar let ik op"),
+  ul(["De regel is geen garantie. In De Bilt kwam er sinds 1901 in negen jaren na 14 mei nog vorst voor. De regel klopt dus in ongeveer 92% van de jaren (KNMI).","De laatste voorjaarsvorst komt tegenwoordig eerder dan vroeger. In De Bilt eindigde de periode met vorstkans in 1981 tot 2010 gemiddeld op 8 mei, tegen 22 mei begin vorige eeuw (KNMI).","Wacht liever een week te lang dan te kort."])]},
  {id:"vier-seizoenen",t:"Seizoen per seizoen",min:4,s:"Wat je in elk seizoen doet.",b:[
   h("Lente"),p("Bereid de grond voor, zaai voor, zaai de eerste gewassen buiten en plant na half mei vorstgevoelige planten uit."),
   h("Zomer"),p("Geef water, steun, wied, oogst. Zaai bij voor het najaar: wortel, snijbiet, spinazie, sla, veldsla."),
@@ -976,6 +1006,9 @@ GIDS.push(
 ]},
 {id:"oogsten",t:"Oogsten en bewaren",d:"Rijpheid, bewaren, invriezen, drogen",ic:"basket",arts:[
  {id:"oogst-wanneer",t:"Wanneer is het rijp?",min:4,s:"De tekenen per gewas.",b:[
+  h("Wat doe ik"),
+  p("Controleer om de paar dagen of je gewas klaar is en oogst op het juiste moment."),
+  h("Hoe doe ik dat"),
   tb(["Gewas","Je oogst wanneer"],[
    ["Radijs","De knol 2 tot 3 cm dik is"],["Sla","De krop vol is, of pluk de buitenste bladeren"],["Spinazie","Bladeren 10 tot 15 cm"],
    ["Wortel","De kop 2 cm dik is. Bij twijfel een proef trekken"],["Rode biet","Golfbal tot tennisbal"],["Courgette","15 tot 20 cm, jong en glanzend"],
@@ -983,7 +1016,8 @@ GIDS.push(
    ["Erwt","Peul vol maar nog zacht, erwtjes zoet"],["Stokboon","Peul stevig, bonen nog niet bol"],["Prei","Schacht 2 tot 3 cm dik"],
    ["Ui","Loof valt om en wordt geel"],["Knoflook","Onderste bladeren geel, de rest groen"],["Aardappel","Loof sterft af (late), na bloei (jonge)"],
    ["Aardbei","Volledig rood"],["Appel","Pitjes bruin, appel komt los bij een lichte draai"]]),
-  tip("Oogst 's ochtends als het koel is. Groenten zijn dan het knapperigst.")]},
+  h("Waar let ik op"),
+  ul(["Oogst 's ochtends als het koel is. Groenten zijn dan het knapperigst.","Twijfel je? Doe een proefoogst: trek één wortel of radijs en kijk hoe ver ze zijn.","Oogst radijs en courgette vaak en jong."])]},
  {id:"bewaren",t:"Bewaren zonder invriezen",min:4,s:"Koel, droog en donker.",b:[
   tb(["Gewas","Hoe bewaren","Hoelang"],[
    ["Aardappel","Donker, koel (4 tot 8 °C), niet in de koelkast","Maanden"],
@@ -1088,7 +1122,7 @@ const SG=[
  h("Wat kan je verwachten?"),
  ul(["Je eerste jaar levert minder op dan je hoopt, maar meer dan je denkt. Eén courgetteplant geeft al wekenlang vruchten.","Je leert elke maand iets bij. Dat hoort erbij.","Mislukkingen zijn normaal. Wat je leert van een mislukte tomaat onthoud je beter dan een gelukte.","Een moestuin vraagt ongeveer 2 tot 4 uur per week in het seizoen voor 10 m². Een paar potten vragen veel minder."]),
  h("Drie regels voor beginners"),
- ol(["Begin klein. Twee bakken of een tiental potten zijn genoeg.","Kies gewassen die vergevend zijn: radijs, sla, courgette, bonen, bieslook.","Volg het seizoen. Planten doen het beste op hun eigen moment. De pagina Nu en de Kalender helpen je daarbij."]),
+ ol(["Begin klein. Twee bakken of een tiental potten zijn genoeg.","Kies gewassen die vergevend zijn: radijs, sla, courgette, bonen, bieslook.","Volg het seizoen. Planten doen het beste op hun eigen moment. De Kalender helpt je daarbij."]),
  tip("Je hoeft niet alles te weten. Dit boekje is gemaakt om stap voor stap te lezen. Wat niet nodig is, staat onder 'Meer weten'."),
  more([["art","beginnen/waar-begin-ik","Waar begin ik?"],["art","verzorging/weinig-tijd","Weinig tijd of op vakantie"],["art","kennis/faq","Veelgestelde vragen"]])]},
 {id:"s2",t:"Kies je plek",s:"Zon, wind, water en afstand.",b:[
@@ -1133,7 +1167,7 @@ const SG=[
   ["Aardbei","Vaste plant, leuke oogst","Plant in augustus of maart"],
   ["Tomaat (struik of cherry)","Je favoriet, iets meer aandacht","Zaai in maart, plant half mei"]]),
  h("Hoe gebruik je de kalender?"),
- ol(["Open Nu. Je ziet wat deze maand kan.","Kies een gewas met niveau Makkelijk.","Tik op het gewas en daarna op Hoe teel ik dit? voor het volledige verhaal.","Open Kalender om te zien wanneer je wat doet."]),
+ ol(["Open de Kalender. Je ziet wat deze maand kan.","Kies een gewas met niveau Makkelijk.","Tik op het gewas en daarna op Hoe teel ik dit? voor het volledige verhaal.","Kijk in het Jaaroverzicht om te zien wanneer je wat doet."]),
  tip("Begin met drie gewassen als vijf te veel lijkt. Je kan altijd bijzaaien."),
  more([["crop","radijs","Radijs"],["crop","sla","Sla"],["crop","courgette","Courgette"],["crop","stokboon","Stokboon"],["crop","bieslook","Bieslook"],["crop","aardbei","Aardbei"],["crop","tomaat","Tomaat"]])]},
 {id:"s6",t:"Zaaien of plantjes kopen",s:"Twee manieren om te beginnen.",b:[
@@ -1217,7 +1251,7 @@ const SG=[
  more([["art","oogsten/bewaren","Bewaren"],["art","grond/groenbemesters","Groenbemesters"],["art","seizoen/winter-groenten","Wintergroenten"],["art","seizoen/vier-seizoenen","Seizoen per seizoen"]])]},
 {id:"s13",t:"Jouw eerste jaar: maandplan",s:"Een eenvoudig schema om te volgen.",b:[
  ill("jaar"),
- p("Dit is een rustig jaarplan. Op de pagina Nu staat altijd de lijst voor de huidige maand."),
+ p("Dit is een rustig jaarplan. In de Kalender staat altijd de lijst voor de huidige maand."),
  tb(["Maand","Wat je doet"],[
   ["Januari-februari","Plannen, zaad bestellen, aardappelen voorkiemen, grond voorbereiden."],
   ["Maart","Zaai tomaat binnen. Zaai radijs, erwten en tuinbonen buiten. Plant ui en aardappel."],
@@ -1229,7 +1263,7 @@ const SG=[
   ["December","Rust uit en plan."]]),
  h("Je checklist voor de start"),
  ul(["Plek gekozen met minstens 5 uur zon.","Opstelling gekozen: pot, bak of grond.","Grond of potgrond met compost klaar.","Drie tot zeven gewassen gekozen.","Zaad of plantjes besteld.","Gieter, schep en labels klaar."]),
- tip("Begin deze maand. Open Nu en kies iets dat nu kan. Een moestuin leer je door te doen."),
+ tip("Begin deze maand. Open de Kalender en kies iets dat nu kan. Een moestuin leer je door te doen."),
  more([["art","beginnen/eerste-jaar","Je eerste jaar maand per maand"]])]}
 ];
 
@@ -1280,7 +1314,7 @@ zaaidiepte:sv(190,`
 plantafstand:sv(200,`
  ${(()=>{const sq=(x,n,r,l,s)=>{let o=`<rect x="${x}" y="30" width="96" height="96" class="o fll"/>`;const st=96/n;for(let i=0;i<n;i++)for(let j=0;j<n;j++)o+=`<circle cx="${x+st/2+i*st}" cy="${30+st/2+j*st}" r="${r}" class="fl"/>`;return o+`<text x="${x+48}" y="148" text-anchor="middle">${l}</text><text x="${x+48}" y="165" text-anchor="middle" class="sm">${s}</text>`;};
   return sq(10,10,1.8,"Radijs","bijna 100 per m²")+sq(130,4,4.5,"Sla","16 per m²")+sq(250,2,12,"Tomaat","2 à 3 per m²");})()}
- <text x="180" y="20" text-anchor="middle" class="sm">Elk vierkant is 1 m²</text><text x="180" y="190" text-anchor="middle" class="sm">Courgette en pompoen: 1 plant per m²</text>`,"Hoeveel planten per vierkante meter"),
+ <text x="180" y="20" text-anchor="middle" class="sm">Elk vierkant is 1 m²</text><text x="180" y="190" text-anchor="middle" class="sm">Courgette: 1 plant per m²</text>`,"Hoeveel planten per vierkante meter"),
 afharden:sv(190,`
  ${[["Dag 1-2","2 uur","schaduw"],["Dag 3-5","4 uur","halfschaduw"],["Dag 6-8","6 uur","zon"],["Dag 9-10","hele dag","en nacht"]].map((a,i)=>`<g transform="translate(${10+i*88} 30)"><rect class="o fll" width="78" height="110" rx="10"/><text x="39" y="26" text-anchor="middle">${a[0]}</text>${sunI(39,62)}<text x="39" y="96" text-anchor="middle" class="sm">${a[1]}</text><text x="39" y="108" text-anchor="middle" class="sm" style="opacity:.0">${a[2]}</text></g>`).join("")}
  <text x="180" y="172" text-anchor="middle" class="sm">Elke dag wat langer buiten, steeds meer zon</text>`,"Afharden in 10 dagen"),
@@ -1752,9 +1786,12 @@ PAIRS.forEach(([a,b,t,ev,why,how])=>{
 const PIC={};
 for(const id in PHOTOS)PIC[id]=PHOTOS[id].src;
 
-const KIND={zb:["Binnen voorzaaien","k-zb-t"],zd:["Buiten zaaien","k-zd-t"],pt:["Planten","k-pt-t"]};
+const FASEN=[["zb","Zaai in huis"],["zd","Zaai buiten"],["pt","Plant uit"],["oo","Oogst"]];
+const faseLabel=k=>(FASEN.find(f=>f[0]===k)||[])[1]||"";
+const KIND={zb:[faseLabel("zb")],zd:[faseLabel("zd")],pt:[faseLabel("pt")]};
+function legendHtml(){const x={zb:" (open)",zd:" (gevuld)"};return `<div class="legend">${FASEN.map(([k,l])=>`<span><i class="k-${k}"></i>${l}${x[k]||""}</span>`).join("")}</div>`;}
 const NOW=new Date().getMonth()+1;const cr=s=>String(s).split(" I\u0027d")[0].replace(/\s*\(.*?$/,"");
-const S={tab:"nu",m:NOW,type:"alle",diep:"alle",plek:"alle",q:"",cmp:new Set(),more:new Set(),grp:new Set(),hulp:null,hg:"",gc:null,ch:0};
+const S={tab:"kal",kv:"maand",m:NOW,type:"alle",diep:"alle",plek:"alle",q:"",cmp:new Set(),more:new Set(),grp:new Set(),jgrp:new Set(),hulp:null,hg:"",gc:null,ch:0};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function ranges(arr){if(!arr||!arr.length)return "-";const s=new Set(arr);if(s.size===12)return "heel jaar";let st=1;while(s.has(st))st++;const out=[];let run=null;for(let k=1;k<=12;k++){const m=((st+k-1)%12)+1;if(s.has(m)){if(!run){run=[m,m];out.push(run);}else run[1]=m;}else run=null;}return out.map(x=>x[0]===x[1]?MN[x[0]-1]:MN[x[0]-1]+"-"+MN[x[1]-1]).join(", ");}
 const nm=id=>BY[id].n;
@@ -1765,15 +1802,16 @@ const activeF=()=>(S.type!=="alle")+(S.diep!=="alle")+(S.plek!=="alle");
 const byEase=(a,b)=>a.d-b.d||a.n.localeCompare(b.n);
 const fold=t=>t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
 const SYN={courgette:"zucchini courgettes",tomaat:"tomaten trostomaat cherrytomaat tomate",aardappel:"aardappelen patat krieltjes",biet:"rode bieten bietjes rooie biet",wortel:"wortelen wortels peen",spruitkool:"spruiten spruitjes",boerenkool:"kale groenkool",prei:"porei",ui:"uien",sjalot:"sjalotten",bloemkool:"bloemkolen",witloof:"witlof chicoree",wittekool:"witte kool",rodekool:"rode kool blauwe kool",savooikool:"savooi savooiekool",kolrabi:"koolrabi",snijbiet:"bladbiet mangold",rucola:"raketsla rauke arugula",veldsla:"rapunzel lamsoor feldsalat",pompoen:"pompoenen butternut kalebas",komkommer:"komkommers slangenkomkommer",erwt:"erwten doperwt doperwten kapucijner tuinerwt",tuinboon:"tuinbonen dikke boon paardenboon",stokboon:"stokbonen snijboon snijbonen pronkboon",struikboon:"struikbonen sperzieboon sperziebonen princessenboon boontjes",suikermais:"mais maiskolf maiskolven",peterselie:"pieterselie",koriander:"cilantro",basilicum:"basil",bieslook:"ciboulette",dille:"dil",munt:"mint pepermunt",tijm:"thijm",rozemarijn:"rosmarijn",aardbei:"aardbeien",framboos:"frambozen",rodebes:"aalbes rode aalbes trosbes rode bessen",zwartebes:"zwarte aalbes cassis zwarte bessen",blauwebes:"bosbes bosbessen blueberry blauwe bessen",kruisbes:"stekelbes kruisbessen",braam:"bramen",rabarber:"rhubarb",knolselder:"selder knolselderij",pastinaak:"pastinaken witte wortel",appel:"appels appelboom",peer:"peren perenboom",pruim:"pruimen pruimenboom",aubergine:"eierplant aubergines",knoflook:"look",broccoli:"brocoli",sla:"salade kropsla ijsbergsla eikenbladsla",radijs:"radijsjes radijzen",spinazie:"spinach",salie:"salvia",oregano:"marjolein wilde marjolein"};
-function filtered(){return C.filter(c=>(S.type==="alle"||c.t===S.type)&&(S.diep==="alle"||c.d<=+S.diep)&&(S.plek==="alle"||c.pl.includes(S.plek))&&(!S.q||fold(c.n+" "+c.l+" "+c.c+" "+(SYN[c.id]||"")).includes(fold(S.q.trim()))));}
+const zoekQ=()=>S.tab==="alle"||(S.tab==="kal"&&S.kv==="jaar")?S.q:"";
+function filtered(){return C.filter(c=>(S.type==="alle"||c.t===S.type)&&(S.diep==="alle"||c.d<=+S.diep)&&(S.plek==="alle"||c.pl.includes(S.plek))&&(!zoekQ()||fold(c.n+" "+c.l+" "+c.c+" "+(SYN[c.id]||"")).includes(fold(zoekQ().trim()))));}
 function rel(a,b){const x=BY[a].buren.find(y=>y.id===b);return x?(x.t==="g"?"good":"bad"):"neutral";}
 
 /* ---------- Kaartjes ---------- */
 function names(ids,max){const l=ids.slice(0,max).map(nm).join(", ");return l+(ids.length>max?" +"+(ids.length-max):"");}
 function tile(c,tag){
   const t=tag||[];
-  const act=t.map(k=>`<span class="${KIND[k][1]}">${KIND[k][0]}</span>`).join(", ");
-  const what=t.map(k=>KIND[k][0]).join(", ");
+  const act=t.map(k=>`<span class="pl"><i class="k-${k}" aria-hidden="true"></i>${faseLabel(k)}</span>`).join("");
+  const what=t.map(faseLabel).join(", ");
   return `<article class="tile"><button data-open="${c.id}" aria-label="${esc(c.n)}${what?", "+esc(what):""}, ${DIFF[c.d]}">
    <span class="phw"><img class="ph" src="${PIC[c.id]||""}" alt="" loading="lazy">${act?`<span class="act">${act}</span>`:""}</span>
    <h3>${esc(c.n)}</h3>
@@ -1782,37 +1820,43 @@ function tile(c,tag){
 }
 
 /* ---------- Chrome: header, maanden, nav ---------- */
-const ICONS={tuin:'<path d="M12 21v-8"/><path d="M12 13c0-4 3-6 7-6 0 4-3 6-7 6z"/><path d="M12 15c0-3-2-5-6-5 0 3 2 5 6 5z"/>',hulp:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7"/><path d="M12 17h.01"/>',nu:'<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>',alle:'<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',kal:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>',gids:'<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/><path d="M9 8h6"/>'};
+const ICONS={tuin:'<path d="M12 21v-8"/><path d="M12 13c0-4 3-6 7-6 0 4-3 6-7 6z"/><path d="M12 15c0-3-2-5-6-5 0 3 2 5 6 5z"/>',hulp:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7"/><path d="M12 17h.01"/>',alle:'<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',kal:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>',gids:'<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/><path d="M9 8h6"/>'};
 const GIC={sprout:'<path d="M12 21v-8"/><path d="M12 13c0-4 3-6 7-6 0 4-3 6-7 6z"/><path d="M12 15c0-3-2-5-6-5 0 3 2 5 6 5z"/>',soil:'<path d="M3 17h18M5 21h14M7 13c1-3 3-5 5-5s4 2 5 5"/>',seed:'<path d="M12 3c4 3 6 6 6 9a6 6 0 0 1-12 0c0-3 2-6 6-9z"/><path d="M12 9v8"/>',water:'<path d="M12 3s6 6 6 11a6 6 0 0 1-12 0c0-5 6-11 6-11z"/>',bug:'<ellipse cx="12" cy="14" rx="5" ry="6"/><path d="M12 8V5M8 4l2 3M16 4l-2 3M7 12H3M17 12h4M8 18l-3 3M16 18l3 3"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>',pair:'<circle cx="8" cy="12" r="5"/><circle cx="16" cy="12" r="5"/>',basket:'<path d="M4 10h16l-2 10H6z"/><path d="M8 10l4-6 4 6"/>',book:'<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M9 8h6M9 12h6"/>',pot:'<path d="M6 10h12l-1.5 10h-9z"/><path d="M12 10V4M12 6c0-2 2-3 4-3M12 7c0-2-2-3-4-3"/>'};
 function renderChrome(){
-  const T=[["nu","Nu"],["alle","Gewassen"],["kal","Kalender"],["tuin","Tuin"],["hulp","Hulp"],["gids","Gids"]];
+  const T=[["kal","Kalender"],["alle","Gewassen"],["tuin","Tuin"],["hulp","Hulp"],["gids","Gids"]];
   document.getElementById("nav").innerHTML=T.map(([k,v])=>`<button data-tab="${k}" ${S.tab===k?'aria-current="page"':""}><svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[k]}</svg>${v}</button>`).join("");
-  const nu=S.tab==="nu";
-  const gcat=S.tab==="gids"&&S.gc&&S.gc!=="start"?GIDS.find(g=>g.id===S.gc):null;const gstart=S.tab==="gids"&&S.gc==="start";
-  document.getElementById("h1").textContent=nu?MF[S.m-1].charAt(0).toUpperCase()+MF[S.m-1].slice(1):{alle:"Alle gewassen",kal:"Kalender",tuin:"Mijn tuin",hulp:(HELP.find(x=>x.id===S.hulp)||{t:"Hulp"}).t,gids:gstart?"Startersgids":gcat?gcat.t:"Gids"}[S.tab];
-  const subs={nu:S.m===NOW?"Dit kan je nu doen in je moestuin.":"Dit kan je doen in "+MF[S.m-1]+".",alle:C.length+" groenten, fruit en kruiden voor België.",kal:"Wanneer je wat zaait, plant en oogst. De gele band is deze maand.",tuin:TUIN.crops.length?TUIN.crops.length+" "+(TUIN.crops.length===1?"gewas":"gewassen")+" in je tuin.":"Je tuin is nog leeg.",hulp:(HELP.find(x=>x.id===S.hulp)||{s:"Wat gaat er mis met je plant?"}).s,gids:gstart?SG[S.ch].t:gcat?gcat.d:"Begin hier en leer stap voor stap."};
+  const maand=S.tab==="kal"&&S.kv==="maand";
+  const gcat=S.tab==="gids"&&S.gc&&S.gc!=="start"?GROEPEN.find(g=>g.id===S.gc):null;const gstart=S.tab==="gids"&&S.gc==="start";
+  document.getElementById("h1").textContent=maand?MF[S.m-1].charAt(0).toUpperCase()+MF[S.m-1].slice(1):{alle:"Alle gewassen",kal:"Jaaroverzicht",tuin:"Mijn tuin",hulp:(HELP.find(x=>x.id===S.hulp)||{t:"Hulp"}).t,gids:gstart?"Startersgids":gcat?gcat.t:"Gids"}[S.tab];
+  const subs={alle:C.length+" groenten, fruit en kruiden voor België.",kal:S.kv==="maand"?(S.m===NOW?"Dit kan je nu doen in je moestuin.":"Dit kan je doen in "+MF[S.m-1]+"."):"Wanneer je wat zaait, plant en oogst. De gele band is deze maand.",tuin:TUIN.crops.length?TUIN.crops.length+" "+(TUIN.crops.length===1?"gewas":"gewassen")+" in je tuin.":"Je tuin is nog leeg.",hulp:(HELP.find(x=>x.id===S.hulp)||{s:"Wat gaat er mis met je plant?"}).s,gids:gstart?SG[S.ch].t:gcat?gcat.d:"Begin hier en leer stap voor stap."};
   document.getElementById("sub").textContent=subs[S.tab];
-  const mo=document.getElementById("months");mo.hidden=!nu;
+  const kv=document.getElementById("kv");kv.hidden=S.tab!=="kal";
+  kv.innerHTML=[["maand","Deze maand"],["jaar","Jaaroverzicht"]].map(([v,t])=>`<button class="chip" data-kv="${v}" aria-pressed="${S.kv===v}">${t}</button>`).join("");
+  const mo=document.getElementById("months");mo.hidden=!maand;
   mo.innerHTML=MN.map((n,i)=>`<button class="mo${i+1===NOW?" now":""}" data-mo="${i+1}" aria-pressed="${S.m===i+1}" aria-label="${MF[i]}">${n}</button>`).join("");
+  {const a=mo.querySelector('[aria-pressed="true"]');if(a&&!mo.hidden)mo.scrollLeft=a.getBoundingClientRect().left-mo.getBoundingClientRect().left+mo.scrollLeft-(mo.clientWidth-a.offsetWidth)/2;}
   const sr=document.querySelector&&document.querySelector(".src");if(sr)sr.hidden=["gids","hulp","tuin"].includes(S.tab);
   const bar=document.getElementById("bar");bar.hidden=["gids","hulp","tuin"].includes(S.tab);
   const n=activeF();
-  bar.innerHTML=(S.tab==="alle"?`<input type="search" id="q" placeholder="Zoek een gewas" value="${esc(S.q)}" aria-label="Zoek een gewas">`:"<span style='flex:1'></span>")+`<button class="chip" data-f="diep" data-v="${S.diep==="1"?"alle":"1"}" aria-pressed="${S.diep==="1"}">Alleen makkelijk</button><button class="btn" data-act="filter">Filter${n?` <b>${n}</b>`:""}</button>`;
+  bar.innerHTML=(S.tab==="alle"||(S.tab==="kal"&&S.kv==="jaar")?`<input type="search" id="q" placeholder="Zoek een gewas" value="${esc(S.q)}" aria-label="Zoek een gewas">`:"<span style='flex:1'></span>")+`<button class="chip" data-f="diep" data-v="${S.diep==="1"?"alle":"1"}" aria-pressed="${S.diep==="1"}">Alleen makkelijk</button><button class="btn" data-act="filter">Filter${n?` <b>${n}</b>`:""}</button>`;
 }
 
-/* ---------- Nu / Alle ---------- */
-function viewNu(){
-  const list=filtered(),m=S.m,nx=m%12+1;
-  const st=list.filter(c=>starts(c,m).length).sort(byEase);
-  const oo=list.filter(c=>c.oo.includes(m)).sort(byEase);
-  const kom=list.filter(c=>starts(c,nx).length&&!starts(c,m).length).sort(byEase);
-  const LIM=6;
-  const sec=(key,t,sub,arr,tagFn,msg)=>{const all=S.more.has(key)||arr.length<=LIM+1,shown=all?arr:arr.slice(0,LIM);
-    return `<section class="sec" data-sec="${key}"><h2>${t}<small>${sub}</small></h2>${arr.length?`<div class="grid">${shown.map(c=>tile(c,tagFn?tagFn(c):null)).join("")}</div>${all?"":`<div class="morewrap"><button class="btn" data-more="${key}">Toon alle ${arr.length}</button></div>`}`:`<div class="empty">${msg}</div>`}</section>`;};
-  return sec("st","Starten",`${st.length} gewassen om te zaaien of te planten`,st,c=>starts(c,m),"Er valt in "+MF[m-1]+" niets te starten. Kijk bij Volgende maand.")+
-   sec("oo","Oogsten",`${oo.length} gewassen klaar in ${MF[m-1]}`,oo,null,"Er is in "+MF[m-1]+" niets te oogsten met deze filters.")+
-   sec("kom","Volgende maand",`Wat start in ${MF[nx-1]}`,kom,c=>starts(c,nx),"In "+MF[nx-1]+" komt er niets nieuws bij.");
+/* ---------- Kalender: Deze maand ---------- */
+const HINT={2:"Warmteminnende gewassen zoals paprika zaai je nu alleen binnen.",3:"Warmteminnende gewassen zoals tomaat en paprika zaai je nu alleen binnen.",4:"In Ukkel viel de laatste vorst gemiddeld op 27 maart. Tot half mei kan het buiten nog vriezen.",5:"Plant vorstgevoelige gewassen pas na de ijsheiligen (11 tot 13 mei).",10:"In Ukkel viel de eerste vorst gemiddeld op 21 november (KMI, 1991 tot 2020).",11:"In Ukkel viel de eerste vorst gemiddeld op 21 november (KMI, 1991 tot 2020)."};
+const hintVoor=m=>HINT[m]||"";
+const faseLijst=(k,m)=>filtered().filter(c=>c[k].includes(m)).sort(byEase);
+const LIM=6;
+function fSec(key,t,arr){const all=S.more.has(key)||arr.length<=LIM+1,shown=all?arr:arr.slice(0,LIM);
+  return `<section class="sec" data-sec="${key}"><h2>${esc(t)}<small>${arr.length} gewassen</small></h2><div class="grid">${shown.map(c=>tile(c,null)).join("")}</div>${all?"":`<div class="morewrap"><button class="btn" data-more="${key}">Toon alle ${arr.length}</button></div>`}</section>`;}
+function viewMaand(){
+  const m=S.m,mn=MF[m-1];
+  const fase=FASEN.map(([k,l])=>({k,l,arr:faseLijst(k,m)})).filter(f=>f.arr.length);
+  const h=hintVoor(m),hint=h?`<p class="hint" role="note">Let op: ${esc(h)}</p>`:"";
+  if(!fase.length)return hint+`<div class="empty">In ${mn} is er niets te doen met deze filters. Kies een andere maand.</div>`;
+  const geenZaai=!fase.some(f=>f.k!=="oo");
+  return hint+(geenZaai?`<div class="empty">In ${mn} valt er niets te zaaien of planten. Kijk bij oogst, of kies een andere maand.</div>`:"")+fase.map(f=>fSec(f.k,f.l,f.arr)).join("");
 }
+function viewKal(){return S.kv==="jaar"?viewJaar():viewMaand();}
 const GROUPS=["Vruchtgroente","Bladgroente","Wortelgroente","Koolgroente","Uigewas","Knolgewas","Peulvrucht","Vaste groente","Kruid","Klein fruit","Boomfruit"];
 function viewAlle(){
   const l=filtered().sort((a,b)=>a.n.localeCompare(b.n));
@@ -1830,13 +1874,13 @@ function viewAlle(){
 const KOOL=["boerenkool","spruitkool","broccoli","bloemkool","wittekool","rodekool","savooikool","kolrabi"];
 const HELP=[
 {id:"geel",t:"Gele bladeren",s:"Het blad wordt bleek of geel.",w:[
- {t:"Te nat",h:"De grond blijft drassig of de pot staat in water. De plant is vaak slap en geel tegelijk.",c:"Steek je vinger 3 cm in de grond. Voelt die nat en plakkerig aan?",d:"Geef een paar dagen geen water. Zorg dat potten gaten onderaan hebben en niet in een bakje water staan.",l:["verzorging/water-geven"]},
- {t:"Te droog",h:"Het blad hangt, wordt geel en droog aan de randen. De grond is hard.",c:"Is de grond 3 cm diep droog?",d:"Geef minder vaak, maar flink water, aan de voet en liefst 's ochtends. Een laagje mulch (stro of gras rond de plant) houdt vocht vast.",l:["verzorging/water-geven","grond/mulchen"]},
+ {t:"Te nat",h:"De grond blijft drassig of de pot staat in water. De plant is vaak slap en geel tegelijk.",c:"Voel met je hand de aarde op 10 cm diepte. Voelt ze nat en plakkerig aan?",d:"Geef een paar dagen geen water. Zorg dat potten gaten onderaan hebben en niet in een bakje water staan.",l:["verzorging/water-geven"]},
+ {t:"Te droog",h:"Het blad hangt, wordt geel en droog aan de randen. De grond is hard.",c:"Voel met je hand de aarde op 10 cm diepte. Voelt ze niet koel meer aan?",d:"Geef minder vaak, maar flink water, aan de voet en liefst 's ochtends. Een laagje mulch (stro of gras rond de plant) houdt vocht vast.",l:["verzorging/water-geven","grond/mulchen"]},
  {t:"Tekort aan voeding",h:"De oudste, onderste bladeren worden gelijkmatig lichtgeel en de groei is traag. Vaak bij vraatzuchtige gewassen en in potten.",c:"Wanneer gaf je voor het laatst compost of mest?",d:"Werk compost in de grond of geef een organische meststof. In potten is de voorraad sneller op.",l:["grond/voeding","grond/compost"],g:["tomaat","courgette","pompoen","komkommer","prei"]},
  {t:"Gewoon ouder blad",h:"Alleen de onderste, oudste bladeren verkleuren. De rest van de plant groeit gezond.",d:"Je hoeft niets te doen. Je mag die bladeren afknippen. Dit is normaal, zeker tegen het einde van het seizoen.",g:["tomaat"]},
  {t:"Een plantenziekte",h:"Het geel gaat samen met bruine vlekken of wit poeder.",d:"Kijk bij 'Bruine of zwarte vlekken' of 'Witte aanslag'.",l:["plagen/plagen-overzicht"]}]},
 {id:"vlekken",t:"Bruine of zwarte vlekken",s:"Op bladeren, stengels of vruchten.",w:[
- {t:"Phytophthora",h:"Bruine vlekken op blad en stengel, later harde bruine plekken op de vruchten. Vooral bij vochtig, warm weer.",c:"Zie je onderaan het blad ook een witte waas?",d:"Verwijder aangetaste delen en gooi ze bij het restafval, niet op de compost. Geef water aan de voet, plant ruimer en kies resistente rassen.",l:["plagen/phytophthora"],g:["tomaat","aardappel"]},
+ {t:"Phytophthora",h:"Bruine vlekken op blad en stengel, later harde bruine plekken op de vruchten. Vooral bij vochtig, warm weer.",c:"Zie je onderaan het blad ook een witte waas?",d:"Haal aangetaste planten weg en gooi ze niet op de composthoop. Geef water aan de voet en kies resistente rassen.",l:["plagen/phytophthora"],g:["tomaat","aardappel"]},
  {t:"Neusrot",h:"Een zwarte, ingezakte plek onderaan de vrucht, soms al aan groene vruchten. Het is geen ziekte, maar komt door onregelmatig water.",d:"Geef regelmatig water en leg een laagje mulch (stro of gras) rond de plant. Verwijder aangetaste vruchten. De volgende zijn vaak weer goed.",l:["verzorging/tomaat-verzorgen","plagen/plagen-overzicht"],g:["tomaat","paprika"]},
  {t:"Schade door zon, wind of vorst",h:"Droge, papierachtige plekken die plots verschijnen, na een zonnige dag, hitte of koude nacht. Ze worden niet groter.",d:"Wacht af: nieuw blad groeit gezond. Bescherm tegen vorst met doek of gaas en geef schaduw bij hitte.",l:["seizoen/ijsheiligen","seizoen/droogte-hitte"]},
  {t:"Een andere schimmelziekte",h:"Vlekken met ringetjes of een gele rand, vooral in een natte zomer.",d:"Verwijder het zieke blad, geef water aan de voet en plant ruimer. Twijfel je? Kijk dan in het overzicht.",l:["plagen/plagen-overzicht"]}]},
@@ -1864,7 +1908,7 @@ const HELP=[
  {t:"Te veel stikstof",h:"Groot, donkergroen blad, maar weinig bloemen of vruchten.",d:"Bemest minder met stikstof.",l:["grond/voeding"]}]},
 {id:"rotten",t:"Vruchten die rotten",s:"Zachte, bruine of beschimmelde vruchten.",w:[
  {t:"Neusrot",h:"Een zwarte, ingezakte plek onderaan de vrucht.",d:"Geef regelmatig water en leg een laagje mulch (stro of gras) rond de plant.",l:["verzorging/tomaat-verzorgen"],g:["tomaat","paprika"]},
- {t:"Phytophthora",h:"Harde bruine plekken op vruchten, vaak met bruine vlekken op het blad.",d:"Verwijder aangetaste delen, geef water aan de voet en kies resistente rassen.",l:["plagen/phytophthora"],g:["tomaat","aardappel"]},
+ {t:"Phytophthora",h:"Harde bruine plekken op vruchten, vaak met bruine vlekken op het blad.",d:"Haal aangetaste planten weg, geef water aan de voet en kies resistente rassen.",l:["plagen/phytophthora"],g:["tomaat","aardappel"]},
  {t:"Grijsschimmel op aardbeien",h:"Een grijs pluizig laagje op rijpe vruchten, vooral bij vochtig weer en vruchten op natte grond.",d:"Leg stro onder de planten, oogst vaak en haal aangetaste vruchten weg.",l:["plagen/plagen-overzicht"],g:["aardbei"]},
  {t:"Contact met natte grond",h:"Vruchten die op de grond liggen rotten onderaan.",d:"Leg een plank of stro onder de vruchten.",l:["verzorging/water-geven"],g:["courgette","pompoen"]}]},
 {id:"kiemen-niet",t:"Zaadjes die niet kiemen",s:"Er komt niets op.",w:[
@@ -1881,7 +1925,7 @@ function viewHulp(){
   const h=HELP.find(x=>x.id===S.hulp);
   if(!h)return `<section class="sec" style="margin-top:14px"><p class="art-p">Kies wat je ziet. Je krijgt de mogelijke oorzaken en wat je eraan kunt doen. Eén probleem kan meerdere oorzaken hebben, lees ze dus allemaal.</p>
    <div class="hgrid">${HELP.map(x=>`<button class="hbtn" data-hulp="${x.id}"><b>${esc(x.t)}</b><span>${esc(x.s)}</span></button>`).join("")}</div>
-   <div class="more"><b>Liever zelf zoeken?</b><div class="links"><button data-art="plagen/plagen-overzicht">Overzicht: plaag en aanpak</button><button data-art="kennis/faq">Veelgestelde vragen</button></div></div></section>`;
+   <h2 class="hsub">Plagen en ziektes opzoeken</h2><div class="acards">${PLAGEN.map(artCard).join("")}</div></section>`;
   const gv=S.hg&&BY[S.hg]?S.hg:"";
   const w=h.w.map((x,i)=>({x,i,fit:gv&&(x.g||[]).includes(gv)?0:1})).sort((a,b)=>a.fit-b.fit||a.i-b.i);
   const opts=C.slice().sort((a,b)=>a.n.localeCompare(b.n)).map(c=>`<option value="${c.id}"${c.id===gv?" selected":""}>${esc(c.n)}</option>`).join("");
@@ -1905,13 +1949,13 @@ const tuinSave=()=>lsSet(TK,JSON.stringify(TUIN));
 const MKEY=new Date().getFullYear()+"-"+NOW;
 const doneSet=()=>new Set(Array.isArray(TUIN.done[MKEY])?TUIN.done[MKEY]:[]);
 const say=t=>setTimeout(()=>{const l=document.getElementById("live");if(l)l.textContent=t;},60);
-const TKIND={zb:"binnen voorzaaien",zd:"buiten zaaien",pt:"planten",oo:"oogsten"};
+const TKIND=Object.fromEntries(FASEN.map(([k,l])=>[k,l.toLowerCase()]));
 const inTuin=id=>TUIN.crops.includes(id);
 function tuinTasks(){const out=[];TUIN.crops.forEach(id=>{const c=BY[id];["zb","zd","pt","oo"].forEach(k=>{if(c[k].includes(NOW))out.push({id,k,key:k+":"+id,c});});});return out;}
 function tuinProg(){const ds=doneSet(),t=tuinTasks();return t.filter(x=>ds.has(x.key)).length+" van "+t.length+" gedaan";}
 function viewTuin(){
   const n=TUIN.crops.length,tasks=tuinTasks(),ds=doneSet();
-  const grpDef=[["Zaaien",["zb","zd"]],["Planten",["pt"]],["Oogsten",["oo"]]];
+  const grpDef=[["Zaaien",["zb","zd"]],["Plant uit",["pt"]],["Oogst",["oo"]]];
   const taskHtml=grpDef.map(([t,ks])=>{const l=tasks.filter(x=>ks.includes(x.k));
     return l.length?`<h3 class="sub-h">${t}</h3><ul class="tasks">${l.map(x=>`<li><label class="task"><input type="checkbox" data-task="${x.key}"${ds.has(x.key)?" checked":""}><span>${esc(x.c.n)}: ${TKIND[x.k]}</span></label><button class="lnk" data-open="${x.id}" aria-label="Uitleg over ${esc(x.c.n)}">Uitleg</button></li>`).join("")}</ul>`:"";}).join("");
   const fits=c=>TUIN.plek==="alle"||c.pl.includes(TUIN.plek);
@@ -1942,15 +1986,17 @@ function track(c){
   const bar=(arr,k,row)=>runs(arr).map(([a,b])=>`<i class="${k}" style="grid-column:${a}/${b+1};grid-row:${row}"></i>`).join("");
   return `<span class="trk" aria-hidden="true"><span class="nowline" style="left:${(NOW-1)/12*100}%"></span>${bar(c.zb.filter(m=>!c.zd.includes(m)),"k-zb",1)}${bar(c.zd,"k-zd",1)}${bar(c.pt,"k-pt",2)}${bar(c.oo,"k-oo",3)}</span>`;
 }
-function textCal(c){return `Binnen voorzaaien ${ranges(c.zb)}. Buiten zaaien ${ranges(c.zd)}. Planten ${ranges(c.pt)}. Oogst ${ranges(c.oo)}.`;}
-function viewKal(){
+function textCal(c){return FASEN.map(([k,l])=>`${l} ${ranges(c[k])}.`).join(" ");}
+function viewJaar(){
   const l=filtered();
   const head=`<div class="mhead" aria-hidden="true">${MN.map((n,i)=>`<span class="${i+1===NOW?"now":""}">${n.slice(0,1).toUpperCase()}</span>`).join("")}</div>`;
   const qc=`<div class="qchips">${[["alle","Alles"],["groente","Groente"],["fruit","Fruit"],["kruid","Kruid"]].map(([v,t])=>`<button class="chip" data-f="type" data-v="${v}" data-stay="1" aria-pressed="${S.type===v}">${t}</button>`).join("")}</div>`;
+  const act=!!S.q||S.type!=="alle"||S.diep!=="alle"||S.plek!=="alle";
   const groups=GROUPS.map(g=>({g,l:l.filter(c=>c.c===g).sort((a,b)=>a.n.localeCompare(b.n))})).filter(x=>x.l.length);
-  return `<div class="legend"><span><i class="k-zb"></i>Binnen voorzaaien</span><span><i class="k-zd"></i>Buiten zaaien</span><span><i class="k-pt"></i>Planten</span><span><i class="k-oo"></i>Oogst</span></div>${qc}
-  ${groups.map(x=>`<section class="cgrp"><h2>${x.g}<small>${x.l.length} gewassen</small></h2>${head}${x.l.map(c=>`<button class="crow" data-open="${c.id}" aria-label="${esc(c.n)}. ${textCal(c)}"><span class="nmr">${esc(c.n)} ${dots(c.d)}</span>${track(c)}</button>`).join("")}</section>`).join("")||'<div class="empty">Geen gewassen met deze filters.</div>'}
-  <p class="p" style="color:var(--muted);margin-top:18px;font-size:.9rem">Elke rij heeft drie lijnen: bovenaan zaaien (blauw is binnen, groen is buiten), in het midden planten en onderaan oogsten. Tik op een gewas voor het stappenplan.</p>`;
+  const rij=c=>`<button class="crow" data-open="${c.id}" aria-label="${esc(c.n)}. ${DIFF[c.d]}. ${textCal(c)}"><span class="nmr">${esc(c.n)}<span class="niv">${DIFF[c.d]}</span></span>${track(c)}</button>`;
+  return `${legendHtml()}${qc}
+  ${groups.length?`<div class="grps">${groups.map(x=>`<details class="grp cg" data-view="jaar" data-grp="${esc(x.g)}"${act||S.jgrp.has(x.g)?" open":""}><summary><h2 class="gt">${esc(x.g)}<small>${x.l.length} gewassen</small></h2></summary><div class="cbody">${head}${x.l.map(rij).join("")}</div></details>`).join("")}</div>`:'<div class="empty">Geen gewassen gevonden. Pas je zoekopdracht of filters aan.</div>'}
+  <p class="p" style="color:var(--muted);margin-top:18px;font-size:.9rem">Elke rij heeft drie lijnen: bovenaan zaaien (een open balk is in huis, een gevulde balk is buiten), in het midden uitplanten en onderaan oogsten. Tik op een gewas voor het stappenplan.</p>`;
 }
 
 /* ---------- Gids ---------- */
@@ -1994,6 +2040,29 @@ function overview(){
 }
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+/* ---------- Gids: taakgroepen ---------- */
+const P=(c,...ids)=>ids.map(i=>c+"/"+i);
+const GROEPEN=[
+ {id:"begin",t:"Begin hier",d:"Plek, materiaal en je eerste jaar",ic:"sprout",subs:[{arts:P("beginnen","waar-begin-ik","plek-kiezen","pot-bak-grond","gereedschap","eerste-jaar")}]},
+ {id:"doen",t:"Zo doe je het",d:"Stap voor stap zaaien, verzorgen en oogsten",ic:"pot",subs:[
+  {t:"Zaaien en planten",arts:P("zaaien","zaaien-binnen-buiten","zaaigrond-licht","verspenen-afharden","kiemtijd","zaad-kopen","plantafstand","plantjes-kopen")},
+  {t:"Verzorgen",arts:P("verzorging","water-geven","regenwater","onkruid","steun","tomaat-verzorgen","snoeien","weinig-tijd").concat(P("grond","mulchen"))},
+  {t:"Grond en voeding",arts:P("grond","compost","potgrond","groenbemesters")},
+  {t:"Oogsten en bewaren",arts:P("oogsten","oogst-wanneer","bewaren","invriezen","drogen","zaad-bewaren")},
+  {t:"Seizoen en kleine ruimtes",arts:P("seizoen","kas-koude-bak","winter-groenten").concat(P("klein","balkon","schaduw","verticaal"))},
+  {t:"Slim combineren",arts:P("combineren","tussenteelt","drie-zusters","helpers")}]},
+ {id:"waarom",t:"Weten waarom",d:"Uitleg over grond, klimaat en combineren",ic:"book",subs:[{arts:P("grond","grondsoorten","ph-kalk","voeding").concat(P("seizoen","klimaat","ijsheiligen","vier-seizoenen","droogte-hitte"),P("combineren","combi-hoe","vruchtwisseling"),P("kennis","families","groenten-groepen","soorten-rassen"))}]},
+ {id:"naslag",t:"Naslag",d:"Combinaties, woordenlijst en veelgestelde vragen",ic:"basket",subs:[{arts:P("combineren","combi-goed","combi-slecht").concat(P("kennis","woordenlijst","faq"))}]}
+];
+const PLAGEN=P("plagen","slakken","bladluis","koolwitje","wortelvlieg","phytophthora","meeldauw","dieren","plagen-overzicht");
+const artByPath=p=>{const [c,a]=p.split("/"),cat=GIDS.find(g=>g.id===c),x=cat&&cat.arts.find(y=>y.id===a);return x?{cat,a:x}:null;};
+const artCard=p=>{const r=artByPath(p);return r?`<button class="acard" data-art="${p}"><b>${esc(r.a.t)}</b><span>${esc(r.a.s)}</span><small>${r.a.min} min lezen</small></button>`:"";};
+function naslagExtra(){
+  return `<section class="sec"><h2>Buren in één oogopslag<small>Welke gewassen bij elkaar passen. Tik op een gewas voor uitleg waarom en hoe.</small></h2><div style="margin-top:14px">${overview()}</div></section>
+   <section class="sec srcs"><h2>Bronnen en controle</h2>
+    <p class="art-p">De zaai-, plant- en oogstperiodes zijn vergeleken met de Belgische zaaikalenders van <a href="https://www.hubo.be/nl/hulp-en-advies/tuin/moestuin/zaaikalender/" target="_blank" rel="noopener">Hubo</a> en <a href="https://www.tuinadvies.be/tuininfo/tuinonderhoud-kalender/tuinkalender/zaaien-het-hele-jaar-door/" target="_blank" rel="noopener">Tuinadvies</a>. Daarbij zijn de periodes voor tomaat, wortel, prei en spruitkool aangepast.</p>
+    <p class="art-p">Overige teeltinformatie (afstanden, water, grond) komt uit algemene tuinbouwkennis en is niet voor elk gewas apart bij een bron nagekeken. Bij combinaties staat het bewijs per combinatie. Foto's komen van Wikimedia Commons met vrije licenties, met de fotograaf bij elke foto.</p></section>`;
+}
 function viewGids(){
   if(S.gc==="start"){
     const ch=SG[S.ch]||SG[0];
@@ -2004,31 +2073,31 @@ function viewGids(){
      <article class="reader"><div class="rmeta">Hoofdstuk ${S.ch+1} van ${SG.length}</div><h2>${esc(ch.t)}</h2><p class="rsub">${esc(ch.s)}</p>${blocks(ch.b)}</article>
      <div class="pager">${prev}${next}</div>`;
   }
-  const cat=S.gc?GIDS.find(g=>g.id===S.gc):null;
-  if(cat){
-    return `<button class="back" data-act="gback">‹ Alle onderwerpen</button><div class="acards">${cat.arts.map(a=>`<button class="acard" data-art="${cat.id}/${a.id}"><b>${esc(a.t)}</b><span>${esc(a.s)}</span><small>${a.min} min lezen</small></button>`).join("")}</div>`;
+  const gr=S.gc?GROEPEN.find(g=>g.id===S.gc):null;
+  if(gr){
+    const body=gr.subs.map(x=>(x.t?`<h2 class="gsub">${esc(x.t)}</h2>`:"")+`<div class="acards">${x.arts.map(artCard).join("")}</div>`).join("");
+    return `<button class="back" data-act="gback">‹ Gids</button>${body}${gr.id==="naslag"?naslagExtra():""}`;
   }
   const last=parseInt(lsGet("sg-ch")||"0",10)||0;
-  const n=GIDS.reduce((s,g)=>s+g.arts.length,0);
   return `<section class="hero-card"><div><b class="hc-t">Startersgids</b><p>${SG.length} hoofdstukken in de juiste volgorde, van plek kiezen tot oogsten. Rustig te lezen in ongeveer 40 minuten. Wat niet nodig is, staat onder 'Meer weten'.</p>
     <div class="hc-row"><button class="btn pri" data-ch="${last}" data-start="1">${last>0?`Ga verder bij hoofdstuk ${last+1}`:"Begin met hoofdstuk 1"}</button>${last>0?`<button class="btn" data-ch="0" data-start="1">Van voor af aan</button>`:""}</div></div>
     <ol class="hc-list">${SG.map((c,i)=>`<li><button data-ch="${i}" data-start="1">${esc(c.t)}</button></li>`).join("")}</ol></section>
-   <section class="sec"><h2>Achtergrond en naslag<small>${n} korte artikels voor wie meer wil weten. Je hebt ze niet nodig om te beginnen.</small></h2>
-   <div class="gcats">${GIDS.map(g=>`<button class="gcat" data-cat="${g.id}"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true">${GIC[g.ic]||GIC.sprout}</svg></span><span><b>${esc(g.t)}</b><span>${esc(g.d)}</span><em>${g.arts.length} artikels</em></span></button>`).join("")}</div></section>
-   <section class="sec"><h2>Buren in één oogopslag<small>Welke gewassen bij elkaar passen. Tik op een gewas voor uitleg waarom en hoe.</small></h2><div style="margin-top:14px">${overview()}</div></section>
-   <section class="sec srcs"><h2>Bronnen en controle</h2>
-    <p class="art-p">De zaai-, plant- en oogstperiodes zijn vergeleken met de Belgische zaaikalenders van <a href="https://www.hubo.be/nl/hulp-en-advies/tuin/moestuin/zaaikalender/" target="_blank" rel="noopener">Hubo</a> en <a href="https://www.tuinadvies.be/tuininfo/tuinonderhoud-kalender/tuinkalender/zaaien-het-hele-jaar-door/" target="_blank" rel="noopener">Tuinadvies</a>. Daarbij zijn de periodes voor tomaat, wortel, prei en spruitkool aangepast.</p>
-    <p class="art-p">Overige teeltinformatie (afstanden, water, grond) komt uit algemene tuinbouwkennis en is niet voor elk gewas apart bij een bron nagekeken. Bij combinaties staat het bewijs per combinatie. Foto's komen van Wikimedia Commons met vrije licenties, met de fotograaf bij elke foto.</p></section>`;
+   <section class="sec"><h2>Kies waarmee je verder wilt<small>Kort en praktisch. Je hebt ze niet nodig om te beginnen.</small></h2>
+   <div class="gcats">${GROEPEN.map(g=>`<button class="gcat" data-cat="${g.id}"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true">${GIC[g.ic]||GIC.sprout}</svg></span><span><b>${esc(g.t)}</b><span>${esc(g.d)}</span><em>${g.subs.reduce((n,x)=>n+x.arts.length,0)} artikels</em></span></button>`).join("")}<button class="gcat" data-act="tohulp"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true">${GIC.bug}</svg></span><span><b>Als het misgaat</b><span>Gele bladeren, vlekken, plagen en meer</span><em>Naar Hulp</em></span></button></div></section>`;
+}
+function artMeta(path,cat){
+  for(const g of GROEPEN)for(const x of g.subs)if(x.arts.includes(path))return g.t+(x.t?" › "+x.t:"");
+  return PLAGEN.includes(path)?"Hulp › Plagen en ziektes":cat.t;
 }
 function openArticle(path){
   const [cid,aid]=path.split("/"),cat=GIDS.find(g=>g.id===cid),a=cat&&cat.arts.find(x=>x.id===aid);if(!a)return;
-  showSheet(`<div class="art"><button class="x" style="top:18px" data-act="close" aria-label="Sluiten">×</button><h2>${esc(a.t)}</h2><div class="meta">${esc(cat.t)} · ${a.min} min lezen</div>${blocks(a.b)}</div>`);
+  showSheet(`<div class="art"><button class="x" style="top:18px" data-act="close" aria-label="Sluiten">×</button><h2>${esc(a.t)}</h2><div class="meta">${esc(artMeta(path,cat))} · ${a.min} min lezen</div>${blocks(a.b)}${a.bron&&a.nagekeken?`<p class="credit" style="margin-top:18px">Bron: ${esc(a.bron)}. Nagekeken: ${MF[+a.nagekeken.slice(5)-1]} ${a.nagekeken.slice(0,4)}.</p>`:""}</div>`);
 }
 
 /* ---------- Render ---------- */
 function render(){
   renderChrome();
-  document.getElementById("main").innerHTML={nu:viewNu,alle:viewAlle,kal:viewKal,tuin:viewTuin,hulp:viewHulp,gids:viewGids}[S.tab]();
+  document.getElementById("main").innerHTML={alle:viewAlle,kal:viewKal,tuin:viewTuin,hulp:viewHulp,gids:viewGids}[S.tab]();
   renderTray();
   document.getElementById("live").textContent=S.tab==="alle"?filtered().length+" gewassen":"";
 }
@@ -2058,7 +2127,7 @@ function openDetail(id){
   <div class="pad">${p?`<p class="credit">Foto: ${esc(cr(p.c))}. <a href="${esc(p.u)}" target="_blank" rel="noopener">Bron</a></p>`:""}
   <div class="head"><h2>${esc(c.n)}</h2><div class="lat" translate="no">${esc(c.l)}</div></div>
   <div class="facts4"><div><span>Niveau</span><b>${DIFF[c.d]}</b></div><div><span>Duur</span><b>${esc(short(c.dagen))}</b></div><div><span>Plek</span><b>${c.pl.join(", ")}</b></div><div><span>Ruimte</span><b>${esc(c.afst)}</b></div></div>
-  <div style="margin-top:18px"><div class="legend"><span><i class="k-zb"></i>Voorzaaien</span><span><i class="k-zd"></i>Zaaien</span><span><i class="k-pt"></i>Planten</span><span><i class="k-oo"></i>Oogst</span></div>${miniRow(c)}</div>
+  <div style="margin-top:18px">${legendHtml()}${miniRow(c)}</div>
   <div class="guide-cta"><button class="btn pri big" data-guide="${id}">Hoe teel ik dit? ›</button><span>Volledig stappenplan van voorbereiding tot oogst</span></div><div class="fbtn"><button class="btn${inTuin(id)?" pri":""}" data-tuin="${id}">${inTuin(id)?"In mijn tuin":"Zet in mijn tuin"}</button><button class="btn${S.cmp.has(id)?" pri":""}" data-cmp="${id}">${S.cmp.has(id)?"In vergelijking":"Zet in vergelijking"}</button></div>
   <div style="margin-top:18px">
   ${fold("In het kort",`<ol class="steps">${c.st.map(s=>`<li><span>${esc(s)}</span></li>`).join("")}</ol>`)}
@@ -2067,7 +2136,7 @@ function openDetail(id){
   ${c.sub&&c.sub.length?fold("Soorten en rassen vergeleken",`<div class="scroll"><table><thead><tr><th>Soort</th><th>Voorbeelden</th><th>Kenmerken</th></tr></thead><tbody>${c.sub.map(s=>`<tr><td><b>${esc(s.n)}</b></td><td>${esc(s.ex)}</td><td>${esc(s.k)}</td></tr>`).join("")}</tbody></table></div>`):""}
   ${fold("Alle gegevens",`<table><tbody>
    <tr><th>Zon</th><td>${esc(c.zon)}</td></tr><tr><th>Potgrootte</th><td>${esc(c.pot)}</td></tr><tr><th>Duur</th><td>${esc(c.dagen)}</td></tr>
-   <tr><th>Voorzaaien</th><td>${ranges(c.zb)}</td></tr><tr><th>Buiten zaaien</th><td>${ranges(c.zd)}</td></tr><tr><th>Planten</th><td>${ranges(c.pt)}</td></tr><tr><th>Oogst</th><td>${ranges(c.oo)}</td></tr>
+   ${FASEN.map(([k,l])=>`<tr><th>${l}</th><td>${ranges(c[k])}</td></tr>`).join("")}
    <tr><th>Water</th><td>${esc(c.w)}</td></tr><tr><th>Grond</th><td>${esc(c.g)}</td></tr><tr><th>Familie</th><td>${esc(c.fam)}</td></tr><tr><th>Levensduur</th><td>${esc(c.vast)}</td></tr></tbody></table>`)}
   </div>
   <p class="art-p" style="color:var(--muted)">${esc(c.wt)}</p></div>`;
@@ -2087,7 +2156,7 @@ function openGuide(id){
   showSheet(`<div class="art"><button class="x" style="top:18px" data-act="close" aria-label="Sluiten">×</button>
    <div class="rmeta">Teeltgids</div><h2>Hoe teel ik ${esc(c.n.toLowerCase())}?</h2><p class="rsub">${esc(c.l)}. Van voorbereiding tot oogst.</p>
    ${facts}<figure class="figure">${geoSvg(c)}</figure>
-   <div style="margin-top:6px"><div class="legend"><span><i class="k-zb"></i>Voorzaaien</span><span><i class="k-zd"></i>Zaaien</span><span><i class="k-pt"></i>Planten</span><span><i class="k-oo"></i>Oogst</span></div>${miniRow(c)}</div>
+   <div style="margin-top:6px">${legendHtml()}${miniRow(c)}</div>
    ${body}${nb}
    <div class="pager" style="margin-top:22px"><button class="btn" data-open="${id}">‹ Terug naar ${esc(c.n.toLowerCase())}</button></div></div>`);
 }
@@ -2099,7 +2168,7 @@ function openCompare(){
   showSheet(`<div class="pad" style="padding-top:18px;position:relative"><div class="head" style="padding-top:0"><h2>Vergelijking</h2></div><button class="x" style="top:14px" data-act="close" aria-label="Sluiten">×</button>
   <div class="scroll" style="margin-top:14px"><table><thead><tr><th></th>${l.map(c=>`<th style="color:var(--ink)">${esc(c.n)}</th>`).join("")}</tr></thead><tbody>
   ${row("Niveau",c=>DIFF[c.d])}${row("Soort",c=>esc(c.t))}${row("Zon",c=>esc(c.zon))}${row("Plek",c=>c.pl.join(", "))}${row("Pot",c=>esc(c.pot))}${row("Plantafstand",c=>esc(c.afst))}${row("Duur",c=>esc(c.dagen))}
-  ${row("Voorzaaien",c=>ranges(c.zb))}${row("Buiten zaaien",c=>ranges(c.zd))}${row("Planten",c=>ranges(c.pt))}${row("Oogst",c=>ranges(c.oo))}${row("Levensduur",c=>esc(c.vast))}
+  ${FASEN.map(([k,l])=>row(l,c=>ranges(c[k]))).join("")}${row("Levensduur",c=>esc(c.vast))}
   ${row("Goed naast",c=>c.goed.map(nm).join(", ")||"-")}${row("Liever niet naast",c=>c.slecht.map(nm).join(", ")||"-")}</tbody></table></div>
   <h3 style="margin-top:22px;font-size:1.2rem">Passen ze samen?</h3><div>${pairs}</div></div>`);
 }
@@ -2119,6 +2188,7 @@ document.addEventListener("click",e=>{
   if(t.dataset.mo){S.m=+t.dataset.mo;S.more.clear();render();return;}
   if(t.dataset.more){const k=t.dataset.more;S.more.add(k);render();const b=document.querySelectorAll(`[data-sec="${k}"] .tile>button`)[6];if(b)b.focus();return;}
   if(t.dataset.f){S[t.dataset.f]=t.dataset.v;const open=!document.getElementById("ov").hidden;render();if(open)openFilter();return;}
+  if(t.dataset.kv){S.kv=t.dataset.kv;S.more.clear();render();window.scrollTo(0,0);const b=document.querySelector('[data-kv="'+S.kv+'"]');if(b)b.focus();return;}
   if(t.dataset.tuin){const id=t.dataset.tuin,i=TUIN.crops.indexOf(id),inSheet=!!t.closest("#sheet");if(i>=0)TUIN.crops.splice(i,1);else TUIN.crops.push(id);tuinSave();render();if(inSheet)openDetail(id);say(BY[id].n+(i>=0?" is uit je tuin gehaald.":" staat nu in je tuin."));return;}
   if(t.dataset.tplek){TUIN.plek=t.dataset.tplek;tuinSave();render();const b=document.querySelector('[data-tplek="'+TUIN.plek+'"]');if(b)b.focus();return;}
   if(t.dataset.hulp){S.hulp=t.dataset.hulp;S.hg="";render();window.scrollTo(0,0);document.getElementById("main").focus({preventScroll:true});return;}
@@ -2133,6 +2203,7 @@ document.addEventListener("click",e=>{
   if(a==="filter"){openFilter();return;}
   if(a==="export"){tuinExport();return;}
   if(a==="import"){document.getElementById("tfile").click();return;}
+  if(a==="tohulp"){S.tab="hulp";S.hulp=null;render();window.scrollTo(0,0);return;}
   if(a==="hback"){S.hulp=null;S.hg="";render();window.scrollTo(0,0);document.getElementById("main").focus({preventScroll:true});return;}
   if(a==="gback"){S.gc=null;render();window.scrollTo(0,0);return;}
   if(a==="reset"){S.type=S.diep=S.plek="alle";render();openFilter();return;}
@@ -2140,7 +2211,7 @@ document.addEventListener("click",e=>{
   if(a==="clear"){S.cmp.clear();render();return;}
 });
 document.addEventListener("input",e=>{if(e.target.id==="q"){S.q=e.target.value;const pos=e.target.selectionStart;render();const q=document.getElementById("q");q.focus();q.setSelectionRange(pos,pos);}});
-document.addEventListener("toggle",e=>{const d=e.target;if(!d.classList||!d.classList.contains("grp"))return;if(!(S.q||S.type!=="alle"||S.diep!=="alle"||S.plek!=="alle")){if(d.open)S.grp.add(d.dataset.grp);else S.grp.delete(d.dataset.grp);}},true);
+document.addEventListener("toggle",e=>{const d=e.target;if(!d.classList||!d.classList.contains("grp"))return;const set=d.dataset.view==="jaar"?S.jgrp:S.grp;if(!(S.q||S.type!=="alle"||S.diep!=="alle"||S.plek!=="alle")){if(d.open)set.add(d.dataset.grp);else set.delete(d.dataset.grp);}},true);
 document.addEventListener("change",e=>{const t=e.target;
   if(t.id==="hg"){S.hg=t.value;render();const g=document.getElementById("hg");if(g)g.focus();}
   else if(t.dataset&&t.dataset.task){const ds=doneSet();if(t.checked)ds.add(t.dataset.task);else ds.delete(t.dataset.task);TUIN.done[MKEY]=[...ds];tuinSave();const pr=document.getElementById("tprog");if(pr)pr.textContent=tuinProg();}

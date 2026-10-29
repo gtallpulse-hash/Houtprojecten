@@ -1,0 +1,27 @@
+# Kleurvalidatie 2026-10-26 (validate_palette.js uit de dataviz-skill)
+
+## Licht, oppervlak #eaeedf
+
+Palette (light, surface #eaeedf, categorical): 3 slots
+  [PASS] Lightness band         all 3 inside L 0.43–0.77
+  [PASS] Chroma floor           all 3 >= 0.1
+  [PASS] CVD separation         worst adjacent #0f8a63↔#c8501f ΔE 9.9 (deutan) · tritan 30.3
+  [PASS] Normal-vision floor    worst adjacent #0f8a63↔#c8501f ΔE 24.9 (normal)
+  [PASS] Contrast vs surface    all 3 >= 3:1
+
+  → ALL CHECKS PASS  (CVD in the 6–8 floor band is legal ONLY with secondary encoding: direct labels, gaps, or texture)
+  scope: categorical palettes only. For a lone status/text color check WCAG text contrast; for a sequential ramp, lightness monotonicity.
+
+
+## Donker, oppervlak #12170e
+
+Palette (dark, surface #12170e, categorical): 3 slots
+  [PASS] Lightness band         all 3 inside L 0.48–0.67
+  [PASS] Chroma floor           all 3 >= 0.1
+  [PASS] CVD separation         worst adjacent #199e70↔#d95926 ΔE 9.4 (deutan) · tritan 32.4
+  [PASS] Normal-vision floor    worst adjacent #199e70↔#d95926 ΔE 26.5 (normal)
+  [PASS] Contrast vs surface    all 3 >= 3:1
+
+  → ALL CHECKS PASS  (CVD in the 6–8 floor band is legal ONLY with secondary encoding: direct labels, gaps, or texture)
+  scope: categorical palettes only. For a lone status/text color check WCAG text contrast; for a sequential ramp, lightness monotonicity.
+
