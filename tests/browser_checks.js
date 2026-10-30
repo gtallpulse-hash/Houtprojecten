@@ -76,7 +76,7 @@ checks.legendaTekst = async () => {
   await go("kal");
   S.kv = "jaar"; render(); await sleep(100);
   const t = document.querySelector(".legend").innerText;
-  const ok = ["Zaai in huis (open)", "Zaai buiten (gevuld)", "Plant uit", "Oogst"].every((x) => t.includes(x));
+  const ok = ["Zaai in huis", "Zaai buiten", "Plant uit", "Oogst"].every((x) => t.includes(x));
   return { ok, detail: t.replace(/\s+/g, " | ") };
 };
 
@@ -244,7 +244,7 @@ checks.jaarNu = async () => {
 checks.jaarLegenda = async () => {
   await jaar();
   const l = document.querySelector(".legend"), t = l.innerText.replace(/\s+/g, " ");
-  const labels = ["Zaai in huis (open)", "Zaai buiten (gevuld)", "Plant uit", "Oogst"].every((x) => t.includes(x));
+  const labels = ["Zaai in huis", "Zaai buiten", "Plant uit", "Oogst"].every((x) => t.includes(x));
   const rijen = new Set([...l.children].map((c) => Math.round(c.getBoundingClientRect().top))).size;  // aantal rijen waarin de legenda wrapt
   return { ok: labels && rijen <= 2, detail: rijen + " rijen" };
 };
@@ -650,6 +650,26 @@ checks.tuinToevoegen = async () => {
   } finally { TUIN.crops = bewaar.crops; TUIN.bak = bewaar.bak; tuinSave(); S.kies = false; }
   return { ok: f.length === 0, detail: f.slice(0, 4).join("; ") }; 
 };
+checks.begrippen = async () => {
+  const f = [];
+  await go("kal");
+  S.kv = "jaar"; render(); await sleep(150);
+  const leg = [...document.querySelectorAll(".jleg [data-term]")].map((b) => b.dataset.term);
+  if (leg.join() !== "zb,zd,pt,oo") f.push("legenda niet klikbaar: " + leg);
+  if (/\((open|gevuld)\)/.test(document.querySelector(".jleg").innerText)) f.push("legenda heeft nog (open)/(gevuld)");
+  for (const k of ["zb", "zd", "pt", "oo"]) {
+    document.querySelector('.jleg [data-term="' + k + '"]').click(); await sleep(200);
+    const sh = document.getElementById("sheet");
+    if (document.getElementById("ov").hidden) { f.push(k + ": geen uitleg"); continue; }
+    if (!sh.querySelector("h2") || sh.querySelectorAll(".tsteps li").length < 3) f.push(k + ": uitleg onvolledig");
+    if (sh.querySelectorAll("[data-term]").length !== 3) f.push(k + ": links naar andere begrippen ontbreken");
+    closeOv(); await sleep(150);
+  }
+  S.kv = "maand"; render(); await sleep(150);
+  if (!document.querySelector("#main .sec .wat[data-term]")) f.push("geen 'Wat is ...?' bij de maandkoppen");
+  return { ok: f.length === 0, detail: f.slice(0, 4).join("; ") || "4 begrippen" };
+};
+
 checks.eersteGebruik = async () => {
   const f = [];
   const bewaar = localStorage.getItem("mt-intro-v1");
@@ -952,7 +972,7 @@ export function kleineDoelen() {
   return [...document.querySelectorAll(sel)]
     .filter((e) => e.offsetParent !== null && !e.closest("[hidden]") && !e.closest("[inert]"))
     .filter((e) => !(e.tagName === "A" && e.closest("p, li")))  // links in lopende tekst zijn uitgezonderd (WCAG 2.2, doelgrootte)
-    .filter((e) => !e.classList.contains("tl"))  // verwijzing in lopende tekst (artikel, kader)
+    .filter((e) => !e.classList.contains("tl") && !(e.classList.contains("lt") && !e.classList.contains("wat")))  // verwijzing in lopende tekst (artikel, kader)
     .filter((e) => !(e.type === "checkbox" && e.closest("label") && e.closest("label").getBoundingClientRect().height >= 43.5))  // het hele label is het doel
     .map((e) => ({ e, h: e.getBoundingClientRect().height }))
     .filter((x) => x.h > 0 && x.h < 43.5)
