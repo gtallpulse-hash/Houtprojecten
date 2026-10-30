@@ -496,7 +496,7 @@ checks.tuinOverzicht = async () => {
     TUIN.crops = []; TUIN.done = {};
     await go("tuin");
     if (!document.querySelector("#main .tleeg")) f.push("geen lege toestand");
-    else if (!document.querySelector('#main .tleeg [data-tab="alle"]')) f.push("lege toestand heeft geen actie");
+    else if (!document.querySelector('#main .tleeg [data-act="kies"]')) f.push("lege toestand heeft geen actie");
     if (document.querySelector("#main .tt")) f.push("overzichtskaart bij lege tuin");
     const ids = C.filter((c) => ["zb", "zd", "pt", "oo"].some((k) => c[k].includes(NOW))).slice(0, 3).map((c) => c.id);
     TUIN.crops = ids; TUIN.bak = Date.now(); TUIN.done = {};
@@ -625,6 +625,31 @@ checks.gidsDoel = async () => {
 };
 
 // Uitleg bij eerste gebruik, instructie bij taken, maandkiezer en kleine correcties.
+checks.tuinToevoegen = async () => {
+  const f = [];
+  const bewaar = { crops: TUIN.crops.slice(), bak: TUIN.bak };
+  try {
+    TUIN.crops = []; await go("tuin");
+    const knop = document.querySelector('#main [data-act="kies"]');
+    if (!knop) { f.push("geen knop Voeg een gewas toe"); return { ok: false, detail: f[0] }; }
+    knop.click(); await sleep(250);
+    if (S.tab !== "alle" || !S.kies) f.push("knop opent de gewassenlijst niet in kiesstand");
+    document.querySelectorAll("#main details.grp").forEach((d) => (d.open = true));
+    const tegel = document.querySelector("#main .tile button[data-open]");
+    const id = tegel.dataset.open;
+    tegel.click(); await sleep(300);
+    if (S.tab !== "tuin") f.push("na kiezen niet in Mijn tuin");
+    if (!TUIN.crops.includes(id)) f.push("gewas niet toegevoegd");
+    if (!document.getElementById("ov").hidden) f.push("informatiepaneel geopend");
+    if (S.kies) f.push("kiesstand blijft aan");
+    await go("alle");
+    document.querySelectorAll("#main details.grp").forEach((d) => (d.open = true));
+    document.querySelector("#main .tile button[data-open]").click(); await sleep(250);
+    if (document.getElementById("ov").hidden) f.push("gewone tik opent geen paneel meer");
+    closeOv();
+  } finally { TUIN.crops = bewaar.crops; TUIN.bak = bewaar.bak; tuinSave(); S.kies = false; }
+  return { ok: f.length === 0, detail: f.slice(0, 4).join("; ") }; 
+};
 checks.eersteGebruik = async () => {
   const f = [];
   const bewaar = localStorage.getItem("mt-intro-v1");
@@ -655,7 +680,9 @@ checks.eersteGebruik = async () => {
     // maandkiezer: meer maanden dan zichtbaar, en een fade-aanwijzing
     await go("kal");
     const mo = document.getElementById("months");
-    if (mo.scrollWidth <= mo.clientWidth) f.push("alle maanden passen: geen aanwijzing nodig");
+    const nu = new Date().getMonth() + 1, ml = [...mo.querySelectorAll(".mo")].map(b => +b.dataset.mo);
+    if (ml.some(x => x < nu && nu !== 12)) f.push("maandkiezer toont verleden maanden: " + ml);
+    if (!ml.includes(nu % 12 + 1)) f.push("komende maand ontbreekt in de kiezer");
     const m = getComputedStyle(mo);
     if (!/gradient/.test(m.maskImage || m.webkitMaskImage || "")) f.push("geen fade aan de randen");
     // tekstverwijzing in kader
@@ -949,8 +976,7 @@ checks.doelen44 = async () => {
   S.gc = null;
   for (const pad of ["zaaien/zaaien-binnen-buiten", "plagen/slakken"]) await doe("artikel " + pad, async () => { openArticle(pad); });
   closeOv();
-  await doe("vergelijk", async () => { S.cmp.clear(); S.cmp.add("tomaat"); S.cmp.add("courgette"); openCompare(); });
-  closeOv(); S.cmp.clear();
+  closeOv();
   return { ok: Object.keys(uit).length === 0, detail: JSON.stringify(uit) };
 };
 

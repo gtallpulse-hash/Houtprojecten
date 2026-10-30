@@ -45,7 +45,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .top .brand{font:700 var(--fs-b) var(--f-display);color:var(--leaf);display:flex;gap:8px;align-items:center}
 .top h1{font-size:clamp(2.4rem,9vw,4rem);letter-spacing:-.02em;margin-top:10px}
 .top p{margin:6px 0 0;color:var(--muted);font-size:var(--fs-l);max-width:44ch}
-.months{display:flex;gap:6px;overflow-x:auto;padding-block:14px 4px;scrollbar-width:none;-webkit-mask-image:linear-gradient(to right,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%);mask-image:linear-gradient(to right,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%)}
+.months{display:flex;gap:6px;overflow-x:auto;padding-block:14px 4px;scrollbar-width:none;-webkit-mask-image:linear-gradient(to right,#000 calc(100% - 18px),transparent 100%);mask-image:linear-gradient(to right,#000 calc(100% - 18px),transparent 100%)}
 .months::-webkit-scrollbar{display:none}
 .mo{border:0;background:transparent;padding:11px 14px;min-height:44px;border-radius:999px;font-weight:600;color:var(--muted);flex:none}
 .mo[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
@@ -127,10 +127,6 @@ details.dd>summary{cursor:pointer;font-weight:600;color:var(--leaf);padding-bloc
 .nav button{flex:1;border:0;background:transparent;color:inherit;opacity:.65;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;border-radius:14px;font-size:var(--fs-s);font-weight:600}
 .nav button svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .nav button[aria-current="page"]{opacity:1;background:rgba(255,255,255,.12)}
-.tray{position:fixed;left:12px;right:12px;bottom:calc(76px + env(safe-area-inset-bottom,0px));z-index:35;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:10px 12px;display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;max-width:600px;margin-inline:auto;font-size:var(--fs-m)}
-.tray .go{background:var(--leaf);color:var(--on-leaf);border:0;border-radius:999px;padding:8px 14px;font-weight:600}
-.tray .clr{background:transparent;border:0;color:var(--muted);text-decoration:underline}
-.tray .go:disabled{opacity:.5}
 .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:var(--fs-s);margin-block:10px;color:var(--muted)}
 .legend i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-right:6px}
 .k-zb{background:transparent;border:2px solid var(--f-zaai)} .k-zd{background:var(--f-zaai)} .k-pt{background:var(--f-plant)} .k-oo{background:var(--f-oogst)}
@@ -270,6 +266,17 @@ details.grp.cg>.cbody{padding:0 14px 10px}
 .gc-nu i{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none}
 .gc-act{display:flex;gap:2px 16px;flex-wrap:wrap}
 .mini .nu span{color:var(--ink);font-weight:700}
+.prep,.nextm{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;margin-top:14px}
+.prep h2,.nextm h2{font-size:var(--fs-xl)}
+.prep-i{margin:2px 0 8px;color:var(--muted)}
+.pg{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.pg h3{display:flex;align-items:center;gap:8px;font:700 var(--fs-l) var(--f-display);margin:0 0 6px}
+.pg h3 i{width:12px;height:12px;border-radius:50%;flex:none}
+.pg h3 small{margin-left:auto;font-weight:400;color:var(--muted);font-size:var(--fs-m)}
+.pg ul{margin:0;padding-left:20px}
+.pg-g{margin:8px 0 0;font-size:var(--fs-m)}
+.nextm{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.nm-r{display:flex;gap:4px 14px;flex-wrap:wrap;margin:4px 0 0}
 .tleeg{background:var(--surface);border:1px dashed var(--line);border-radius:18px;padding:20px;margin-top:14px;display:grid;gap:10px;justify-items:start}
 .tleeg h2{font-size:var(--fs-xl)}
 .tleeg p{margin:0}
@@ -374,7 +381,6 @@ details.grp.cg>.cbody{padding:0 14px 10px}
 
 <div class="toast" id="toast" hidden><span id="toast-t" aria-hidden="true"></span><button class="toast-b" data-act="undo" hidden>Ongedaan maken</button></div>
 <div class="overlay" id="ov" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-t"></div></div>
-<div class="tray" id="tray" hidden></div>
 
 <script>
 const MN=["jan","feb","mrt","apr","mei","jun","jul","aug","sep","okt","nov","dec"];
@@ -1857,7 +1863,7 @@ const faseLabel=k=>(FASEN.find(f=>f[0]===k)||[])[1]||"";
 const KIND={zb:[faseLabel("zb")],zd:[faseLabel("zd")],pt:[faseLabel("pt")]};
 function legendHtml(){const x={zb:" (open)",zd:" (gevuld)"};return `<div class="legend">${FASEN.map(([k,l])=>`<span><i class="k-${k}"></i>${l}${x[k]||""}</span>`).join("")}</div>`;}
 const NOW=new Date().getMonth()+1;const cr=s=>String(s).split(" I\u0027d")[0].replace(/\s*\(.*?$/,"");
-const S={tab:"kal",kv:"maand",m:NOW,type:"alle",diep:"alle",plek:"alle",q:"",cmp:new Set(),more:new Set(),grp:new Set(),jgrp:new Set(),hulp:null,hg:"",gc:null,gq:"",gsel:[],gedit:false,gplek:false,gact:null,ch:0};
+const S={tab:"kal",kv:"maand",m:NOW,type:"alle",diep:"alle",plek:"alle",q:"",more:new Set(),grp:new Set(),jgrp:new Set(),hulp:null,hg:"",gc:null,gq:"",gsel:[],gedit:false,gplek:false,kies:false,gact:null,ch:0};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function ranges(arr){if(!arr||!arr.length)return "-";const s=new Set(arr);if(s.size===12)return "heel jaar";let st=1;while(s.has(st))st++;const out=[];let run=null;for(let k=1;k<=12;k++){const m=((st+k-1)%12)+1;if(s.has(m)){if(!run){run=[m,m];out.push(run);}else run[1]=m;}else run=null;}return out.map(x=>x[0]===x[1]?MN[x[0]-1]:MN[x[0]-1]+"-"+MN[x[1]-1]).join(", ");}
 const nm=id=>BY[id].n;
@@ -1902,18 +1908,20 @@ function tile(c,tag,actie){
 /* ---------- Chrome: header, maanden, nav ---------- */
 const ICONS={tuin:'<path d="M12 21v-8"/><path d="M12 13c0-4 3-6 7-6 0 4-3 6-7 6z"/><path d="M12 15c0-3-2-5-6-5 0 3 2 5 6 5z"/>',hulp:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7"/><path d="M12 17h.01"/>',alle:'<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',kal:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>',gids:'<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/><path d="M9 8h6"/>'};
 const GIC={sprout:'<path d="M12 21v-8"/><path d="M12 13c0-4 3-6 7-6 0 4-3 6-7 6z"/><path d="M12 15c0-3-2-5-6-5 0 3 2 5 6 5z"/>',soil:'<path d="M3 17h18M5 21h14M7 13c1-3 3-5 5-5s4 2 5 5"/>',seed:'<path d="M12 3c4 3 6 6 6 9a6 6 0 0 1-12 0c0-3 2-6 6-9z"/><path d="M12 9v8"/>',water:'<path d="M12 3s6 6 6 11a6 6 0 0 1-12 0c0-5 6-11 6-11z"/>',bug:'<ellipse cx="12" cy="14" rx="5" ry="6"/><path d="M12 8V5M8 4l2 3M16 4l-2 3M7 12H3M17 12h4M8 18l-3 3M16 18l3 3"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>',pair:'<circle cx="8" cy="12" r="5"/><circle cx="16" cy="12" r="5"/>',basket:'<path d="M4 10h16l-2 10H6z"/><path d="M8 10l4-6 4 6"/>',book:'<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M9 8h6M9 12h6"/>',pot:'<path d="M6 10h12l-1.5 10h-9z"/><path d="M12 10V4M12 6c0-2 2-3 4-3M12 7c0-2-2-3-4-3"/>'};
+const VOLG=NOW%12+1;
+const MKIES=NOW===12?[12,1]:Array.from({length:13-NOW},(_,i)=>NOW+i);
 function renderChrome(){
   const T=[["kal","Kalender"],["alle","Gewassen"],["tuin","Tuin"],["hulp","Hulp"],["gids","Gids"]];
   document.getElementById("nav").innerHTML=T.map(([k,v])=>`<button data-tab="${k}" ${S.tab===k?'aria-current="page"':""}><svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[k]}</svg>${v}</button>`).join("");
   const maand=S.tab==="kal"&&S.kv==="maand";
   const gcat=S.tab==="gids"&&S.gc&&S.gc!=="start"?GROEPEN.find(g=>g.id===S.gc):null;const gstart=S.tab==="gids"&&S.gc==="start";
-  document.getElementById("h1").textContent=maand?MF[S.m-1].charAt(0).toUpperCase()+MF[S.m-1].slice(1):{alle:"Alle gewassen",kal:"Jaaroverzicht",tuin:"Mijn tuin",hulp:(HELP.find(x=>x.id===S.hulp)||{t:"Hulp"}).t,gids:gstart?"Startersgids":gcat?gcat.t:"Gids"}[S.tab];
-  const subs={alle:C.length+" groenten, fruit en kruiden voor België.",kal:S.kv==="maand"?(S.m===NOW?"Dit kan je nu doen in je moestuin.":"Dit kan je doen in "+MF[S.m-1]+"."):"Wanneer je wat zaait, plant en oogst. De gele band is deze maand.",tuin:TUIN.crops.length?TUIN.crops.length+" "+(TUIN.crops.length===1?"gewas":"gewassen")+" in je tuin.":"Je tuin is nog leeg.",hulp:(HELP.find(x=>x.id===S.hulp)||{s:"Wat gaat er mis met je plant?"}).s,gids:gstart?SG[S.ch].t:gcat?gcat.d:"Begin hier en leer stap voor stap."};
+  document.getElementById("h1").textContent=maand?MF[S.m-1].charAt(0).toUpperCase()+MF[S.m-1].slice(1):{alle:S.kies?"Kies een gewas":"Alle gewassen",kal:"Jaaroverzicht",tuin:"Mijn tuin",hulp:(HELP.find(x=>x.id===S.hulp)||{t:"Hulp"}).t,gids:gstart?"Startersgids":gcat?gcat.t:"Gids"}[S.tab];
+  const subs={alle:S.kies?"Tik op een gewas om het aan je tuin toe te voegen.":C.length+" groenten, fruit en kruiden voor België.",kal:S.kv==="maand"?(S.m===NOW?"Dit kan je nu doen in je moestuin.":S.m===VOLG?"Dit komt eraan. Bereid je voor.":"Dit kan je doen in "+MF[S.m-1]+"."):"Wanneer je wat zaait, plant en oogst. De gele band is deze maand.",tuin:TUIN.crops.length?TUIN.crops.length+" "+(TUIN.crops.length===1?"gewas":"gewassen")+" in je tuin.":"Je tuin is nog leeg.",hulp:(HELP.find(x=>x.id===S.hulp)||{s:"Wat gaat er mis met je plant?"}).s,gids:gstart?SG[S.ch].t:gcat?gcat.d:"Begin hier en leer stap voor stap."};
   document.getElementById("sub").textContent=subs[S.tab];
   const kv=document.getElementById("kv");kv.hidden=S.tab!=="kal";
   kv.innerHTML=[["maand","Deze maand"],["jaar","Jaaroverzicht"]].map(([v,t])=>`<button class="chip" data-kv="${v}" aria-pressed="${S.kv===v}">${t}</button>`).join("");
   const mo=document.getElementById("months");mo.hidden=!maand;
-  mo.innerHTML=MN.map((n,i)=>`<button class="mo${i+1===NOW?" now":""}" data-mo="${i+1}" aria-pressed="${S.m===i+1}" aria-label="${MF[i]}">${n}</button>`).join("");
+  mo.innerHTML=MKIES.map(m=>`<button class="mo${m===NOW?" now":""}" data-mo="${m}" aria-pressed="${S.m===m}" aria-label="${MF[m-1]}">${MN[m-1]}</button>`).join("");
   {const a=mo.querySelector('[aria-pressed="true"]');if(a&&!mo.hidden)mo.scrollLeft=a.getBoundingClientRect().left-mo.getBoundingClientRect().left+mo.scrollLeft-(mo.clientWidth-a.offsetWidth)/2;}
   const sr=document.querySelector&&document.querySelector(".src");if(sr)sr.hidden=["gids","hulp","tuin"].includes(S.tab);
   const bar=document.getElementById("bar");bar.hidden=["gids","hulp","tuin"].includes(S.tab);
@@ -1928,10 +1936,21 @@ const faseLijst=(k,m)=>filtered().filter(c=>c[k].includes(m)).sort(byEase);
 const LIM=6;
 function fSec(key,t,arr){const all=S.more.has(key)||arr.length<=LIM+1,shown=all?arr:arr.slice(0,LIM);
   return `<section class="sec" data-sec="${key}"><h2>${esc(t)}<small>${arr.length} gewassen</small></h2><div class="grid">${shown.map(c=>tile(c,null,actieZin(c,key))).join("")}</div>${all?"":`<div class="morewrap"><button class="btn" data-more="${key}">Toon alle ${arr.length}</button></div>`}</section>`;}
+const PREP={zb:["Maak zaaibakken en potjes schoon.","Haal zaaizaad en zaaigrond in huis.","Zoek een lichte plek, bijvoorbeeld een vensterbank."],zd:["Maak het bed vrij van onkruid en oude resten.","Werk de grond los en meng er compost door.","Leg zaaizaad, een touw en labels klaar."],pt:["Maak de plek klaar met verse grond en compost.","Koop of bestel plantgoed vlak voor je plant.","Markeer de afstand tussen de planten."],oo:["Zet manden of kratten klaar.","Kijk of het gewas rijp is voor je plukt of rooit.","Bedenk waar je de oogst bewaart of laat drogen."]};
+function prepHtml(m){
+  const mn=MF[m-1],groepen=FASEN.map(([k,l])=>({k,l,arr:faseLijst(k,m)})).filter(f=>f.arr.length);
+  if(!groepen.length)return "";
+  return `<section class="prep" aria-labelledby="prep-t"><h2 id="prep-t">Hoe bereid ik me voor op ${mn}?</h2><p class="prep-i">Dit komt in ${mn} aan bod. Doe dit alvast.</p>${groepen.map(f=>`<div class="pg"><h3><i class="k-${f.k}" aria-hidden="true"></i>${f.l}<small>${f.arr.length} ${f.arr.length===1?"gewas":"gewassen"}</small></h3><ul>${PREP[f.k].map(t=>`<li>${t}</li>`).join("")}</ul><p class="pg-g">${f.arr.slice(0,8).map(c=>`<button class="lnk" data-open="${c.id}">${esc(c.n)}</button>`).join(", ")}${f.arr.length>8?` en ${f.arr.length-8} andere`:""}</p></div>`).join("")}</section>`;
+}
+function volgendeKaart(){
+  const m=VOLG,mn=MF[m-1],groepen=FASEN.map(([k,l])=>({k,l,n:faseLijst(k,m).length})).filter(f=>f.n);
+  if(!groepen.length)return "";
+  return `<section class="nextm" aria-labelledby="nm-t"><div><h2 id="nm-t">Komende maand: ${mn}</h2><p class="nm-r">${groepen.map(f=>`<span class="tfase"><i class="k-${f.k}" aria-hidden="true"></i>${f.l} ${f.n}</span>`).join("")}</p></div><button class="btn" data-mo="${m}">Bereid je voor</button></section>`;
+}
 function viewMaand(){
   const m=S.m,mn=MF[m-1];
   const fase=FASEN.map(([k,l])=>({k,l,arr:faseLijst(k,m)})).filter(f=>f.arr.length);
-  const h=hintVoor(m),hint=h?`<p class="hint" role="note">Let op: ${esc(h)}</p>`:"";
+  const h=hintVoor(m),hint=(m===VOLG&&m!==NOW?prepHtml(m):"")+(h?`<p class="hint" role="note">Let op: ${esc(h)}</p>`:"")+(m===NOW?volgendeKaart():"");
   if(!fase.length)return hint+`<div class="empty">In ${mn} is er niets te doen met deze filters. Kies een andere maand.</div>`;
   const geenZaai=!fase.some(f=>f.k!=="oo");
   return hint+(geenZaai?`<div class="empty">In ${mn} valt er niets te zaaien of planten. Kijk bij oogst, of kies een andere maand.</div>`:"")+fase.map(f=>fSec(f.k,f.l,f.arr)).join("");
@@ -1941,13 +1960,14 @@ function viewKal(){return S.kv==="jaar"?viewJaar():introHtml()+viewMaand();}
 const GROUPS=["Vruchtgroente","Bladgroente","Wortelgroente","Koolgroente","Uigewas","Knolgewas","Peulvrucht","Vaste groente","Kruid","Klein fruit","Boomfruit"];
 function viewAlle(){
   const l=filtered().sort((a,b)=>a.n.localeCompare(b.n));
-  if(!l.length)return `<section class="sec" style="margin-top:14px"><div class="empty">Geen gewassen gevonden. Pas je zoekopdracht of filters aan.</div></section>`;
+  const kies=S.kies?`<p class="hint" role="note">Kies hieronder een gewas. Het komt meteen in je tuin. <button class="lnk" data-act="kiesstop">Annuleren</button></p>`:"";
+  if(!l.length)return kies+`<section class="sec" style="margin-top:14px"><div class="empty">Geen gewassen gevonden. Pas je zoekopdracht of filters aan.</div></section>`;
   const act=!!S.q||S.type!=="alle"||S.diep!=="alle"||S.plek!=="alle";
   const names=[...GROUPS,...new Set(l.map(c=>c.c).filter(g=>!GROUPS.includes(g)))].filter(g=>l.some(c=>c.c===g));
   const fq=S.q?fold(S.q.trim()):"";
   const via=fq.length>=3?l.filter(c=>!fold(c.n+" "+c.l).includes(fq)&&fold(SYN[c.id]||"").includes(fq)):[];
   const note=via.length?`<p class="credit" role="note" style="margin:10px 0 0">Je zocht "${esc(S.q.trim())}". Dat vind je onder ${via.map(c=>esc(c.n)).join(", ")}.</p>`:"";
-  return note+`<div class="grps">${names.map(g=>{const arr=l.filter(c=>c.c===g);
+  return kies+note+`<div class="grps">${names.map(g=>{const arr=l.filter(c=>c.c===g);
     return `<details class="grp" data-grp="${esc(g)}"${act||S.grp.has(g)?" open":""}><summary><h2 class="gt">${esc(g)}<small>${arr.length} ${arr.length===1?"gewas":"gewassen"}</small></h2><span class="thumbs" aria-hidden="true">${arr.slice(0,3).map(c=>`<img src="${PIC[c.id]||""}" alt="" loading="lazy">`).join("")}</span></summary><div class="grid">${arr.map(c=>tile(c)).join("")}</div></details>`;}).join("")}</div>`;
 }
 
@@ -2063,9 +2083,10 @@ function viewTuin(){
   const top=n?`<section class="tt" aria-labelledby="tt-t"><div class="ring" id="tring" aria-hidden="true" style="--p:${pct}"><span id="tring-n">${tasks.length?done+"/"+tasks.length:"–"}</span></div><div><h2 id="tt-t">${MF[NOW-1][0].toUpperCase()+MF[NOW-1].slice(1)}</h2><p id="tprog" role="status">${tuinProg()}</p>${volgende?`<p class="tt-next">${esc(volgende)}</p>`:""}</div><progress id="tprogress" class="sr" max="${Math.max(tasks.length,1)}" value="${done}" aria-label="Taken in ${MF[NOW-1]}"></progress></section>`:"";
   const taskHtml=tasks.length?`<ul class="tasks tcards">${tasks.map(x=>`<li${ds.has(x.key)?' class="gedaan"':""}><label class="task"><input type="checkbox" data-task="${x.key}"${ds.has(x.key)?" checked":""}><img class="tphoto" src="${PIC[x.id]||""}" alt="" loading="lazy"><span><b class="tnaam">${esc(x.c.n)}</b><span class="tfase"><i class="k-${x.k}" aria-hidden="true"></i>${TKIND[x.k]}</span>${tinstr(x)}</span></label><button class="lnk" data-open="${x.id}" aria-label="Uitleg over ${esc(x.c.n)}">Uitleg</button></li>`).join("")}</ul>`:`<div class="empty">In ${MF[NOW-1]} is er niets te doen voor je gewassen.${volgende?" "+esc(volgende):""}</div>`;
   const cards=`<div class="gcards">${TUIN.crops.map(id=>{const c=BY[id];return `<article class="gcard"><button class="gc-top" data-open="${id}" aria-label="Open ${esc(c.n)}"><img class="ph" src="${PIC[id]||""}" alt="" loading="lazy"><span><b>${esc(c.n)}</b><span class="gc-nu">${gcNu(c)}</span></span></button>${miniNu(c)}<div class="gc-act"><button class="lnk" data-guide="${id}">Hoe teel ik dit?</button><button class="lnk" data-tuin="${id}" aria-label="Haal ${esc(c.n)} uit mijn tuin">Uit mijn tuin halen</button></div></article>`;}).join("")}</div>`;
-  const leeg=`<section class="tleeg" aria-labelledby="tl-t"><h2 id="tl-t">Je tuin is nog leeg</h2><p>Kies een gewas om te beginnen.</p><button class="btn pri" data-tab="alle">Kies een gewas</button></section>`;
+  const leeg=`<section class="tleeg" aria-labelledby="tl-t"><h2 id="tl-t">Je tuin is nog leeg</h2><p>Kies een gewas om te beginnen.</p><button class="btn pri" data-act="kies">Voeg een gewas toe</button></section>`;
   return `${bakNodig?`<p class="hint" id="tbak" role="note">Je tuin staat alleen op dit toestel. <button class="lnk" data-act="export">Bewaar nu een back-up</button></p>`:""}
   ${n?top:leeg}
+  ${n?`<div class="fbtn"><button class="btn pri" data-act="kies">Voeg een gewas toe</button></div>`:""}
   ${n?`<section class="sec" style="margin-top:22px"><h2>Te doen in ${MF[NOW-1]}</h2>${taskHtml}</section>
   <section class="sec" style="margin-top:28px"><h2>Mijn gewassen<small>${n} ${n===1?"gewas":"gewassen"}</small></h2>${cards}</section>`:""}
   <details class="tback"><summary>Back-up en herstel</summary><div><p class="art-p">Je tuin wordt bewaard in je browser op dit toestel. Wis je browsergegevens of gebruik je een ander toestel, dan is hij weg. Bewaar daarom af en toe een back-up.</p>
@@ -2360,20 +2381,12 @@ addEventListener("popstate",e=>{
 function render(){
   renderChrome();
   document.getElementById("main").innerHTML={alle:viewAlle,kal:viewKal,tuin:viewTuin,hulp:viewHulp,gids:viewGids}[S.tab]();
-  renderTray();
   document.getElementById("live").textContent=S.tab==="alle"?filtered().length+" gewassen":(S.tab==="gids"&&!S.gc&&S.gq.trim()?(gidsFind(S.gq).length||gidsFind(S.gq,true).length)+" resultaten":"");
   navSync();
 }
-function renderTray(){
-  const t=document.getElementById("tray");t.hidden=!S.cmp.size||!document.getElementById("ov").hidden;
-  if(!S.cmp.size)return;
-  t.innerHTML=`<span>${S.cmp.size} in vergelijking: ${[...S.cmp].map(nm).join(", ")}</span><span><button class="clr" data-act="clear">Wissen</button> <button class="go" data-act="compare" ${S.cmp.size<2?"disabled":""}>${S.cmp.size<2?"Kies er nog één":"Vergelijk"}</button></span>`;
-}
-function tagList(arr){return arr.length?`<div class="links">${arr.map(i=>`<button data-open="${i}">${esc(nm(i))}</button>`).join("")}</div>`:"<span style='color:var(--muted)'>Niets bijzonders.</span>";}
-let lastFocus=null;
-function setBg(off){for(const e of document.querySelectorAll(".wrap,.nav,.tray"))e.inert=off;}
-function showSheet(html){const sh=document.getElementById("sheet"),ov=document.getElementById("ov");if(ov.hidden){const a=document.activeElement;lastFocus=a&&a!==document.body?{el:a,open:a.getAttribute("data-open")}:null;navPush({ov:1});}sh.innerHTML=html;sh.scrollTop=0;const h=sh.querySelector("h2");if(h)h.id="sheet-t";ov.hidden=false;setBg(true);document.body.style.overflow="hidden";document.getElementById("tray").hidden=true;const f=sh.querySelector("[data-act=close]");if(f)f.focus();}
-function closeOv(){if(askRes){const r=askRes;askRes=null;r(false);}const wasOpen=!document.getElementById("ov").hidden;document.getElementById("ov").hidden=true;setBg(false);document.body.style.overflow="";renderTray();if(lastFocus){let t=lastFocus.el;if(!document.contains(t)&&lastFocus.open)t=document.querySelector(`[data-open="${lastFocus.open}"]`);if(t&&t.focus)t.focus();lastFocus=null;}if(wasOpen&&!navRest&&history.state&&history.state.ov){navSkip++;history.back();setTimeout(()=>{if(navSkip>0){navSkip=0;navSync();}},800);}}
+function setBg(off){for(const e of document.querySelectorAll(".wrap,.nav"))e.inert=off;}
+function showSheet(html){const sh=document.getElementById("sheet"),ov=document.getElementById("ov");if(ov.hidden){const a=document.activeElement;lastFocus=a&&a!==document.body?{el:a,open:a.getAttribute("data-open")}:null;navPush({ov:1});}sh.innerHTML=html;sh.scrollTop=0;const h=sh.querySelector("h2");if(h)h.id="sheet-t";ov.hidden=false;setBg(true);document.body.style.overflow="hidden";const f=sh.querySelector("[data-act=close]");if(f)f.focus();}
+function closeOv(){if(askRes){const r=askRes;askRes=null;r(false);}const wasOpen=!document.getElementById("ov").hidden;document.getElementById("ov").hidden=true;setBg(false);document.body.style.overflow="";if(lastFocus){let t=lastFocus.el;if(!document.contains(t)&&lastFocus.open)t=document.querySelector(`[data-open="${lastFocus.open}"]`);if(t&&t.focus)t.focus();lastFocus=null;}if(wasOpen&&!navRest&&history.state&&history.state.ov){navSkip++;history.back();setTimeout(()=>{if(navSkip>0){navSkip=0;navSync();}},800);}}
 const closeBtn='<button class="x" data-act="close" aria-label="Sluiten">×</button>';
 function miniRow(c){return `<div class="mini">${MN.map((n,i)=>{const m=i+1;return `<div><span>${n.slice(0,1).toUpperCase()}</span>`+["zb","zd","pt"].map(k=>`<b class="${c[k].includes(m)?"on k-"+k:""}"></b>`).join("")+`<b class="${c.oo.includes(m)?"on k-oo":""}"></b></div>`;}).join("")}</div>`;}
 
@@ -2391,7 +2404,7 @@ function openDetail(id){
   <div class="head"><h2>${esc(c.n)}</h2><div class="lat" translate="no">${esc(c.l)}</div></div>
   <div class="facts4"><div><span>Niveau</span><b>${DIFF[c.d]}</b></div><div><span>Duur</span><b>${esc(short(c.dagen))}</b></div><div><span>Plek</span><b>${c.pl.join(", ")}</b></div><div><span>Ruimte</span><b>${esc(c.afst)}</b></div></div>
   <div style="margin-top:18px">${legendHtml()}${miniRow(c)}</div>
-  <div class="guide-cta"><button class="btn pri big" data-guide="${id}">Hoe teel ik dit? ›</button><span>Volledig stappenplan van voorbereiding tot oogst</span></div><div class="fbtn"><button class="btn${inTuin(id)?" pri":""}" data-tuin="${id}">${inTuin(id)?"In mijn tuin":"Zet in mijn tuin"}</button><button class="btn${S.cmp.has(id)?" pri":""}" data-cmp="${id}">${S.cmp.has(id)?"In vergelijking":"Zet in vergelijking"}</button></div>
+  <div class="guide-cta"><button class="btn pri big" data-guide="${id}">Hoe teel ik dit? ›</button><span>Volledig stappenplan van voorbereiding tot oogst</span></div><div class="fbtn"><button class="btn${inTuin(id)?" pri":""}" data-tuin="${id}">${inTuin(id)?"In mijn tuin":"Zet in mijn tuin"}</button></div>
   <div style="margin-top:18px">
   ${fold("In het kort",`<ol class="steps">${c.st.map(s=>`<li><span>${esc(s)}</span></li>`).join("")}</ol>`)}
   ${fold("Met wie combineer je dit?",buren,true)}
@@ -2424,17 +2437,6 @@ function openGuide(id){
    <div class="pager" style="margin-top:22px"><button class="btn" data-open="${id}">‹ Terug naar ${esc(c.n.toLowerCase())}</button></div></div>`);
 }
 
-function openCompare(){
-  const l=[...S.cmp].map(i=>BY[i]);
-  const row=(lab,fn)=>`<tr><th>${lab}</th>${l.map(c=>`<td>${fn(c)}</td>`).join("")}</tr>`;
-  const pairs=(()=>{const a=[];for(let i=0;i<l.length;i++)for(let j=i+1;j<l.length;j++){const s=rel(l[i].id,l[j].id);a.push(`<div class="pair"><b>${esc(l[i].n)}</b> en <b>${esc(l[j].n)}</b><span class="pill ${s==="bad"?"tom":s==="good"?"":"plain"}">${s==="bad"?"Liever niet samen":s==="good"?"Goede buren":"Geen bijzondere invloed"}</span></div>`);}return a.join("");})();
-  showSheet(`<div class="pad" style="padding-top:18px;position:relative"><div class="head" style="padding-top:0"><h2>Vergelijking</h2></div><button class="x" style="top:14px" data-act="close" aria-label="Sluiten">×</button>
-  <div class="scroll" style="margin-top:14px"><table><thead><tr><th></th>${l.map(c=>`<th style="color:var(--ink)">${esc(c.n)}</th>`).join("")}</tr></thead><tbody>
-  ${row("Niveau",c=>DIFF[c.d])}${row("Soort",c=>esc(c.t))}${row("Zon",c=>esc(c.zon))}${row("Plek",c=>c.pl.join(", "))}${row("Pot",c=>esc(c.pot))}${row("Plantafstand",c=>esc(c.afst))}${row("Duur",c=>esc(c.dagen))}
-  ${FASEN.map(([k,l])=>row(l,c=>ranges(c[k]))).join("")}${row("Levensduur",c=>esc(c.vast))}
-  ${row("Goed naast",c=>c.goed.map(nm).join(", ")||"-")}${row("Liever niet naast",c=>c.slecht.map(nm).join(", ")||"-")}</tbody></table></div>
-  <h3 style="margin-top:22px;font-size:var(--fs-xl)">Passen ze samen?</h3><div>${pairs}</div></div>`);
-}
 function openFilter(){
   const g=(t,key,opts)=>`<h3 class="sub-h">${t}</h3><div class="chips">${opts.map(([v,l])=>`<button class="chip" data-f="${key}" data-v="${v}" aria-pressed="${S[key]===v}">${l}</button>`).join("")}</div>`;
   showSheet(`<div class="pad" style="padding-top:20px;position:relative"><div class="head" style="padding-top:0"><h2>Filter</h2></div><button class="x" style="top:16px" data-act="close" aria-label="Sluiten">×</button>
@@ -2450,7 +2452,7 @@ document.addEventListener("click",e=>{navY=window.scrollY;
   if(t.dataset.gdoel){const i=S.gsel.indexOf(t.dataset.gdoel);if(i>=0)S.gsel.splice(i,1);else S.gsel.push(t.dataset.gdoel);render();gdFocus(`[data-gdoel="${t.dataset.gdoel}"]`);return;}
   if(t.dataset.gplek){gdKies({d:[t.dataset.gplek],skip:false,eerste:true},"#es-t");return;}
   if(t.dataset.gact){S.gact=t.dataset.gact;render();gdFocus(`[data-gact="${t.dataset.gact}"]`);return;}
-  if(t.dataset.tab){S.tab=t.dataset.tab;if(S.tab==="gids"){S.gc=null;S.gq="";S.gedit=false;S.gplek=false;}if(S.tab==="hulp")S.hulp=null;render();window.scrollTo(0,0);return;}
+  if(t.dataset.tab){S.tab=t.dataset.tab;S.kies=false;if(S.tab==="gids"){S.gc=null;S.gq="";S.gedit=false;S.gplek=false;}if(S.tab==="hulp")S.hulp=null;render();window.scrollTo(0,0);return;}
   if(t.dataset.mo){S.m=+t.dataset.mo;S.more.clear();render();return;}
   if(t.dataset.more){const k=t.dataset.more;S.more.add(k);render();const b=document.querySelectorAll(`[data-sec="${k}"] .tile>button`)[6];if(b)b.focus();return;}
   if(t.dataset.f){S[t.dataset.f]=t.dataset.v;const open=!document.getElementById("ov").hidden;render();if(open)openFilter();return;}
@@ -2460,12 +2462,13 @@ document.addEventListener("click",e=>{navY=window.scrollY;
     notify(BY[id].n+(was?" is uit je tuin gehaald.":" staat nu in je tuin."),()=>{const j=TUIN.crops.indexOf(id);if(was){if(j<0)TUIN.crops.splice(Math.min(i,TUIN.crops.length),0,id);}else if(j>=0)TUIN.crops.splice(j,1);tuinSave();render();if(!document.getElementById("ov").hidden)openDetail(id);notify(BY[id].n+(was?" staat weer in je tuin.":" is weer uit je tuin gehaald."));});return;}
   if(t.dataset.tplek){TUIN.plek=t.dataset.tplek;tuinSave();render();const b=document.querySelector('[data-tplek="'+TUIN.plek+'"]');if(b)b.focus();return;}
   if(t.dataset.hulp){S.hulp=t.dataset.hulp;S.hg="";render();window.scrollTo(0,0);document.getElementById("main").focus({preventScroll:true});return;}
+  if(t.dataset.open&&S.kies&&S.tab==="alle"&&!t.closest("#sheet")){const id=t.dataset.open,nieuw=!TUIN.crops.includes(id);if(nieuw){TUIN.crops.push(id);tuinSave();}S.kies=false;S.tab="tuin";render();window.scrollTo(0,0);document.getElementById("main").focus({preventScroll:true});
+    notify(BY[id].n+(nieuw?" staat nu in je tuin.":" stond al in je tuin."),nieuw?()=>{const j=TUIN.crops.indexOf(id);if(j>=0)TUIN.crops.splice(j,1);tuinSave();render();notify(BY[id].n+" is weer uit je tuin gehaald.");}:undefined);return;}
   if(t.dataset.open){openDetail(t.dataset.open);return;}
   if(t.dataset.art){openArticle(t.dataset.art);return;}
   if(t.dataset.cat){S.gc=t.dataset.cat;render();window.scrollTo(0,0);return;}
   if(t.dataset.guide){openGuide(t.dataset.guide);return;}
   if(t.dataset.ch!==undefined){S.ch=+t.dataset.ch;lsSet("sg-ch",String(S.ch));if(t.dataset.start){S.tab="gids";}S.gc="start";if(!document.getElementById("ov").hidden)closeOv();render();window.scrollTo(0,0);return;}
-  if(t.dataset.cmp){const i=t.dataset.cmp;if(S.cmp.has(i))S.cmp.delete(i);else{if(S.cmp.size>=4)S.cmp.delete([...S.cmp][0]);S.cmp.add(i);}render();openDetail(i);return;}
   const a=t.dataset.act;
   if(a==="close"){closeOv();return;}
   if(a==="filter"){openFilter();return;}
@@ -2476,6 +2479,8 @@ document.addEventListener("click",e=>{navY=window.scrollY;
   if(a==="gklaar"){if(S.gsel.length)gdKies({d:S.gsel.slice(),skip:false,eerste:false},"#es-t");return;}
   if(a==="gskip"){gdKies({d:[],skip:true,eerste:false});window.scrollTo(0,0);return;}
   if(a==="gedit"){S.gedit=true;S.gplek=false;S.gsel=DOEL?DOEL.d.slice():[];render();window.scrollTo(0,0);gdFocus("#gdoel-t");return;}
+  if(a==="kies"){S.kies=true;S.tab="alle";render();window.scrollTo(0,0);document.getElementById("main").focus({preventScroll:true});return;}
+  if(a==="kiesstop"){S.kies=false;S.tab="tuin";render();window.scrollTo(0,0);return;}
   if(a==="introok"){lsSet("mt-intro-v1","1");render();document.getElementById("main").focus({preventScroll:true});return;}
   if(a==="askok"){const r=askRes;askRes=null;closeOv();if(r)r(true);return;}
   if(a==="undo"){const f=toastUndo;hideToast();if(f)f();return;}
@@ -2484,8 +2489,6 @@ document.addEventListener("click",e=>{navY=window.scrollY;
   if(a==="hback"){S.hulp=null;S.hg="";render();window.scrollTo(0,0);document.getElementById("main").focus({preventScroll:true});return;}
   if(a==="gback"){S.gc=null;render();window.scrollTo(0,0);return;}
   if(a==="reset"){S.type=S.diep=S.plek="alle";render();openFilter();return;}
-  if(a==="compare"&&S.cmp.size>1){openCompare();return;}
-  if(a==="clear"){S.cmp.clear();render();return;}
 });
 document.addEventListener("input",e=>{if(e.target.id==="q"){S.q=e.target.value;const pos=e.target.selectionStart;render();const q=document.getElementById("q");q.focus();q.setSelectionRange(pos,pos);}else if(e.target.id==="gq"){S.gq=e.target.value;const pos=e.target.selectionStart;render();const q=document.getElementById("gq");q.focus();q.setSelectionRange(pos,pos);}});
 document.addEventListener("toggle",e=>{const d=e.target;if(!d.classList||!d.classList.contains("grp"))return;const set=d.dataset.view==="jaar"?S.jgrp:S.grp;if(!(S.q||S.type!=="alle"||S.diep!=="alle"||S.plek!=="alle")){if(d.open)set.add(d.dataset.grp);else set.delete(d.dataset.grp);}},true);
