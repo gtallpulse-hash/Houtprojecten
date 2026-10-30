@@ -127,10 +127,6 @@ details.dd>summary{cursor:pointer;font-weight:600;color:var(--leaf);padding-bloc
 .nav button{flex:1;border:0;background:transparent;color:inherit;opacity:.65;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;border-radius:14px;font-size:var(--fs-s);font-weight:600}
 .nav button svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .nav button[aria-current="page"]{opacity:1;background:rgba(255,255,255,.12)}
-.tray{position:fixed;left:12px;right:12px;bottom:calc(76px + env(safe-area-inset-bottom,0px));z-index:35;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:10px 12px;display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;max-width:600px;margin-inline:auto;font-size:var(--fs-m)}
-.tray .go{background:var(--leaf);color:var(--on-leaf);border:0;border-radius:999px;padding:8px 14px;font-weight:600}
-.tray .clr{background:transparent;border:0;color:var(--muted);text-decoration:underline}
-.tray .go:disabled{opacity:.5}
 .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:var(--fs-s);margin-block:10px;color:var(--muted)}
 .legend i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-right:6px}
 .k-zb{background:transparent;border:2px solid var(--f-zaai)} .k-zd{background:var(--f-zaai)} .k-pt{background:var(--f-plant)} .k-oo{background:var(--f-oogst)}
@@ -385,7 +381,6 @@ details.grp.cg>.cbody{padding:0 14px 10px}
 
 <div class="toast" id="toast" hidden><span id="toast-t" aria-hidden="true"></span><button class="toast-b" data-act="undo" hidden>Ongedaan maken</button></div>
 <div class="overlay" id="ov" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-t"></div></div>
-<div class="tray" id="tray" hidden></div>
 
 <script>
 const MN=["jan","feb","mrt","apr","mei","jun","jul","aug","sep","okt","nov","dec"];
@@ -1868,7 +1863,7 @@ const faseLabel=k=>(FASEN.find(f=>f[0]===k)||[])[1]||"";
 const KIND={zb:[faseLabel("zb")],zd:[faseLabel("zd")],pt:[faseLabel("pt")]};
 function legendHtml(){const x={zb:" (open)",zd:" (gevuld)"};return `<div class="legend">${FASEN.map(([k,l])=>`<span><i class="k-${k}"></i>${l}${x[k]||""}</span>`).join("")}</div>`;}
 const NOW=new Date().getMonth()+1;const cr=s=>String(s).split(" I\u0027d")[0].replace(/\s*\(.*?$/,"");
-const S={tab:"kal",kv:"maand",m:NOW,type:"alle",diep:"alle",plek:"alle",q:"",cmp:new Set(),more:new Set(),grp:new Set(),jgrp:new Set(),hulp:null,hg:"",gc:null,gq:"",gsel:[],gedit:false,gplek:false,gact:null,ch:0};
+const S={tab:"kal",kv:"maand",m:NOW,type:"alle",diep:"alle",plek:"alle",q:"",more:new Set(),grp:new Set(),jgrp:new Set(),hulp:null,hg:"",gc:null,gq:"",gsel:[],gedit:false,gplek:false,gact:null,ch:0};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function ranges(arr){if(!arr||!arr.length)return "-";const s=new Set(arr);if(s.size===12)return "heel jaar";let st=1;while(s.has(st))st++;const out=[];let run=null;for(let k=1;k<=12;k++){const m=((st+k-1)%12)+1;if(s.has(m)){if(!run){run=[m,m];out.push(run);}else run[1]=m;}else run=null;}return out.map(x=>x[0]===x[1]?MN[x[0]-1]:MN[x[0]-1]+"-"+MN[x[1]-1]).join(", ");}
 const nm=id=>BY[id].n;
@@ -2384,20 +2379,12 @@ addEventListener("popstate",e=>{
 function render(){
   renderChrome();
   document.getElementById("main").innerHTML={alle:viewAlle,kal:viewKal,tuin:viewTuin,hulp:viewHulp,gids:viewGids}[S.tab]();
-  renderTray();
   document.getElementById("live").textContent=S.tab==="alle"?filtered().length+" gewassen":(S.tab==="gids"&&!S.gc&&S.gq.trim()?(gidsFind(S.gq).length||gidsFind(S.gq,true).length)+" resultaten":"");
   navSync();
 }
-function renderTray(){
-  const t=document.getElementById("tray");t.hidden=!S.cmp.size||!document.getElementById("ov").hidden;
-  if(!S.cmp.size)return;
-  t.innerHTML=`<span>${S.cmp.size} in vergelijking: ${[...S.cmp].map(nm).join(", ")}</span><span><button class="clr" data-act="clear">Wissen</button> <button class="go" data-act="compare" ${S.cmp.size<2?"disabled":""}>${S.cmp.size<2?"Kies er nog één":"Vergelijk"}</button></span>`;
-}
-function tagList(arr){return arr.length?`<div class="links">${arr.map(i=>`<button data-open="${i}">${esc(nm(i))}</button>`).join("")}</div>`:"<span style='color:var(--muted)'>Niets bijzonders.</span>";}
-let lastFocus=null;
-function setBg(off){for(const e of document.querySelectorAll(".wrap,.nav,.tray"))e.inert=off;}
-function showSheet(html){const sh=document.getElementById("sheet"),ov=document.getElementById("ov");if(ov.hidden){const a=document.activeElement;lastFocus=a&&a!==document.body?{el:a,open:a.getAttribute("data-open")}:null;navPush({ov:1});}sh.innerHTML=html;sh.scrollTop=0;const h=sh.querySelector("h2");if(h)h.id="sheet-t";ov.hidden=false;setBg(true);document.body.style.overflow="hidden";document.getElementById("tray").hidden=true;const f=sh.querySelector("[data-act=close]");if(f)f.focus();}
-function closeOv(){if(askRes){const r=askRes;askRes=null;r(false);}const wasOpen=!document.getElementById("ov").hidden;document.getElementById("ov").hidden=true;setBg(false);document.body.style.overflow="";renderTray();if(lastFocus){let t=lastFocus.el;if(!document.contains(t)&&lastFocus.open)t=document.querySelector(`[data-open="${lastFocus.open}"]`);if(t&&t.focus)t.focus();lastFocus=null;}if(wasOpen&&!navRest&&history.state&&history.state.ov){navSkip++;history.back();setTimeout(()=>{if(navSkip>0){navSkip=0;navSync();}},800);}}
+function setBg(off){for(const e of document.querySelectorAll(".wrap,.nav"))e.inert=off;}
+function showSheet(html){const sh=document.getElementById("sheet"),ov=document.getElementById("ov");if(ov.hidden){const a=document.activeElement;lastFocus=a&&a!==document.body?{el:a,open:a.getAttribute("data-open")}:null;navPush({ov:1});}sh.innerHTML=html;sh.scrollTop=0;const h=sh.querySelector("h2");if(h)h.id="sheet-t";ov.hidden=false;setBg(true);document.body.style.overflow="hidden";const f=sh.querySelector("[data-act=close]");if(f)f.focus();}
+function closeOv(){if(askRes){const r=askRes;askRes=null;r(false);}const wasOpen=!document.getElementById("ov").hidden;document.getElementById("ov").hidden=true;setBg(false);document.body.style.overflow="";if(lastFocus){let t=lastFocus.el;if(!document.contains(t)&&lastFocus.open)t=document.querySelector(`[data-open="${lastFocus.open}"]`);if(t&&t.focus)t.focus();lastFocus=null;}if(wasOpen&&!navRest&&history.state&&history.state.ov){navSkip++;history.back();setTimeout(()=>{if(navSkip>0){navSkip=0;navSync();}},800);}}
 const closeBtn='<button class="x" data-act="close" aria-label="Sluiten">×</button>';
 function miniRow(c){return `<div class="mini">${MN.map((n,i)=>{const m=i+1;return `<div><span>${n.slice(0,1).toUpperCase()}</span>`+["zb","zd","pt"].map(k=>`<b class="${c[k].includes(m)?"on k-"+k:""}"></b>`).join("")+`<b class="${c.oo.includes(m)?"on k-oo":""}"></b></div>`;}).join("")}</div>`;}
 
@@ -2415,7 +2402,7 @@ function openDetail(id){
   <div class="head"><h2>${esc(c.n)}</h2><div class="lat" translate="no">${esc(c.l)}</div></div>
   <div class="facts4"><div><span>Niveau</span><b>${DIFF[c.d]}</b></div><div><span>Duur</span><b>${esc(short(c.dagen))}</b></div><div><span>Plek</span><b>${c.pl.join(", ")}</b></div><div><span>Ruimte</span><b>${esc(c.afst)}</b></div></div>
   <div style="margin-top:18px">${legendHtml()}${miniRow(c)}</div>
-  <div class="guide-cta"><button class="btn pri big" data-guide="${id}">Hoe teel ik dit? ›</button><span>Volledig stappenplan van voorbereiding tot oogst</span></div><div class="fbtn"><button class="btn${inTuin(id)?" pri":""}" data-tuin="${id}">${inTuin(id)?"In mijn tuin":"Zet in mijn tuin"}</button><button class="btn${S.cmp.has(id)?" pri":""}" data-cmp="${id}">${S.cmp.has(id)?"In vergelijking":"Zet in vergelijking"}</button></div>
+  <div class="guide-cta"><button class="btn pri big" data-guide="${id}">Hoe teel ik dit? ›</button><span>Volledig stappenplan van voorbereiding tot oogst</span></div><div class="fbtn"><button class="btn${inTuin(id)?" pri":""}" data-tuin="${id}">${inTuin(id)?"In mijn tuin":"Zet in mijn tuin"}</button></div>
   <div style="margin-top:18px">
   ${fold("In het kort",`<ol class="steps">${c.st.map(s=>`<li><span>${esc(s)}</span></li>`).join("")}</ol>`)}
   ${fold("Met wie combineer je dit?",buren,true)}
@@ -2448,17 +2435,6 @@ function openGuide(id){
    <div class="pager" style="margin-top:22px"><button class="btn" data-open="${id}">‹ Terug naar ${esc(c.n.toLowerCase())}</button></div></div>`);
 }
 
-function openCompare(){
-  const l=[...S.cmp].map(i=>BY[i]);
-  const row=(lab,fn)=>`<tr><th>${lab}</th>${l.map(c=>`<td>${fn(c)}</td>`).join("")}</tr>`;
-  const pairs=(()=>{const a=[];for(let i=0;i<l.length;i++)for(let j=i+1;j<l.length;j++){const s=rel(l[i].id,l[j].id);a.push(`<div class="pair"><b>${esc(l[i].n)}</b> en <b>${esc(l[j].n)}</b><span class="pill ${s==="bad"?"tom":s==="good"?"":"plain"}">${s==="bad"?"Liever niet samen":s==="good"?"Goede buren":"Geen bijzondere invloed"}</span></div>`);}return a.join("");})();
-  showSheet(`<div class="pad" style="padding-top:18px;position:relative"><div class="head" style="padding-top:0"><h2>Vergelijking</h2></div><button class="x" style="top:14px" data-act="close" aria-label="Sluiten">×</button>
-  <div class="scroll" style="margin-top:14px"><table><thead><tr><th></th>${l.map(c=>`<th style="color:var(--ink)">${esc(c.n)}</th>`).join("")}</tr></thead><tbody>
-  ${row("Niveau",c=>DIFF[c.d])}${row("Soort",c=>esc(c.t))}${row("Zon",c=>esc(c.zon))}${row("Plek",c=>c.pl.join(", "))}${row("Pot",c=>esc(c.pot))}${row("Plantafstand",c=>esc(c.afst))}${row("Duur",c=>esc(c.dagen))}
-  ${FASEN.map(([k,l])=>row(l,c=>ranges(c[k]))).join("")}${row("Levensduur",c=>esc(c.vast))}
-  ${row("Goed naast",c=>c.goed.map(nm).join(", ")||"-")}${row("Liever niet naast",c=>c.slecht.map(nm).join(", ")||"-")}</tbody></table></div>
-  <h3 style="margin-top:22px;font-size:var(--fs-xl)">Passen ze samen?</h3><div>${pairs}</div></div>`);
-}
 function openFilter(){
   const g=(t,key,opts)=>`<h3 class="sub-h">${t}</h3><div class="chips">${opts.map(([v,l])=>`<button class="chip" data-f="${key}" data-v="${v}" aria-pressed="${S[key]===v}">${l}</button>`).join("")}</div>`;
   showSheet(`<div class="pad" style="padding-top:20px;position:relative"><div class="head" style="padding-top:0"><h2>Filter</h2></div><button class="x" style="top:16px" data-act="close" aria-label="Sluiten">×</button>
@@ -2489,7 +2465,6 @@ document.addEventListener("click",e=>{navY=window.scrollY;
   if(t.dataset.cat){S.gc=t.dataset.cat;render();window.scrollTo(0,0);return;}
   if(t.dataset.guide){openGuide(t.dataset.guide);return;}
   if(t.dataset.ch!==undefined){S.ch=+t.dataset.ch;lsSet("sg-ch",String(S.ch));if(t.dataset.start){S.tab="gids";}S.gc="start";if(!document.getElementById("ov").hidden)closeOv();render();window.scrollTo(0,0);return;}
-  if(t.dataset.cmp){const i=t.dataset.cmp;if(S.cmp.has(i))S.cmp.delete(i);else{if(S.cmp.size>=4)S.cmp.delete([...S.cmp][0]);S.cmp.add(i);}render();openDetail(i);return;}
   const a=t.dataset.act;
   if(a==="close"){closeOv();return;}
   if(a==="filter"){openFilter();return;}
@@ -2508,8 +2483,6 @@ document.addEventListener("click",e=>{navY=window.scrollY;
   if(a==="hback"){S.hulp=null;S.hg="";render();window.scrollTo(0,0);document.getElementById("main").focus({preventScroll:true});return;}
   if(a==="gback"){S.gc=null;render();window.scrollTo(0,0);return;}
   if(a==="reset"){S.type=S.diep=S.plek="alle";render();openFilter();return;}
-  if(a==="compare"&&S.cmp.size>1){openCompare();return;}
-  if(a==="clear"){S.cmp.clear();render();return;}
 });
 document.addEventListener("input",e=>{if(e.target.id==="q"){S.q=e.target.value;const pos=e.target.selectionStart;render();const q=document.getElementById("q");q.focus();q.setSelectionRange(pos,pos);}else if(e.target.id==="gq"){S.gq=e.target.value;const pos=e.target.selectionStart;render();const q=document.getElementById("gq");q.focus();q.setSelectionRange(pos,pos);}});
 document.addEventListener("toggle",e=>{const d=e.target;if(!d.classList||!d.classList.contains("grp"))return;const set=d.dataset.view==="jaar"?S.jgrp:S.grp;if(!(S.q||S.type!=="alle"||S.diep!=="alle"||S.plek!=="alle")){if(d.open)set.add(d.dataset.grp);else set.delete(d.dataset.grp);}},true);

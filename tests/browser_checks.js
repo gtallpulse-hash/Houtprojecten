@@ -951,8 +951,7 @@ checks.doelen44 = async () => {
   S.gc = null;
   for (const pad of ["zaaien/zaaien-binnen-buiten", "plagen/slakken"]) await doe("artikel " + pad, async () => { openArticle(pad); });
   closeOv();
-  await doe("vergelijk", async () => { S.cmp.clear(); S.cmp.add("tomaat"); S.cmp.add("courgette"); openCompare(); });
-  closeOv(); S.cmp.clear();
+  closeOv();
   return { ok: Object.keys(uit).length === 0, detail: JSON.stringify(uit) };
 };
 
