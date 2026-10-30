@@ -655,7 +655,9 @@ checks.eersteGebruik = async () => {
     // maandkiezer: meer maanden dan zichtbaar, en een fade-aanwijzing
     await go("kal");
     const mo = document.getElementById("months");
-    if (mo.scrollWidth <= mo.clientWidth) f.push("alle maanden passen: geen aanwijzing nodig");
+    const nu = new Date().getMonth() + 1, ml = [...mo.querySelectorAll(".mo")].map(b => +b.dataset.mo);
+    if (ml.some(x => x < nu && nu !== 12)) f.push("maandkiezer toont verleden maanden: " + ml);
+    if (!ml.includes(nu % 12 + 1)) f.push("komende maand ontbreekt in de kiezer");
     const m = getComputedStyle(mo);
     if (!/gradient/.test(m.maskImage || m.webkitMaskImage || "")) f.push("geen fade aan de randen");
     // tekstverwijzing in kader

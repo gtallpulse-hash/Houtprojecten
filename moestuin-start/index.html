@@ -45,7 +45,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .top .brand{font:700 var(--fs-b) var(--f-display);color:var(--leaf);display:flex;gap:8px;align-items:center}
 .top h1{font-size:clamp(2.4rem,9vw,4rem);letter-spacing:-.02em;margin-top:10px}
 .top p{margin:6px 0 0;color:var(--muted);font-size:var(--fs-l);max-width:44ch}
-.months{display:flex;gap:6px;overflow-x:auto;padding-block:14px 4px;scrollbar-width:none;-webkit-mask-image:linear-gradient(to right,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%);mask-image:linear-gradient(to right,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%)}
+.months{display:flex;gap:6px;overflow-x:auto;padding-block:14px 4px;scrollbar-width:none;-webkit-mask-image:linear-gradient(to right,#000 calc(100% - 18px),transparent 100%);mask-image:linear-gradient(to right,#000 calc(100% - 18px),transparent 100%)}
 .months::-webkit-scrollbar{display:none}
 .mo{border:0;background:transparent;padding:11px 14px;min-height:44px;border-radius:999px;font-weight:600;color:var(--muted);flex:none}
 .mo[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
@@ -270,6 +270,17 @@ details.grp.cg>.cbody{padding:0 14px 10px}
 .gc-nu i{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none}
 .gc-act{display:flex;gap:2px 16px;flex-wrap:wrap}
 .mini .nu span{color:var(--ink);font-weight:700}
+.prep,.nextm{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;margin-top:14px}
+.prep h2,.nextm h2{font-size:var(--fs-xl)}
+.prep-i{margin:2px 0 8px;color:var(--muted)}
+.pg{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.pg h3{display:flex;align-items:center;gap:8px;font:700 var(--fs-l) var(--f-display);margin:0 0 6px}
+.pg h3 i{width:12px;height:12px;border-radius:50%;flex:none}
+.pg h3 small{margin-left:auto;font-weight:400;color:var(--muted);font-size:var(--fs-m)}
+.pg ul{margin:0;padding-left:20px}
+.pg-g{margin:8px 0 0;font-size:var(--fs-m)}
+.nextm{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.nm-r{display:flex;gap:4px 14px;flex-wrap:wrap;margin:4px 0 0}
 .tleeg{background:var(--surface);border:1px dashed var(--line);border-radius:18px;padding:20px;margin-top:14px;display:grid;gap:10px;justify-items:start}
 .tleeg h2{font-size:var(--fs-xl)}
 .tleeg p{margin:0}
@@ -1902,18 +1913,20 @@ function tile(c,tag,actie){
 /* ---------- Chrome: header, maanden, nav ---------- */
 const ICONS={tuin:'<path d="M12 21v-8"/><path d="M12 13c0-4 3-6 7-6 0 4-3 6-7 6z"/><path d="M12 15c0-3-2-5-6-5 0 3 2 5 6 5z"/>',hulp:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7"/><path d="M12 17h.01"/>',alle:'<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',kal:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>',gids:'<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/><path d="M9 8h6"/>'};
 const GIC={sprout:'<path d="M12 21v-8"/><path d="M12 13c0-4 3-6 7-6 0 4-3 6-7 6z"/><path d="M12 15c0-3-2-5-6-5 0 3 2 5 6 5z"/>',soil:'<path d="M3 17h18M5 21h14M7 13c1-3 3-5 5-5s4 2 5 5"/>',seed:'<path d="M12 3c4 3 6 6 6 9a6 6 0 0 1-12 0c0-3 2-6 6-9z"/><path d="M12 9v8"/>',water:'<path d="M12 3s6 6 6 11a6 6 0 0 1-12 0c0-5 6-11 6-11z"/>',bug:'<ellipse cx="12" cy="14" rx="5" ry="6"/><path d="M12 8V5M8 4l2 3M16 4l-2 3M7 12H3M17 12h4M8 18l-3 3M16 18l3 3"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>',pair:'<circle cx="8" cy="12" r="5"/><circle cx="16" cy="12" r="5"/>',basket:'<path d="M4 10h16l-2 10H6z"/><path d="M8 10l4-6 4 6"/>',book:'<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M9 8h6M9 12h6"/>',pot:'<path d="M6 10h12l-1.5 10h-9z"/><path d="M12 10V4M12 6c0-2 2-3 4-3M12 7c0-2-2-3-4-3"/>'};
+const VOLG=NOW%12+1;
+const MKIES=NOW===12?[12,1]:Array.from({length:13-NOW},(_,i)=>NOW+i);
 function renderChrome(){
   const T=[["kal","Kalender"],["alle","Gewassen"],["tuin","Tuin"],["hulp","Hulp"],["gids","Gids"]];
   document.getElementById("nav").innerHTML=T.map(([k,v])=>`<button data-tab="${k}" ${S.tab===k?'aria-current="page"':""}><svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[k]}</svg>${v}</button>`).join("");
   const maand=S.tab==="kal"&&S.kv==="maand";
   const gcat=S.tab==="gids"&&S.gc&&S.gc!=="start"?GROEPEN.find(g=>g.id===S.gc):null;const gstart=S.tab==="gids"&&S.gc==="start";
   document.getElementById("h1").textContent=maand?MF[S.m-1].charAt(0).toUpperCase()+MF[S.m-1].slice(1):{alle:"Alle gewassen",kal:"Jaaroverzicht",tuin:"Mijn tuin",hulp:(HELP.find(x=>x.id===S.hulp)||{t:"Hulp"}).t,gids:gstart?"Startersgids":gcat?gcat.t:"Gids"}[S.tab];
-  const subs={alle:C.length+" groenten, fruit en kruiden voor België.",kal:S.kv==="maand"?(S.m===NOW?"Dit kan je nu doen in je moestuin.":"Dit kan je doen in "+MF[S.m-1]+"."):"Wanneer je wat zaait, plant en oogst. De gele band is deze maand.",tuin:TUIN.crops.length?TUIN.crops.length+" "+(TUIN.crops.length===1?"gewas":"gewassen")+" in je tuin.":"Je tuin is nog leeg.",hulp:(HELP.find(x=>x.id===S.hulp)||{s:"Wat gaat er mis met je plant?"}).s,gids:gstart?SG[S.ch].t:gcat?gcat.d:"Begin hier en leer stap voor stap."};
+  const subs={alle:C.length+" groenten, fruit en kruiden voor België.",kal:S.kv==="maand"?(S.m===NOW?"Dit kan je nu doen in je moestuin.":S.m===VOLG?"Dit komt eraan. Bereid je voor.":"Dit kan je doen in "+MF[S.m-1]+"."):"Wanneer je wat zaait, plant en oogst. De gele band is deze maand.",tuin:TUIN.crops.length?TUIN.crops.length+" "+(TUIN.crops.length===1?"gewas":"gewassen")+" in je tuin.":"Je tuin is nog leeg.",hulp:(HELP.find(x=>x.id===S.hulp)||{s:"Wat gaat er mis met je plant?"}).s,gids:gstart?SG[S.ch].t:gcat?gcat.d:"Begin hier en leer stap voor stap."};
   document.getElementById("sub").textContent=subs[S.tab];
   const kv=document.getElementById("kv");kv.hidden=S.tab!=="kal";
   kv.innerHTML=[["maand","Deze maand"],["jaar","Jaaroverzicht"]].map(([v,t])=>`<button class="chip" data-kv="${v}" aria-pressed="${S.kv===v}">${t}</button>`).join("");
   const mo=document.getElementById("months");mo.hidden=!maand;
-  mo.innerHTML=MN.map((n,i)=>`<button class="mo${i+1===NOW?" now":""}" data-mo="${i+1}" aria-pressed="${S.m===i+1}" aria-label="${MF[i]}">${n}</button>`).join("");
+  mo.innerHTML=MKIES.map(m=>`<button class="mo${m===NOW?" now":""}" data-mo="${m}" aria-pressed="${S.m===m}" aria-label="${MF[m-1]}">${MN[m-1]}</button>`).join("");
   {const a=mo.querySelector('[aria-pressed="true"]');if(a&&!mo.hidden)mo.scrollLeft=a.getBoundingClientRect().left-mo.getBoundingClientRect().left+mo.scrollLeft-(mo.clientWidth-a.offsetWidth)/2;}
   const sr=document.querySelector&&document.querySelector(".src");if(sr)sr.hidden=["gids","hulp","tuin"].includes(S.tab);
   const bar=document.getElementById("bar");bar.hidden=["gids","hulp","tuin"].includes(S.tab);
@@ -1928,10 +1941,21 @@ const faseLijst=(k,m)=>filtered().filter(c=>c[k].includes(m)).sort(byEase);
 const LIM=6;
 function fSec(key,t,arr){const all=S.more.has(key)||arr.length<=LIM+1,shown=all?arr:arr.slice(0,LIM);
   return `<section class="sec" data-sec="${key}"><h2>${esc(t)}<small>${arr.length} gewassen</small></h2><div class="grid">${shown.map(c=>tile(c,null,actieZin(c,key))).join("")}</div>${all?"":`<div class="morewrap"><button class="btn" data-more="${key}">Toon alle ${arr.length}</button></div>`}</section>`;}
+const PREP={zb:["Maak zaaibakken en potjes schoon.","Haal zaaizaad en zaaigrond in huis.","Zoek een lichte plek, bijvoorbeeld een vensterbank."],zd:["Maak het bed vrij van onkruid en oude resten.","Werk de grond los en meng er compost door.","Leg zaaizaad, een touw en labels klaar."],pt:["Maak de plek klaar met verse grond en compost.","Koop of bestel plantgoed vlak voor je plant.","Markeer de afstand tussen de planten."],oo:["Zet manden of kratten klaar.","Kijk of het gewas rijp is voor je plukt of rooit.","Bedenk waar je de oogst bewaart of laat drogen."]};
+function prepHtml(m){
+  const mn=MF[m-1],groepen=FASEN.map(([k,l])=>({k,l,arr:faseLijst(k,m)})).filter(f=>f.arr.length);
+  if(!groepen.length)return "";
+  return `<section class="prep" aria-labelledby="prep-t"><h2 id="prep-t">Hoe bereid ik me voor op ${mn}?</h2><p class="prep-i">Dit komt in ${mn} aan bod. Doe dit alvast.</p>${groepen.map(f=>`<div class="pg"><h3><i class="k-${f.k}" aria-hidden="true"></i>${f.l}<small>${f.arr.length} ${f.arr.length===1?"gewas":"gewassen"}</small></h3><ul>${PREP[f.k].map(t=>`<li>${t}</li>`).join("")}</ul><p class="pg-g">${f.arr.slice(0,8).map(c=>`<button class="lnk" data-open="${c.id}">${esc(c.n)}</button>`).join(", ")}${f.arr.length>8?` en ${f.arr.length-8} andere`:""}</p></div>`).join("")}</section>`;
+}
+function volgendeKaart(){
+  const m=VOLG,mn=MF[m-1],groepen=FASEN.map(([k,l])=>({k,l,n:faseLijst(k,m).length})).filter(f=>f.n);
+  if(!groepen.length)return "";
+  return `<section class="nextm" aria-labelledby="nm-t"><div><h2 id="nm-t">Komende maand: ${mn}</h2><p class="nm-r">${groepen.map(f=>`<span class="tfase"><i class="k-${f.k}" aria-hidden="true"></i>${f.l} ${f.n}</span>`).join("")}</p></div><button class="btn" data-mo="${m}">Bereid je voor</button></section>`;
+}
 function viewMaand(){
   const m=S.m,mn=MF[m-1];
   const fase=FASEN.map(([k,l])=>({k,l,arr:faseLijst(k,m)})).filter(f=>f.arr.length);
-  const h=hintVoor(m),hint=h?`<p class="hint" role="note">Let op: ${esc(h)}</p>`:"";
+  const h=hintVoor(m),hint=(m===VOLG&&m!==NOW?prepHtml(m):"")+(h?`<p class="hint" role="note">Let op: ${esc(h)}</p>`:"")+(m===NOW?volgendeKaart():"");
   if(!fase.length)return hint+`<div class="empty">In ${mn} is er niets te doen met deze filters. Kies een andere maand.</div>`;
   const geenZaai=!fase.some(f=>f.k!=="oo");
   return hint+(geenZaai?`<div class="empty">In ${mn} valt er niets te zaaien of planten. Kijk bij oogst, of kies een andere maand.</div>`:"")+fase.map(f=>fSec(f.k,f.l,f.arr)).join("");
