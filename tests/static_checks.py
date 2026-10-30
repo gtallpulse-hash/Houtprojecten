@@ -36,6 +36,21 @@ check("sleutels blijven", SRC.count('"mt-tuin-v1"') >= 1 and SRC.count('"sg-ch"'
 check("geenPlaatshouders", re.search(r"TODO|TBD|lorem", SRC, re.I) is None)
 check("vorstdata uit bron", "rond half april" not in SRC and "tussen half oktober en begin november" not in SRC and "27 maart" in SRC and "21 november" in SRC)
 
+# --- Gegevenscontrole fase B, eerste ronde (docs/gegevens-controle-2026-10-30.md)
+check("radijsAfstand", 'afst:"2-3 cm in de rij, 10-15 cm tussen de rijen"' in SRC and "radijs:[1,3,12]" in SRC and 'afst:"3-5 cm in de rij"' not in SRC)
+check("pompoenRuimte", "2 tot 3 m² per plant" not in SRC and "1,5 tot 2 m² per plant" in SRC)
+check("spruitkoolZaai", "Zaai april-mei in een bed." not in SRC and "Zaai van eind maart tot mei in een bed." in SRC)
+
+# --- Audit fase 1: structuur van het document
+check("titelInHead", SRC.index("<title>") < SRC.index("<body>"))
+check("navVoorMain", SRC.index('<nav class="nav"') < SRC.index('<main id="main"'))
+check("naam", "Moestuin Start" not in SRC and "<title>Mijn Moestuin</title>" in SRC)
+
+# --- Audit fase 2: lettergroottereeks en eigen dialogen
+check("geenNativeDialogen", "confirm(" not in SRC and "alert(" not in SRC)
+check("lettergroottereeks", len(set(re.findall(r"font-size:\s*([0-9.]+rem)", SRC))) <= 3, str(sorted(set(re.findall(r"font-size:\s*([0-9.]+rem)", SRC)))[:6]))
+check("indrukstatus", ":active{filter" in SRC)
+
 # --- Reviewer-herstel
 check("pompoenillustratie", "Courgette en pompoen: 1 plant per m" not in SRC)
 

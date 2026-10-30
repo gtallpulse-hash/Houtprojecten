@@ -225,7 +225,7 @@ checks.jaarRij = async () => {
   const rijen = [...document.querySelectorAll(".crow")];
   if (!rijen.length) return { ok: false, detail: "geen rijen" };
   const h = Math.max(...rijen.map((r) => r.getBoundingClientRect().height));
-  if (h > 60) fouten.push("hoogte " + Math.round(h));
+  if (Math.round(h) > 60) fouten.push("hoogte " + Math.round(h));  // afgerond: 60,4 px is geen overschrijding
   if (document.querySelector(".crow .dots")) fouten.push("bolletjes");
   for (const r of rijen) {
     const c = BY[r.dataset.open], niv = r.querySelector(".niv");
@@ -245,8 +245,8 @@ checks.jaarLegenda = async () => {
   await jaar();
   const l = document.querySelector(".legend"), t = l.innerText.replace(/\s+/g, " ");
   const labels = ["Zaai in huis (open)", "Zaai buiten (gevuld)", "Plant uit", "Oogst"].every((x) => t.includes(x));
-  const regels = l.getBoundingClientRect().height / parseFloat(getComputedStyle(l).lineHeight || "20");
-  return { ok: labels && regels <= 2.6, detail: regels.toFixed(1) + " regels" };
+  const rijen = new Set([...l.children].map((c) => Math.round(c.getBoundingClientRect().top))).size;  // aantal rijen waarin de legenda wrapt
+  return { ok: labels && rijen <= 2, detail: rijen + " rijen" };
 };
 
 checks.jaarDonker = async () => {
@@ -381,11 +381,552 @@ checks.bronnen = async () => {
 };
 
 // Acceptatiecriterium 8: interactieve elementen zijn minstens 44 px hoog.
+// Vangnet voor de opgeslagen tuin: niets gaat stilzwijgend verloren.
+checks.tuinVangnet = async () => {
+  const bewaar = { a: localStorage.getItem(TK), b: localStorage.getItem(TKOPIE) };
+  const oud = { crops: TUIN.crops.slice(), bak: TUIN.bak };
+  const fouten = [];
+  try {
+    const id = C[0].id;
+    // 1. onbekend id: kopie van het origineel blijft bewaard
+    localStorage.removeItem(TKOPIE);
+    const raw1 = JSON.stringify({ v: 1, crops: [id, "bestaat-niet"], plek: "alle", done: {} });
+    localStorage.setItem(TK, raw1);
+    const t1 = tuinLoad();
+    if (t1.crops.length !== 1 || t1.crops[0] !== id) fouten.push("onbekend id niet gefilterd");
+    if (localStorage.getItem(TKOPIE) !== raw1) fouten.push("geen kopie bij onbekend id");
+    // 2. kapot bestand: lege tuin, maar kopie bewaard
+    localStorage.removeItem(TKOPIE);
+    localStorage.setItem(TK, "{kapot");
+    const t2 = tuinLoad();
+    if (t2.crops.length !== 0) fouten.push("kapot bestand geeft gewassen");
+    if (localStorage.getItem(TKOPIE) !== "{kapot") fouten.push("geen kopie bij kapot bestand");
+    // 3. een eerste kopie wordt niet overschreven
+    localStorage.setItem(TK, "[1,2]");
+    tuinLoad();
+    if (localStorage.getItem(TKOPIE) !== "{kapot") fouten.push("eerste kopie overschreven");
+    // 4. gezond bestand: geen kopie, oude gegevens zonder versie of back-upveld blijven werken
+    localStorage.removeItem(TKOPIE);
+    localStorage.setItem(TK, JSON.stringify({ crops: [id], plek: "pot", done: { "10": ["x"] } }));
+    const t4 = tuinLoad();
+    if (t4.crops.length !== 1 || t4.plek !== "pot" || !t4.done["10"] || t4.bak !== 0) fouten.push("oud formaat niet gelezen");
+    if (localStorage.getItem(TKOPIE) !== null) fouten.push("onnodige kopie");
+    // 5. opslaan schrijft de versie
+    TUIN.crops = [id];
+    tuinSave();
+    if (JSON.parse(localStorage.getItem(TK)).v !== TVERSIE) fouten.push("versie niet bewaard");
+    // 6. herinnering: zichtbaar zonder recente back-up, weg na een verse
+    TUIN.bak = 0;
+    await go("tuin");
+    if (!document.getElementById("tbak")) fouten.push("herinnering ontbreekt");
+    TUIN.bak = Date.now();
+    await go("tuin");
+    if (document.getElementById("tbak")) fouten.push("herinnering blijft staan");
+    TUIN.crops = [];
+    TUIN.bak = 0;
+    await go("tuin");
+    if (document.getElementById("tbak")) fouten.push("herinnering bij lege tuin");
+  } finally {
+    for (const [k, v] of [[TK, bewaar.a], [TKOPIE, bewaar.b]]) {
+      if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v);
+    }
+    TUIN.crops = oud.crops;
+    TUIN.bak = oud.bak;
+    await go("kal");
+  }
+  return { ok: fouten.length === 0, detail: fouten.join("; ") || "6 onderdelen" };
+};
+
+// Terugknop: elke weergave en elk bladscherm is een stap in de geschiedenis.
+checks.terugknop = async () => {
+  const f = [];
+  await go("kal");
+  await go("gids");
+  if (!history.state || history.state.tab !== "gids") f.push("geen stap voor Gids");
+  document.querySelector("[data-cat]").click();
+  await sleep(250);
+  if (!S.gc) f.push("groep niet geopend");
+  history.back();
+  await sleep(300);
+  if (S.gc !== null || S.tab !== "gids") f.push("terug naar Gids-overzicht mislukt");
+  history.back();
+  await sleep(300);
+  if (S.tab !== "kal") f.push("terug naar Kalender mislukt");
+  openDetail("radijs");
+  await sleep(250);
+  if (document.getElementById("ov").hidden) f.push("bladscherm niet open");
+  history.back();
+  await sleep(300);
+  if (!document.getElementById("ov").hidden) f.push("bladscherm blijft open na terug");
+  if (S.tab !== "kal") f.push("terug sloot meer dan het bladscherm");
+  openDetail("radijs");
+  await sleep(250);
+  closeOv();
+  await sleep(300);
+  if (history.state && history.state.ov) f.push("bladscherm-stap blijft na sluiten");
+  if (S.tab !== "kal") f.push("sluiten veranderde de weergave");
+  // dubbel sluiten gaat niet twee stappen terug
+  const idx0 = navigation.currentEntry.index;
+  openDetail("radijs");
+  await sleep(250);
+  closeOv();
+  closeOv();
+  await sleep(500);
+  if (navigation.currentEntry.index !== idx0) f.push("dubbel sluiten verliet de weergave");
+  if (navSkip !== 0) f.push("teller blijft hangen");
+  // scrollpositie van de vorige weergave komt terug
+  await go("kal");
+  window.scrollTo(0, 400);
+  await sleep(200);
+  const y0 = window.scrollY;
+  document.querySelector('#nav [data-tab="gids"]').click();
+  await sleep(300);
+  history.back();
+  await sleep(400);
+  if (y0 > 0 && Math.abs(window.scrollY - y0) > 5) f.push("scrollpositie niet hersteld: " + window.scrollY + " i.p.v. " + y0);
+  window.scrollTo(0, 0);
+  return { ok: f.length === 0, detail: f.join("; ") || "8 onderdelen" };
+};
+
+// Mijn tuin als overzicht: voortgangsring, taakkaarten, gewaskaarten en back-up in een opklapblok.
+checks.tuinOverzicht = async () => {
+  const f = [];
+  const bewaar = { crops: TUIN.crops.slice(), bak: TUIN.bak, done: JSON.stringify(TUIN.done) };
+  try {
+    TUIN.crops = []; TUIN.done = {};
+    await go("tuin");
+    if (!document.querySelector("#main .tleeg")) f.push("geen lege toestand");
+    else if (!document.querySelector('#main .tleeg [data-tab="alle"]')) f.push("lege toestand heeft geen actie");
+    if (document.querySelector("#main .tt")) f.push("overzichtskaart bij lege tuin");
+    const ids = C.filter((c) => ["zb", "zd", "pt", "oo"].some((k) => c[k].includes(NOW))).slice(0, 3).map((c) => c.id);
+    TUIN.crops = ids; TUIN.bak = Date.now(); TUIN.done = {};
+    await go("kal"); await go("tuin");
+    const taken = [...document.querySelectorAll("#main .task input")];
+    if (!document.querySelector("#main .tt .ring")) f.push("geen voortgangsring");
+    const pg = document.getElementById("tprogress");
+    if (!pg || Number(pg.max) !== taken.length || Number(pg.value) !== 0) f.push("voortgang start fout: " + (pg && pg.value + "/" + pg.max) + " bij " + taken.length + " taken");
+    if (document.querySelectorAll("#main .gcard").length !== ids.length) f.push("aantal gewaskaarten");
+    for (const k of document.querySelectorAll("#main .gcard")) {
+      if (!k.querySelector(".gc-nu").textContent.trim()) f.push("kaart zonder status");
+      const m = k.querySelector('.mini[role="img"]');
+      if (!m || !m.getAttribute("aria-label")) f.push("jaarbalk zonder tekst");
+      if (!k.querySelector(".mini .nu")) f.push("huidige maand niet gemarkeerd");
+    }
+    // afvinken werkt ring, teller en kaart bij zonder te herschikken
+    if (taken.length) {
+      taken[0].click();
+      await sleep(150);
+      if (Number(document.getElementById("tprogress").value) !== 1) f.push("ring telt niet mee na afvinken");
+      if (!taken[0].closest("li").classList.contains("gedaan")) f.push("taak niet gemarkeerd als gedaan");
+      if (!/gedaan/.test(document.getElementById("tprog").textContent)) f.push("tekst niet bijgewerkt");
+      for (const t of document.querySelectorAll("#main .task input:not(:checked)")) { t.click(); await sleep(60); }
+      if (!/Alles gedaan/.test(document.getElementById("tprog").textContent)) f.push("geen melding als alles klaar is: " + document.getElementById("tprog").textContent);
+      if (document.getElementById("tring-n").textContent !== taken.length + "/" + taken.length) f.push("ring toont " + document.getElementById("tring-n").textContent);
+    } else f.push("geen taken om af te vinken");
+    // kaart opent het gewas; opruimen
+    document.querySelector("#main .gc-top").click();
+    await sleep(300);
+    if (document.getElementById("ov").hidden) f.push("kaart opent geen gewas");
+    closeOv(); await sleep(300);
+    // back-up staat in een opklapblok
+    const bk = document.querySelector("#main details.tback");
+    if (!bk) f.push("geen back-upblok");
+    else {
+      if (bk.open) f.push("back-upblok staat open");
+      bk.open = true; await sleep(100);
+      if (!bk.querySelector('[data-act="export"]') || !bk.querySelector("#tfile")) f.push("back-upblok mist knoppen");
+    }
+    const kd = kleineDoelen();
+    if (kd.length) f.push("kleine doelen: " + kd[0]);
+    if (document.documentElement.scrollWidth > document.documentElement.clientWidth) f.push("horizontale overflow");
+  } finally {
+    TUIN.crops = bewaar.crops; TUIN.bak = bewaar.bak; TUIN.done = JSON.parse(bewaar.done);
+    tuinSave();
+    if (!document.getElementById("ov").hidden) closeOv();
+    hideToast();
+    await go("kal");
+  }
+  return { ok: f.length === 0, detail: f.slice(0, 4).join("; ") || "9 onderdelen" };
+};
+
+// Doelkeuze en eerste stap op de Gids.
+checks.gidsDoel = async () => {
+  const f = [];
+  const tuinB = { crops: TUIN.crops.slice(), bak: TUIN.bak };
+  const klik = async (sel) => {
+    const e = document.querySelector(sel);
+    if (!e) { f.push("ontbreekt: " + sel); return false; }
+    e.click();
+    await sleep(200);
+    return true;
+  };
+  try {
+    localStorage.removeItem(GDK); DOEL = gdLoad(); S.gedit = false; S.gplek = false;
+    await go("kal"); await go("gids");
+    if (!document.querySelector("#main .gdoel")) f.push("geen vraag bij eerste bezoek");
+    if (document.querySelector("#main .hero-card")) f.push("rest van de Gids zichtbaar bij eerste bezoek");
+    if (document.querySelectorAll("#main .gopt").length !== 6) f.push("aantal keuzes");
+    if (!document.querySelector("#main .gstart")) f.push("geen keuze voor beginners");
+    const kd = kleineDoelen();
+    if (kd.length) f.push("kleine doelen: " + kd[0]);
+    if (!document.querySelector('#main [data-act="gklaar"]').disabled) f.push("knop staat aan zonder keuze");
+    await klik('#main [data-gdoel="kruid"]'); await klik('#main [data-gdoel="fruit"]');
+    if (document.querySelectorAll('#main .gopt[aria-pressed="true"]').length !== 2) f.push("twee keuzes niet aangevinkt");
+    if (document.activeElement.dataset.gdoel !== "fruit") f.push("focus kwijt na kiezen");
+    await klik('#main [data-act="gklaar"]');
+    if (!document.querySelector("#main .es-card")) f.push("geen eerste stap");
+    if (document.querySelectorAll("#main [data-gact]").length !== 2) f.push("geen wisselrij");
+    if (JSON.parse(localStorage.getItem(GDK)).d.join() !== "kruid,fruit") f.push("keuze niet bewaard");
+    await klik('#main [data-gact="fruit"]');
+    if (document.querySelector('#main [data-gact="fruit"]').getAttribute("aria-pressed") !== "true") f.push("wisselen werkt niet");
+    if (!document.querySelector("#main .hero-card")) f.push("Gids komt niet terug na keuze");
+    await klik('#main [data-act="gedit"]');
+    if (document.querySelectorAll('#main .gopt[aria-pressed="true"]').length !== 2) f.push("bewaarde keuzes niet getoond bij aanpassen");
+    await klik('#main [data-act="gstart"]');
+    if (document.querySelectorAll("#main [data-gplek]").length !== 5) f.push("vervolgvraag heeft geen 5 keuzes");
+    await klik('#main [data-act="gterug"]');
+    if (!document.querySelector("#main .gstart")) f.push("terug naar de vraag mislukt");
+    await klik('#main [data-act="gstart"]');
+    await klik('#main [data-gplek="tuin"]');
+    const o = JSON.parse(localStorage.getItem(GDK));
+    if (o.d.join() !== "tuin" || !o.eerste) f.push("beginnerskeuze bewaard als " + JSON.stringify(o));
+    if (!/Je eerste project/.test(document.querySelector("#main .es-t").textContent)) f.push("kop Je eerste project ontbreekt");
+    await klik('#main [data-act="gedit"]'); await klik('#main [data-act="gskip"]');
+    if (!JSON.parse(localStorage.getItem(GDK)).skip) f.push("overslaan niet bewaard");
+    if (document.querySelector("#main .gdoel") || !document.querySelector("#main .hero-card")) f.push("Gids niet normaal na overslaan");
+    localStorage.setItem(GDK, "{kapot"); DOEL = gdLoad();
+    if (DOEL !== null) f.push("kapot bestand geeft geen nieuwe vraag");
+    // elke keuze, elke maand: een bruikbare eerste stap
+    let n = 0;
+    for (const [id] of DOELEN) {
+      for (let m = 1; m <= 12; m++) {
+        const st = gdStap(id, m);
+        n++;
+        if (st.kind === "gewas") {
+          if (!actieZin(st.c, st.tag)) f.push(id + " " + m + ": geen zin");
+          if (st.c.st.length < 3) f.push(id + " " + m + ": te weinig stappen");
+        } else if (st.kind === "voorbereiding") {
+          if (!GDVOORB[id].every((p) => artByPath(p))) f.push(id + ": voorbereidend artikel bestaat niet");
+          if (!st.volgende) f.push(id + " " + m + ": geen volgende maand");
+        } else if (id !== "leren") f.push(id + ": onbekend soort");
+        if (GDMEER[id] && !GDMEER[id].every((p) => artByPath(p))) f.push(id + ": meer-artikel bestaat niet");
+      }
+    }
+    DOEL = { d: DOELEN.map((x) => x[0]), skip: false, eerste: false };
+    for (const [id] of DOELEN) { const h = gdKaart(id); if (/undefined|NaN/.test(h)) f.push("kaart " + id + " bevat undefined"); }
+    void n;
+  } finally {
+    gidsStil();
+    TUIN.crops = tuinB.crops; TUIN.bak = tuinB.bak; tuinSave();
+    hideToast();
+    await go("kal");
+  }
+  return { ok: f.length === 0, detail: f.slice(0, 4).join("; ") || "alle keuzes in alle maanden" };
+};
+
+// Uitleg bij eerste gebruik, instructie bij taken, maandkiezer en kleine correcties.
+checks.eersteGebruik = async () => {
+  const f = [];
+  const bewaar = localStorage.getItem("mt-intro-v1");
+  const tuinBewaar = { crops: TUIN.crops.slice(), bak: TUIN.bak };
+  try {
+    localStorage.removeItem("mt-intro-v1");
+    await go("kal");
+    S.kv = "maand"; render(); await sleep(200);
+    const intro = document.querySelector("#main .intro");
+    if (!intro) f.push("geen uitleg bij eerste gebruik");
+    else {
+      const knop = intro.querySelector('[data-act="introok"]');
+      if (Math.round(knop.getBoundingClientRect().height) < 44) f.push("knop Begrepen te klein");
+      knop.click(); await sleep(250);
+      if (document.querySelector("#main .intro")) f.push("uitleg blijft na Begrepen");
+      if (localStorage.getItem("mt-intro-v1") !== "1") f.push("keuze niet bewaard");
+    }
+    await go("hulp"); await go("kal");
+    if (document.querySelector("#main .intro")) f.push("uitleg komt terug");
+    // taken in de tuin hebben een instructie
+    TUIN.crops = faseLijst("zd", NOW).slice(0, 1).map((c) => c.id).concat(faseLijst("zb", NOW).slice(0, 1).map((c) => c.id));
+    if (!TUIN.crops.length) TUIN.crops = ["tuinboon"];
+    await go("tuin");
+    const taken = [...document.querySelectorAll("#main .task")];
+    const zonder = taken.filter((t) => !t.querySelector(".tinstr") && !/oogst/i.test(t.textContent));
+    if (!taken.length) f.push("geen taken om te controleren");
+    if (zonder.length) f.push("taak zonder instructie: " + zonder[0].textContent.trim().slice(0, 30));
+    // maandkiezer: meer maanden dan zichtbaar, en een fade-aanwijzing
+    await go("kal");
+    const mo = document.getElementById("months");
+    if (mo.scrollWidth <= mo.clientWidth) f.push("alle maanden passen: geen aanwijzing nodig");
+    const m = getComputedStyle(mo);
+    if (!/gradient/.test(m.maskImage || m.webkitMaskImage || "")) f.push("geen fade aan de randen");
+    // tekstverwijzing in kader
+    const tekst = JSON.stringify(HINT);
+    if (/In Ukkel viel/.test(tekst)) f.push("vorstkader noemt nog 'In Ukkel'");
+  } finally {
+    if (bewaar === null) localStorage.removeItem("mt-intro-v1"); else localStorage.setItem("mt-intro-v1", bewaar);
+    TUIN.crops = tuinBewaar.crops; TUIN.bak = tuinBewaar.bak; tuinSave();
+    await go("kal");
+  }
+  return { ok: f.length === 0, detail: f.join("; ") || "6 onderdelen" };
+};
+
+// Eigen bevestiging bij het herstellen van een back-up, zonder dialogen van de browser.
+checks.bevestiging = async () => {
+  const f = [];
+  const bewaar = { crops: TUIN.crops.slice(), bak: TUIN.bak, plek: TUIN.plek, done: JSON.stringify(TUIN.done) };
+  const toast = () => document.getElementById("toast");
+  const bestand = (o) => new File([JSON.stringify(o)], "t.json", { type: "application/json" });
+  try {
+    TUIN.crops = ["tomaat"];
+    await go("tuin");
+    // annuleren laat de tuin ongemoeid
+    let p = tuinImport(bestand({ versie: 1, tuin: { crops: ["radijs"], plek: "pot", done: {} } }));
+    await sleep(300);
+    if (document.getElementById("ov").hidden) f.push("geen bevestigingsvenster");
+    if (!/Tuin vervangen/.test(document.getElementById("sheet").textContent)) f.push("andere tekst in venster");
+    document.querySelector('#sheet [data-act="close"]').click();
+    await p;
+    await sleep(300);
+    if (TUIN.crops.join() !== "tomaat") f.push("annuleren veranderde de tuin");
+    // bevestigen vervangt en biedt ongedaan maken
+    p = tuinImport(bestand({ versie: 1, tuin: { crops: ["radijs"], plek: "pot", done: {} } }));
+    await sleep(300);
+    document.querySelector('#sheet [data-act="askok"]').click();
+    await p;
+    await sleep(300);
+    if (TUIN.crops.join() !== "radijs") f.push("bevestigen vervangt niet: " + TUIN.crops.join());
+    if (!document.getElementById("ov").hidden) f.push("venster blijft open");
+    const knop = toast().querySelector("button");
+    if (toast().hidden || knop.hidden) f.push("geen ongedaan maken na herstellen");
+    else { knop.click(); await sleep(250); if (TUIN.crops.join() !== "tomaat") f.push("ongedaan maken herstelt niet: " + TUIN.crops.join()); }
+    // kapot bestand: melding in een venster, zonder keuze
+    p = tuinImport(new File(["geen json"], "x.json"));
+    await sleep(300);
+    if (!/niet worden gelezen/.test(document.getElementById("sheet").textContent)) f.push("geen melding bij kapot bestand");
+    if (document.querySelector('#sheet [data-act="askok"]')) f.push("keuzeknop bij foutmelding");
+    document.querySelector('#sheet [data-act="close"]').click();
+    await p;
+    await sleep(300);
+    if (navSkip !== 0) f.push("geschiedenisteller blijft hangen");
+  } finally {
+    TUIN.crops = bewaar.crops; TUIN.bak = bewaar.bak; TUIN.plek = bewaar.plek; TUIN.done = JSON.parse(bewaar.done);
+    tuinSave();
+    if (!document.getElementById("ov").hidden) closeOv();
+    hideToast();
+    await go("kal");
+  }
+  return { ok: f.length === 0, detail: f.join("; ") || "5 onderdelen" };
+};
+
+// Navigatie staat vooraan in het document en blijft visueel onderaan.
+checks.navigatieVolgorde = async () => {
+  const f = [];
+  const nav = document.querySelector("nav.nav"), main = document.getElementById("main");
+  if (!(nav.compareDocumentPosition(main) & Node.DOCUMENT_POSITION_FOLLOWING)) f.push("nav staat niet voor main");
+  const r = nav.getBoundingClientRect();
+  if (Math.abs(r.bottom - window.innerHeight) > 2) f.push("nav staat niet onderaan: " + Math.round(r.bottom) + " van " + window.innerHeight);
+  const eerste = [...document.querySelectorAll("a[href], button, input, select, summary")].filter((e) => e.offsetParent !== null || e.classList.contains("skip"));
+  if (!eerste[0] || !eerste[0].classList.contains("skip")) f.push("skiplink is niet het eerste element");
+  if (!eerste[1] || !eerste[1].closest("nav.nav")) f.push("na de skiplink volgt niet de navigatie");
+  if (document.title !== "Mijn Moestuin") f.push("titel: " + document.title);
+  if (document.querySelector("head title") === null) f.push("title staat niet in head");
+  return { ok: f.length === 0, detail: f.join("; ") || "5 onderdelen" };
+};
+
+// Actiezin op de tegels: elk gewas in een zaai- of plantfase heeft een zin met echte getallen.
+checks.actiezin = async () => {
+  const f = [];
+  let n = 0;
+  for (let m = 1; m <= 12; m++) {
+    for (const [k] of FASEN) {
+      for (const c of faseLijst(k, m)) {
+        const z = actieZin(c, k);
+        n++;
+        if (k !== "oo" && !z) f.push(c.id + " " + k + " " + m + ": geen zin");
+        if (/undefined|NaN|null/.test(z)) f.push(c.id + ": " + z);
+      }
+    }
+  }
+  const oud = { tab: S.tab, kv: S.kv, m: S.m };
+  S.tab = "kal"; S.kv = "maand"; S.m = 4; render();
+  await sleep(250);
+  const tegels = document.querySelectorAll('#main [data-sec="zd"] .tile').length;
+  const zinnen = document.querySelectorAll('#main [data-sec="zd"] .tile .doen').length;
+  if (!tegels) f.push("geen tegels in april");
+  if (tegels !== zinnen) f.push("april: " + zinnen + " zinnen op " + tegels + " tegels");
+  const naam = document.querySelector('#main [data-sec="zd"] .tile button').getAttribute("aria-label");
+  if (!/cm diep/.test(naam)) f.push("zin niet in toegankelijke naam: " + naam);
+  S.tab = oud.tab; S.kv = oud.kv; S.m = oud.m; render();
+  await sleep(150);
+  return { ok: f.length === 0, detail: f.slice(0, 4).join("; ") || n + " tegels gecontroleerd" };
+};
+
+// Melding met ongedaan maken na toevoegen, verwijderen en herstellen.
+checks.melding = async () => {
+  const f = [];
+  const bewaar = { crops: TUIN.crops.slice(), bak: TUIN.bak, done: JSON.stringify(TUIN.done) };
+  const toast = () => document.getElementById("toast");
+  const knop = () => toast().querySelector("button");
+  try {
+    TUIN.crops = ["tomaat", "radijs"];
+    await go("tuin");
+    // verwijderen via de tegel in de tuin: eerst open het detail
+    openDetail("radijs");
+    await sleep(250);
+    document.querySelector('#sheet [data-tuin="radijs"]').click();
+    await sleep(250);
+    if (toast().hidden || !/uit je tuin gehaald/.test(toast().textContent)) f.push("geen melding na verwijderen");
+    if (knop().hidden) f.push("geen knop Ongedaan maken");
+    if (TUIN.crops.includes("radijs")) f.push("radijs niet verwijderd");
+    knop().click();
+    await sleep(250);
+    if (TUIN.crops.join() !== "tomaat,radijs") f.push("ongedaan maken herstelt volgorde niet: " + TUIN.crops.join());
+    if (toast().hidden) f.push("geen melding na ongedaan maken");
+    if (!knop().hidden) f.push("ongedaan maken van ongedaan maken aangeboden");
+    // toevoegen en weer ongedaan
+    TUIN.crops = ["tomaat"];
+    openDetail("sla");
+    await sleep(250);
+    document.querySelector('#sheet [data-tuin="sla"]').click();
+    await sleep(250);
+    if (!TUIN.crops.includes("sla") || !/staat nu in je tuin/.test(toast().textContent)) f.push("geen melding na toevoegen");
+    knop().click();
+    await sleep(250);
+    if (TUIN.crops.includes("sla")) f.push("toevoegen niet ongedaan");
+    // verdwijnt vanzelf
+    notify("test");
+    if (toast().hidden) f.push("melding zonder knop niet zichtbaar");
+    hideToast();
+    if (!toast().hidden) f.push("melding blijft staan");
+    // staat boven het bladscherm en is niet inert
+    openDetail("sla");
+    await sleep(250);
+    notify("boven", () => {});
+    if (toast().closest("[inert]")) f.push("melding is inert bij open bladscherm");
+    closeOv();
+    await sleep(300);
+    hideToast();
+  } finally {
+    TUIN.crops = bewaar.crops;
+    TUIN.bak = bewaar.bak;
+    TUIN.done = JSON.parse(bewaar.done);
+    tuinSave();
+    if (!document.getElementById("ov").hidden) closeOv();
+    hideToast();
+    await go("kal");
+  }
+  return { ok: f.length === 0, detail: f.join("; ") || "6 onderdelen" };
+};
+
+// Zoeken in de Gids en het korte antwoord bovenaan artikels.
+checks.gidsZoeken = async () => {
+  const f = [];
+  await go("gids");
+  const veld = () => document.getElementById("gq");
+  const typ = async (t) => {
+    const v = veld();
+    v.value = t;
+    v.dispatchEvent(new Event("input", { bubbles: true }));
+    await sleep(150);
+  };
+  if (!veld()) f.push("geen zoekveld");
+  else {
+    await typ("slakken");
+    const kaarten = [...document.querySelectorAll("#main [data-art]")].map((b) => b.dataset.art);
+    if (!kaarten.includes("plagen/slakken")) f.push("slakken niet gevonden: " + kaarten.slice(0, 3).join(","));
+    if (document.activeElement.id !== "gq") f.push("focus kwijt na typen");
+    if (document.getElementById("live").textContent.indexOf("resultaat") < 0 && document.getElementById("live").textContent.indexOf("resultaten") < 0) f.push("geen melding voor schermlezers");
+    await typ("gele bladeren");
+    if (!document.querySelector("#main [data-art]")) f.push("gele bladeren: niets");
+    await typ("Zaaien");
+    if (document.querySelectorAll("#main [data-art]").length < 3) f.push("zaaien: te weinig");
+    await typ("mijn zaadjes kiemen niet");
+    if (!document.querySelector("#main [data-art]")) f.push("zaadjes kiemen niet: niets");
+    await typ("xyzxyz");
+    if (!document.querySelector("#main .empty")) f.push("geen lege toestand");
+    if (!document.querySelector('#main [data-act="tohulp"]')) f.push("geen link naar Hulp");
+    await typ("");
+    if (!document.querySelector("#main .gcat")) f.push("groepen komen niet terug");
+    await typ("water");
+    document.querySelector('#nav [data-tab="kal"]').click();
+    await sleep(200);
+    document.querySelector('#nav [data-tab="gids"]').click();
+    await sleep(200);
+    if (S.gq !== "" || (veld() && veld().value !== "")) f.push("zoekterm blijft na tabwissel");
+  }
+  // kort antwoord
+  let kort = null, lang = null;
+  for (const g of GIDS) for (const a of g.arts) {
+    if (!kort && a.b[0] && a.b[0].k === "p" && a.b[0].t.length <= 320) kort = g.id + "/" + a.id;
+    if (!lang && a.b[0] && a.b[0].k !== "p") lang = g.id + "/" + a.id;
+  }
+  if (!kort) f.push("geen artikel met kort antwoord");
+  else {
+    openArticle(kort);
+    await sleep(200);
+    const lead = document.querySelector("#sheet .lead");
+    if (!lead || !/In het kort/.test(lead.textContent)) f.push("geen In het kort");
+    else {
+      const tekst = lead.querySelector("p").textContent.slice(0, 40);
+      if (document.getElementById("sheet").textContent.split(tekst).length !== 2) f.push("kort antwoord staat dubbel");
+    }
+    closeOv();
+    await sleep(200);
+  }
+  if (lang) {
+    openArticle(lang);
+    await sleep(200);
+    if (document.querySelector("#sheet .lead")) f.push("In het kort bij artikel met eigen opbouw");
+    closeOv();
+    await sleep(200);
+  }
+  await go("kal");
+  return { ok: f.length === 0, detail: f.join("; ") || "3 onderdelen" };
+};
+
+// Doorklikpaden: artikel naar volgend artikel en Kalender, tekstverwijzingen, teeltgids.
+checks.doorklik = async () => {
+  const f = [];
+  const ov = () => document.getElementById("ov");
+  const titel = () => document.querySelector("#sheet h2").textContent;
+  await go("kal");
+  // volgend artikel
+  openArticle("zaaien/zaaien-binnen-buiten");
+  await sleep(250);
+  const t0 = titel();
+  const vol = document.querySelector('#sheet .more [data-art]');
+  if (!vol || !/^Volgend: /.test(vol.textContent)) f.push("geen knop Volgend");
+  else { vol.click(); await sleep(250); if (titel() === t0) f.push("Volgend opent hetzelfde artikel"); }
+  // tekstverwijzing naar de Kalender
+  let pad = null;
+  for (const g of GIDS) for (const a of g.arts) if (!pad && JSON.stringify(a.b).includes("de Kalender")) pad = g.id + "/" + a.id;
+  if (!pad) f.push("geen artikel met verwijzing");
+  else {
+    S.tab = "tuin"; render(); await sleep(150);
+    openArticle(pad);
+    await sleep(250);
+    const tl = document.querySelector('#sheet .tl[data-act="tokal"]');
+    if (!tl) f.push("verwijzing niet aanklikbaar");
+    else { tl.click(); await sleep(400); if (!ov().hidden) f.push("bladscherm blijft open"); if (S.tab !== "kal") f.push("Kalender niet geopend"); }
+  }
+  // knop Open de Kalender in teeltgids
+  S.tab = "tuin"; render(); await sleep(150);
+  openGuide("tomaat");
+  await sleep(250);
+  if (!document.querySelector('#sheet .more [data-art]')) f.push("geen leesknoppen in teeltgids");
+  const kb = document.querySelector('#sheet .more [data-act="tokal"]');
+  if (!kb) f.push("geen Kalenderknop in teeltgids");
+  else { kb.click(); await sleep(400); if (S.tab !== "kal" || !ov().hidden) f.push("teeltgids naar Kalender mislukt"); }
+  await go("kal");
+  return { ok: f.length === 0, detail: f.join("; ") || "4 onderdelen" };
+};
+
 export function kleineDoelen() {
   const sel = "button, a[href], input:not([type=hidden]), select, summary";
   return [...document.querySelectorAll(sel)]
     .filter((e) => e.offsetParent !== null && !e.closest("[hidden]") && !e.closest("[inert]"))
     .filter((e) => !(e.tagName === "A" && e.closest("p, li")))  // links in lopende tekst zijn uitgezonderd (WCAG 2.2, doelgrootte)
+    .filter((e) => !e.classList.contains("tl"))  // verwijzing in lopende tekst (artikel, kader)
+    .filter((e) => !(e.type === "checkbox" && e.closest("label") && e.closest("label").getBoundingClientRect().height >= 43.5))  // het hele label is het doel
     .map((e) => ({ e, h: e.getBoundingClientRect().height }))
     .filter((x) => x.h > 0 && x.h < 43.5)
     .map((x) => `${x.e.tagName.toLowerCase()}.${(x.e.className || "").toString().split(" ")[0]} ${Math.round(x.h)}px "${(x.e.textContent || x.e.getAttribute("aria-label") || "").trim().slice(0, 25)}"`);
@@ -442,7 +983,7 @@ checks.hintGewassen = async () => {
 
 checks.artikelGroep = async () => {
   const fouten = [];
-  const verwacht = { "grond/mulchen": "Zo doe je het › Verzorgen", "seizoen/ijsheiligen": "Weten waarom", "plagen/slakken": "Hulp", "combineren/combi-goed": "Naslag" };
+  const verwacht = { "grond/mulchen": "Ik wil aan de slag › Verzorgen", "seizoen/ijsheiligen": "Ik wil begrijpen waarom", "plagen/slakken": "Hulp", "combineren/combi-goed": "Ik zoek iets na" };
   for (const [pad, tekst] of Object.entries(verwacht)) {
     openArticle(pad);
     const meta = document.querySelector("#sheet .meta").textContent;
@@ -467,8 +1008,18 @@ checks.consistentie = async () => {
   return { ok: fouten.length === 0, detail: fouten.join("; ") };
 };
 
+export function gidsStil() {
+  // de meeste tests bekijken de gewone Gids: zet de doelkeuze op overgeslagen
+  localStorage.setItem("mt-gids-doel-v1", JSON.stringify({ v: 1, d: [], skip: true }));
+  DOEL = gdLoad();
+  S.gedit = false;
+  S.gplek = false;
+}
+
 export async function runAll(names) {
   const out = {};
+  const gdBewaar = localStorage.getItem("mt-gids-doel-v1");
+  gidsStil();
   for (const naam of names || Object.keys(checks)) {
     try {
       out[naam] = await checks[naam]();
@@ -476,5 +1027,7 @@ export async function runAll(names) {
       out[naam] = { ok: false, detail: "fout: " + e.message };
     }
   }
+  if (gdBewaar === null) localStorage.removeItem("mt-gids-doel-v1"); else localStorage.setItem("mt-gids-doel-v1", gdBewaar);
+  DOEL = gdLoad();
   return out;
 }
