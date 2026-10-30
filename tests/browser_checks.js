@@ -437,6 +437,48 @@ checks.tuinVangnet = async () => {
   return { ok: fouten.length === 0, detail: fouten.join("; ") || "6 onderdelen" };
 };
 
+// Terugknop: elke weergave en elk bladscherm is een stap in de geschiedenis.
+checks.terugknop = async () => {
+  const f = [];
+  await go("kal");
+  await go("gids");
+  if (!history.state || history.state.tab !== "gids") f.push("geen stap voor Gids");
+  document.querySelector("[data-cat]").click();
+  await sleep(250);
+  if (!S.gc) f.push("groep niet geopend");
+  history.back();
+  await sleep(300);
+  if (S.gc !== null || S.tab !== "gids") f.push("terug naar Gids-overzicht mislukt");
+  history.back();
+  await sleep(300);
+  if (S.tab !== "kal") f.push("terug naar Kalender mislukt");
+  openDetail("radijs");
+  await sleep(250);
+  if (document.getElementById("ov").hidden) f.push("bladscherm niet open");
+  history.back();
+  await sleep(300);
+  if (!document.getElementById("ov").hidden) f.push("bladscherm blijft open na terug");
+  if (S.tab !== "kal") f.push("terug sloot meer dan het bladscherm");
+  openDetail("radijs");
+  await sleep(250);
+  closeOv();
+  await sleep(300);
+  if (history.state && history.state.ov) f.push("bladscherm-stap blijft na sluiten");
+  if (S.tab !== "kal") f.push("sluiten veranderde de weergave");
+  // scrollpositie van de vorige weergave komt terug
+  await go("kal");
+  window.scrollTo(0, 400);
+  await sleep(200);
+  const y0 = window.scrollY;
+  document.querySelector('#nav [data-tab="gids"]').click();
+  await sleep(300);
+  history.back();
+  await sleep(400);
+  if (y0 > 0 && Math.abs(window.scrollY - y0) > 5) f.push("scrollpositie niet hersteld: " + window.scrollY + " i.p.v. " + y0);
+  window.scrollTo(0, 0);
+  return { ok: f.length === 0, detail: f.join("; ") || "7 onderdelen" };
+};
+
 export function kleineDoelen() {
   const sel = "button, a[href], input:not([type=hidden]), select, summary";
   return [...document.querySelectorAll(sel)]

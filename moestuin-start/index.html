@@ -2099,12 +2099,38 @@ function openArticle(path){
   showSheet(`<div class="art"><button class="x" style="top:18px" data-act="close" aria-label="Sluiten">×</button><h2>${esc(a.t)}</h2><div class="meta">${esc(artMeta(path,cat))} · ${a.min} min lezen</div>${blocks(a.b)}${a.bron&&a.nagekeken?`<p class="credit" style="margin-top:18px">Bron: ${esc(a.bron)}. Nagekeken: ${MF[+a.nagekeken.slice(5)-1]} ${a.nagekeken.slice(0,4)}.</p>`:""}</div>`);
 }
 
+/* ---------- Geschiedenis: terugknop en scrollpositie ---------- */
+const navSnap=()=>({tab:S.tab,kv:S.kv,gc:S.gc,hulp:S.hulp});
+const navId=s=>[s.tab,s.kv,s.gc,s.hulp].join("|");
+let navCur="",navY=0,navSkip=0,navRest=false;
+try{history.scrollRestoration="manual";}catch(e){}
+function navPush(extra){try{history.replaceState(Object.assign({},history.state,{y:navY}),"");history.pushState(Object.assign(navSnap(),extra||{}),"");}catch(e){}}
+function navSync(){
+  if(navRest||navSkip>0)return;
+  const id=navId(navSnap());
+  if(!navCur){try{history.replaceState(navSnap(),"");}catch(e){}navCur=id;return;}
+  if(id===navCur)return;
+  navCur=id;navPush();
+}
+addEventListener("popstate",e=>{
+  if(navSkip>0){navSkip--;if(navSkip===0)navSync();return;}
+  const st=e.state;if(!st||!st.tab)return;
+  navRest=true;
+  try{
+    if(!document.getElementById("ov").hidden)closeOv();
+    if(st.ov){history.back();return;}
+    S.tab=st.tab;S.kv=st.kv;S.gc=st.gc;S.hulp=st.hulp;
+    render();navCur=navId(st);window.scrollTo(0,st.y||0);
+  }finally{navRest=false;}
+});
+
 /* ---------- Render ---------- */
 function render(){
   renderChrome();
   document.getElementById("main").innerHTML={alle:viewAlle,kal:viewKal,tuin:viewTuin,hulp:viewHulp,gids:viewGids}[S.tab]();
   renderTray();
   document.getElementById("live").textContent=S.tab==="alle"?filtered().length+" gewassen":"";
+  navSync();
 }
 function renderTray(){
   const t=document.getElementById("tray");t.hidden=!S.cmp.size||!document.getElementById("ov").hidden;
@@ -2114,8 +2140,8 @@ function renderTray(){
 function tagList(arr){return arr.length?`<div class="links">${arr.map(i=>`<button data-open="${i}">${esc(nm(i))}</button>`).join("")}</div>`:"<span style='color:var(--muted)'>Niets bijzonders.</span>";}
 let lastFocus=null;
 function setBg(off){for(const e of document.querySelectorAll(".wrap,.nav,.tray"))e.inert=off;}
-function showSheet(html){const sh=document.getElementById("sheet"),ov=document.getElementById("ov");if(ov.hidden){const a=document.activeElement;lastFocus=a&&a!==document.body?{el:a,open:a.getAttribute("data-open")}:null;}sh.innerHTML=html;sh.scrollTop=0;const h=sh.querySelector("h2");if(h)h.id="sheet-t";ov.hidden=false;setBg(true);document.body.style.overflow="hidden";document.getElementById("tray").hidden=true;const f=sh.querySelector("[data-act=close]");if(f)f.focus();}
-function closeOv(){document.getElementById("ov").hidden=true;setBg(false);document.body.style.overflow="";renderTray();if(lastFocus){let t=lastFocus.el;if(!document.contains(t)&&lastFocus.open)t=document.querySelector(`[data-open="${lastFocus.open}"]`);if(t&&t.focus)t.focus();lastFocus=null;}}
+function showSheet(html){const sh=document.getElementById("sheet"),ov=document.getElementById("ov");if(ov.hidden){const a=document.activeElement;lastFocus=a&&a!==document.body?{el:a,open:a.getAttribute("data-open")}:null;navPush({ov:1});}sh.innerHTML=html;sh.scrollTop=0;const h=sh.querySelector("h2");if(h)h.id="sheet-t";ov.hidden=false;setBg(true);document.body.style.overflow="hidden";document.getElementById("tray").hidden=true;const f=sh.querySelector("[data-act=close]");if(f)f.focus();}
+function closeOv(){document.getElementById("ov").hidden=true;setBg(false);document.body.style.overflow="";renderTray();if(lastFocus){let t=lastFocus.el;if(!document.contains(t)&&lastFocus.open)t=document.querySelector(`[data-open="${lastFocus.open}"]`);if(t&&t.focus)t.focus();lastFocus=null;}if(!navRest&&history.state&&history.state.ov){navSkip++;history.back();}}
 const closeBtn='<button class="x" data-act="close" aria-label="Sluiten">×</button>';
 function miniRow(c){return `<div class="mini">${MN.map((n,i)=>{const m=i+1;return `<div><span>${n.slice(0,1).toUpperCase()}</span>`+["zb","zd","pt"].map(k=>`<b class="${c[k].includes(m)?"on k-"+k:""}"></b>`).join("")+`<b class="${c.oo.includes(m)?"on k-oo":""}"></b></div>`;}).join("")}</div>`;}
 
@@ -2186,7 +2212,7 @@ function openFilter(){
    <div class="fbtn"><button class="btn pri" data-act="close">Toon ${filtered().length} gewassen</button><button class="btn" data-act="reset">Wis filters</button></div></div>`);
 }
 
-document.addEventListener("click",e=>{
+document.addEventListener("click",e=>{navY=window.scrollY;
   const t=e.target.closest("button, .overlay");if(!t)return;
   if(t.id==="ov"){if(e.target===t)closeOv();return;}
   if(t.dataset.tab){S.tab=t.dataset.tab;if(S.tab==="gids")S.gc=null;if(S.tab==="hulp")S.hulp=null;render();window.scrollTo(0,0);return;}
