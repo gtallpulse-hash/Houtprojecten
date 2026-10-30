@@ -247,6 +247,9 @@ details.grp.cg>.cbody{padding:0 14px 10px}
 .buur p b{font-weight:600}
 .lnk{all:unset;cursor:pointer;font:700 1rem var(--f-display);color:var(--ink);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px;min-height:44px;display:inline-flex;align-items:center}
 .lnk:hover{text-decoration-color:var(--leaf)}
+.tl{all:unset;cursor:pointer;font:inherit;font-weight:700;color:var(--ink);text-decoration:underline;text-decoration-color:var(--leaf);text-underline-offset:3px}
+.tl:hover{text-decoration-thickness:2px}
+.tl:focus-visible{outline:3px solid var(--sky);border-radius:4px}
 .lnk:focus-visible{outline:3px solid var(--sky);border-radius:4px}
 .pg{margin-top:6px}
 .srcs a{color:inherit}
@@ -2005,14 +2008,31 @@ function viewJaar(){
 }
 
 /* ---------- Gids ---------- */
+/* Verwijzingen in lopende tekst zijn aanklikbaar */
+const rich=t=>esc(t).replace(/\bde Kalender\b/g,'de <button class="tl" data-act="tokal">Kalender</button>').replace(/\bStartgids\b/g,()=>`<button class="tl" data-ch="${S.ch}" data-start="1">Startgids</button>`);
+function nextArt(path){
+  for(const g of GROEPEN)for(const x of g.subs){const i=x.arts.indexOf(path);if(i>=0)return x.arts[i+1]||null;}
+  const i=PLAGEN.indexOf(path);return i>=0?PLAGEN[i+1]||null:null;
+}
+const KALCATS=["zaaien","seizoen","oogsten"];
+function artFooter(path,a,cat){
+  const n=nextArt(path),r=n&&artByPath(n);
+  const kal=KALCATS.includes(cat.id)||JSON.stringify(a.b).includes("de Kalender");
+  if(!r&&!kal)return "";
+  return `<div class="more"><b>Verder</b><div class="links">${r?`<button data-art="${n}">Volgend: ${esc(r.a.t)}</button>`:""}${kal?`<button data-act="tokal">Open de Kalender</button>`:""}</div></div>`;
+}
+function guideFooter(){
+  const l=["zaaien/zaaien-binnen-buiten","verzorging/water-geven","oogsten/oogst-wanneer"].map(p=>{const r=artByPath(p);return r?`<button data-art="${p}">${esc(r.a.t)}</button>`:"";}).join("");
+  return `<div class="more"><b>Verder lezen en doen</b><div class="links">${l}<button data-act="tokal">Open de Kalender</button></div></div>`;
+}
 function blocks(bs){return bs.map(b=>{switch(b.k){
-  case "p":return `<p class="art-p">${esc(b.t)}</p>`;
+  case "p":return `<p class="art-p">${rich(b.t)}</p>`;
   case "h":return `<h3 class="art-h">${esc(b.t)}</h3>`;
-  case "ul":return `<ul class="bul">${b.t.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`;
-  case "ol":return `<ol class="olist">${b.t.map(x=>`<li>${esc(x)}</li>`).join("")}</ol>`;
+  case "ul":return `<ul class="bul">${b.t.map(x=>`<li>${rich(x)}</li>`).join("")}</ul>`;
+  case "ol":return `<ol class="olist">${b.t.map(x=>`<li>${rich(x)}</li>`).join("")}</ol>`;
   case "tb":return `<div class="scroll"><table><thead><tr>${b.head.map(x=>`<th>${esc(x)}</th>`).join("")}</tr></thead><tbody>${b.rows.map(r=>`<tr>${r.map((x,i)=>i===0?`<td><b>${esc(x)}</b></td>`:`<td>${esc(x)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
-  case "tip":return `<div class="callout tip"><b>Tip</b>${esc(b.t)}</div>`;
-  case "warn":return `<div class="callout warn"><b>Let op</b>${esc(b.t)}</div>`;
+  case "tip":return `<div class="callout tip"><b>Tip</b>${rich(b.t)}</div>`;
+  case "warn":return `<div class="callout warn"><b>Let op</b>${rich(b.t)}</div>`;
   case "pairs":return pairsBlock(b.t);
   case "ill":return `<figure class="figure">${ILL[b.id]||""}</figure>`;
   case "more":return `<div class="more"><b>Meer weten (niet verplicht)</b><div class="links">${b.t.map(([ty,id,tt])=>ty==="crop"?`<button data-open="${id}">${esc(tt)}</button>`:`<button data-art="${id}">${esc(tt)}</button>`).join("")}</div></div>`;
@@ -2096,7 +2116,7 @@ function artMeta(path,cat){
 }
 function openArticle(path){
   const [cid,aid]=path.split("/"),cat=GIDS.find(g=>g.id===cid),a=cat&&cat.arts.find(x=>x.id===aid);if(!a)return;
-  showSheet(`<div class="art"><button class="x" style="top:18px" data-act="close" aria-label="Sluiten">×</button><h2>${esc(a.t)}</h2><div class="meta">${esc(artMeta(path,cat))} · ${a.min} min lezen</div>${blocks(a.b)}${a.bron&&a.nagekeken?`<p class="credit" style="margin-top:18px">Bron: ${esc(a.bron)}. Nagekeken: ${MF[+a.nagekeken.slice(5)-1]} ${a.nagekeken.slice(0,4)}.</p>`:""}</div>`);
+  showSheet(`<div class="art"><button class="x" style="top:18px" data-act="close" aria-label="Sluiten">×</button><h2>${esc(a.t)}</h2><div class="meta">${esc(artMeta(path,cat))} · ${a.min} min lezen</div>${blocks(a.b)}${a.bron&&a.nagekeken?`<p class="credit" style="margin-top:18px">Bron: ${esc(a.bron)}. Nagekeken: ${MF[+a.nagekeken.slice(5)-1]} ${a.nagekeken.slice(0,4)}.</p>`:""}${artFooter(path,a,cat)}</div>`);
 }
 
 /* ---------- Geschiedenis: terugknop en scrollpositie ---------- */
@@ -2107,6 +2127,7 @@ try{history.scrollRestoration="manual";}catch(e){}
 function navPush(extra){try{history.replaceState(Object.assign({},history.state,{y:navY}),"");history.pushState(Object.assign(navSnap(),extra||{}),"");}catch(e){}}
 function navSync(){
   if(navRest||navSkip>0)return;
+  if(history.state&&history.state.ov&&document.getElementById("ov").hidden){try{history.replaceState(Object.assign(navSnap(),{y:navY}),"");}catch(e){}}
   const id=navId(navSnap());
   if(!navCur){try{history.replaceState(navSnap(),"");}catch(e){}navCur=id;return;}
   if(id===navCur)return;
@@ -2141,7 +2162,7 @@ function tagList(arr){return arr.length?`<div class="links">${arr.map(i=>`<butto
 let lastFocus=null;
 function setBg(off){for(const e of document.querySelectorAll(".wrap,.nav,.tray"))e.inert=off;}
 function showSheet(html){const sh=document.getElementById("sheet"),ov=document.getElementById("ov");if(ov.hidden){const a=document.activeElement;lastFocus=a&&a!==document.body?{el:a,open:a.getAttribute("data-open")}:null;navPush({ov:1});}sh.innerHTML=html;sh.scrollTop=0;const h=sh.querySelector("h2");if(h)h.id="sheet-t";ov.hidden=false;setBg(true);document.body.style.overflow="hidden";document.getElementById("tray").hidden=true;const f=sh.querySelector("[data-act=close]");if(f)f.focus();}
-function closeOv(){document.getElementById("ov").hidden=true;setBg(false);document.body.style.overflow="";renderTray();if(lastFocus){let t=lastFocus.el;if(!document.contains(t)&&lastFocus.open)t=document.querySelector(`[data-open="${lastFocus.open}"]`);if(t&&t.focus)t.focus();lastFocus=null;}if(!navRest&&history.state&&history.state.ov){navSkip++;history.back();}}
+function closeOv(){const wasOpen=!document.getElementById("ov").hidden;document.getElementById("ov").hidden=true;setBg(false);document.body.style.overflow="";renderTray();if(lastFocus){let t=lastFocus.el;if(!document.contains(t)&&lastFocus.open)t=document.querySelector(`[data-open="${lastFocus.open}"]`);if(t&&t.focus)t.focus();lastFocus=null;}if(wasOpen&&!navRest&&history.state&&history.state.ov){navSkip++;history.back();setTimeout(()=>{if(navSkip>0){navSkip=0;navSync();}},800);}}
 const closeBtn='<button class="x" data-act="close" aria-label="Sluiten">×</button>';
 function miniRow(c){return `<div class="mini">${MN.map((n,i)=>{const m=i+1;return `<div><span>${n.slice(0,1).toUpperCase()}</span>`+["zb","zd","pt"].map(k=>`<b class="${c[k].includes(m)?"on k-"+k:""}"></b>`).join("")+`<b class="${c.oo.includes(m)?"on k-oo":""}"></b></div>`;}).join("")}</div>`;}
 
@@ -2188,7 +2209,7 @@ function openGuide(id){
    <div class="rmeta">Teeltgids</div><h2>Hoe teel ik ${esc(c.n.toLowerCase())}?</h2><p class="rsub">${esc(c.l)}. Van voorbereiding tot oogst.</p>
    ${facts}<figure class="figure">${geoSvg(c)}</figure>
    <div style="margin-top:6px">${legendHtml()}${miniRow(c)}</div>
-   ${body}${nb}
+   ${body}${nb}${guideFooter()}
    <div class="pager" style="margin-top:22px"><button class="btn" data-open="${id}">‹ Terug naar ${esc(c.n.toLowerCase())}</button></div></div>`);
 }
 
@@ -2234,6 +2255,7 @@ document.addEventListener("click",e=>{navY=window.scrollY;
   if(a==="filter"){openFilter();return;}
   if(a==="export"){tuinExport();return;}
   if(a==="import"){document.getElementById("tfile").click();return;}
+  if(a==="tokal"){if(!document.getElementById("ov").hidden)closeOv();S.tab="kal";S.kv="maand";render();window.scrollTo(0,0);return;}
   if(a==="tohulp"){S.tab="hulp";S.hulp=null;render();window.scrollTo(0,0);return;}
   if(a==="hback"){S.hulp=null;S.hg="";render();window.scrollTo(0,0);document.getElementById("main").focus({preventScroll:true});return;}
   if(a==="gback"){S.gc=null;render();window.scrollTo(0,0);return;}

@@ -465,6 +465,15 @@ checks.terugknop = async () => {
   await sleep(300);
   if (history.state && history.state.ov) f.push("bladscherm-stap blijft na sluiten");
   if (S.tab !== "kal") f.push("sluiten veranderde de weergave");
+  // dubbel sluiten gaat niet twee stappen terug
+  const idx0 = navigation.currentEntry.index;
+  openDetail("radijs");
+  await sleep(250);
+  closeOv();
+  closeOv();
+  await sleep(500);
+  if (navigation.currentEntry.index !== idx0) f.push("dubbel sluiten verliet de weergave");
+  if (navSkip !== 0) f.push("teller blijft hangen");
   // scrollpositie van de vorige weergave komt terug
   await go("kal");
   window.scrollTo(0, 400);
@@ -476,7 +485,44 @@ checks.terugknop = async () => {
   await sleep(400);
   if (y0 > 0 && Math.abs(window.scrollY - y0) > 5) f.push("scrollpositie niet hersteld: " + window.scrollY + " i.p.v. " + y0);
   window.scrollTo(0, 0);
-  return { ok: f.length === 0, detail: f.join("; ") || "7 onderdelen" };
+  return { ok: f.length === 0, detail: f.join("; ") || "8 onderdelen" };
+};
+
+// Doorklikpaden: artikel naar volgend artikel en Kalender, tekstverwijzingen, teeltgids.
+checks.doorklik = async () => {
+  const f = [];
+  const ov = () => document.getElementById("ov");
+  const titel = () => document.querySelector("#sheet h2").textContent;
+  await go("kal");
+  // volgend artikel
+  openArticle("zaaien/zaaien-binnen-buiten");
+  await sleep(250);
+  const t0 = titel();
+  const vol = document.querySelector('#sheet .more [data-art]');
+  if (!vol || !/^Volgend: /.test(vol.textContent)) f.push("geen knop Volgend");
+  else { vol.click(); await sleep(250); if (titel() === t0) f.push("Volgend opent hetzelfde artikel"); }
+  // tekstverwijzing naar de Kalender
+  let pad = null;
+  for (const g of GIDS) for (const a of g.arts) if (!pad && JSON.stringify(a.b).includes("de Kalender")) pad = g.id + "/" + a.id;
+  if (!pad) f.push("geen artikel met verwijzing");
+  else {
+    S.tab = "tuin"; render(); await sleep(150);
+    openArticle(pad);
+    await sleep(250);
+    const tl = document.querySelector('#sheet .tl[data-act="tokal"]');
+    if (!tl) f.push("verwijzing niet aanklikbaar");
+    else { tl.click(); await sleep(400); if (!ov().hidden) f.push("bladscherm blijft open"); if (S.tab !== "kal") f.push("Kalender niet geopend"); }
+  }
+  // knop Open de Kalender in teeltgids
+  S.tab = "tuin"; render(); await sleep(150);
+  openGuide("tomaat");
+  await sleep(250);
+  if (!document.querySelector('#sheet .more [data-art]')) f.push("geen leesknoppen in teeltgids");
+  const kb = document.querySelector('#sheet .more [data-act="tokal"]');
+  if (!kb) f.push("geen Kalenderknop in teeltgids");
+  else { kb.click(); await sleep(400); if (S.tab !== "kal" || !ov().hidden) f.push("teeltgids naar Kalender mislukt"); }
+  await go("kal");
+  return { ok: f.length === 0, detail: f.join("; ") || "4 onderdelen" };
 };
 
 export function kleineDoelen() {
@@ -484,6 +530,7 @@ export function kleineDoelen() {
   return [...document.querySelectorAll(sel)]
     .filter((e) => e.offsetParent !== null && !e.closest("[hidden]") && !e.closest("[inert]"))
     .filter((e) => !(e.tagName === "A" && e.closest("p, li")))  // links in lopende tekst zijn uitgezonderd (WCAG 2.2, doelgrootte)
+    .filter((e) => !e.classList.contains("tl"))  // verwijzing in lopende tekst (artikel, kader)
     .map((e) => ({ e, h: e.getBoundingClientRect().height }))
     .filter((x) => x.h > 0 && x.h < 43.5)
     .map((x) => `${x.e.tagName.toLowerCase()}.${(x.e.className || "").toString().split(" ")[0]} ${Math.round(x.h)}px "${(x.e.textContent || x.e.getAttribute("aria-label") || "").trim().slice(0, 25)}"`);
