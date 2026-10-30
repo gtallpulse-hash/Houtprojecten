@@ -78,61 +78,10 @@ Mijn-Moestuin/
         └── plans/              Implementatieplan
 ```
 
-## Testen
-
-```bash
-# Statische controles (labels, kleurwaarden, opgeslagen sleutels, geen plaatshouders)
-python -I tests/static_checks.py
-```
-
-De gedragscontroles draaien in de pagina zelf, met de pagina geladen via een lokale server vanaf de **hoofdmap** van de repo (niet vanuit `moestuin-start`). Voer dit uit in de console van de browser:
-
-```js
-const m = await import('/tests/browser_checks.js');
-JSON.stringify(await m.runAll());
-```
-
-De controles dekken onder meer: de tabs en weergaven, de hints per maand, zoeken, de 60 artikels, de bronregels en de aanraakdoelen. Daarnaast hoort er een toegankelijkheidsscan met [axe-core](https://github.com/dequelabs/axe-core) bij (`m.axeViolations()`).
-
-## Werkwijze en branches
-
-| Branch of tag | Doel |
-|---|---|
-| `main` | De stabiele versie. Die staat live. |
-| `v1-stabiel` (tag) | Vaste terugvalpositie: de werkende versie vóór de herbouw van Kalender en Gids. |
-| `test` | Hier wordt nieuw werk gebouwd en getest. Pas samenvoegen met `main` als het is goedgekeurd. |
-
-Grotere wijzigingen volgen een vaste cyclus: onderzoek, ontwerp, goedkeuring, een klein plan en daarna uitvoering met tests en een onafhankelijke controle. Het ontwerp en het plan van de laatste ronde staan in [`docs/superpowers`](docs/superpowers).
-
-## Bronnen en betrouwbaarheid
-
-Teeltadvies moet controleerbaar zijn. Daarom staat onderaan de herziene artikels een regel met **bron** en **nagekeken-maand**, en alleen als die echt is ingevuld. Gebruikte bronnen zijn onder meer:
-
-- [KMI](https://www.meteo.be/) en [KNMI](https://www.knmi.nl/) voor vorst en de ijsheiligen
-- [IVN](https://www.ivn.nl/), [Velt](https://www.velt.nu/), [Hubo](https://www.hubo.be/) en [Leefmilieu Brussel](https://leefmilieu.brussels/) voor zaaien, water geven en slakken
-- [RHS](https://www.rhs.org.uk/) voor phytophthora
-- [UC Master Gardener](https://ucanr.edu/) voor kiemtemperaturen
-
-Niet elk artikel is al aan een bron getoetst. Waar dat niet gelukt is, staat er bewust geen bronregel. De gegevens zijn gemiddelden en geen garantie voor jouw tuin. Het zaadzakje blijft altijd de baas.
-
-## Foto's
-
-De foto's komen van [Wikimedia Commons](https://commons.wikimedia.org/) met vrije licenties. In de app staat bij elke foto de fotograaf en een link naar de bron.
 
 ## Beperkingen
 
 - Je tuin staat alleen in je browser op dat toestel. Wis je browsergegevens of gebruik je een ander toestel, dan is hij weg. Gebruik daarom af en toe **Bewaar back-up** in de tab Tuin.
-- Er is nog geen echte test met beginners uitgevoerd. De bevindingen komen uit onderzoek en automatische controles, niet uit gebruikersonderzoek.
-- Automatische toegankelijkheidscontroles vinden maar een deel van de problemen. Een test met een schermlezer is nog niet gedaan.
-
-## Ideeën voor later
-
-Dit zijn ideeën, geen beloftes:
-
-- Een plantdatum per gewas, zodat taken uit de groeifase komen in plaats van uit de kalender
-- Een "Welkom terug"-scherm dat achterstallige taken rustig opnieuw plant
-- Eigen webadressen voor artikels en gewassen, zodat ze vindbaar zijn
-- Een deelbare afbeelding van je eerste moestuinplan
 
 ## Licentie
 
