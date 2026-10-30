@@ -89,7 +89,7 @@ details.grp>.grid{padding:0 14px 18px;margin-top:4px}
 .tasks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
 .tasks li{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:2px 8px 2px 4px}
 .task{flex:1;display:flex;align-items:center;gap:12px;min-height:52px;padding:4px 8px;cursor:pointer}
-.task input{width:24px;height:24px;accent-color:var(--leaf);flex:none}
+.task input{width:28px;height:28px;accent-color:var(--leaf);flex:none}
 .task input:checked+span{text-decoration:line-through;color:var(--muted)}
 .tasks .lnk{min-height:44px;padding:0 10px}
 .stile{display:flex;flex-direction:column;gap:8px}
@@ -248,6 +248,35 @@ details.grp.cg>.cbody{padding:0 14px 10px}
 .buur p b{font-weight:600}
 .lnk{all:unset;cursor:pointer;font:700 var(--fs-b) var(--f-display);color:var(--ink);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px;min-height:44px;display:inline-flex;align-items:center}
 .lnk:hover{text-decoration-color:var(--leaf)}
+.tt{display:flex;gap:16px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;margin-top:14px}
+.tt h2{font-size:var(--fs-xl)}
+.tt p{margin:2px 0 0}
+.tt .tt-next{color:var(--muted);font-size:var(--fs-m)}
+.ring{--p:0;flex:none;width:72px;height:72px;border-radius:50%;background:conic-gradient(var(--leaf) calc(var(--p)*1%),var(--line) 0);display:grid;place-items:center}
+.ring span{width:calc(100% - 14px);height:calc(100% - 14px);border-radius:50%;background:var(--surface);display:grid;place-items:center;font:700 var(--fs-m) var(--f-display)}
+.tcards{margin-top:14px}
+.tphoto{width:44px;height:44px;border-radius:50%;object-fit:cover;flex:none}
+.tnaam{display:block;font:700 var(--fs-b) var(--f-display)}
+.tfase{display:flex;align-items:center;gap:6px;font-size:var(--fs-m);color:var(--muted)}
+.tfase i{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none}
+.tasks li.gedaan .tnaam{text-decoration:line-through;color:var(--muted)}
+.gcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-top:14px}
+.gcard{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:12px;display:flex;flex-direction:column;gap:6px}
+.gc-top{all:unset;box-sizing:border-box;cursor:pointer;display:flex;gap:12px;align-items:center;min-height:56px;width:100%}
+.gc-top:focus-visible{outline:3px solid var(--sky);outline-offset:2px;border-radius:12px}
+.gc-top .ph{width:56px;height:56px;border-radius:14px;object-fit:cover;flex:none}
+.gc-top b{font:700 var(--fs-l) var(--f-display);display:block}
+.gc-nu{display:flex;align-items:center;gap:6px;font-size:var(--fs-m);color:var(--muted)}
+.gc-nu i{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none}
+.gc-act{display:flex;gap:2px 16px;flex-wrap:wrap}
+.mini .nu span{color:var(--ink);font-weight:700}
+.tleeg{background:var(--surface);border:1px dashed var(--line);border-radius:18px;padding:20px;margin-top:14px;display:grid;gap:10px;justify-items:start}
+.tleeg h2{font-size:var(--fs-xl)}
+.tleeg p{margin:0}
+.tback{margin-top:32px;background:var(--surface);border:1px solid var(--line);border-radius:18px}
+.tback>summary{cursor:pointer;padding:12px 16px;min-height:44px;display:flex;align-items:center;font-weight:700;list-style:none}
+.tback>summary:focus-visible{outline:3px solid var(--sky);outline-offset:2px;border-radius:12px}
+.tback>div{padding:0 16px 16px}
 .gdoel{margin-top:14px}
 .gdoel h2,.es-t{font-size:var(--fs-2xl)}
 .gstart,.gopt{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;gap:2px;width:100%;background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:14px 16px;min-height:44px}
@@ -2007,25 +2036,47 @@ const say=t=>setTimeout(()=>{const l=document.getElementById("live");if(l)l.text
 const TKIND=Object.fromEntries(FASEN.map(([k,l])=>[k,l.toLowerCase()]));
 const inTuin=id=>TUIN.crops.includes(id);
 function tuinTasks(){const out=[];TUIN.crops.forEach(id=>{const c=BY[id];["zb","zd","pt","oo"].forEach(k=>{if(c[k].includes(NOW))out.push({id,k,key:k+":"+id,c});});});return out;}
-function tuinProg(){const ds=doneSet(),t=tuinTasks();return t.filter(x=>ds.has(x.key)).length+" van "+t.length+" gedaan";}
+function tuinProg(){const ds=doneSet(),t=tuinTasks(),d=t.filter(x=>ds.has(x.key)).length;return t.length&&d===t.length?"Alles gedaan voor deze maand":d+" van "+t.length+" gedaan";}
+function gcNu(c){
+  const dot=k=>`<i class="k-${k}" aria-hidden="true"></i>`;
+  if(c.oo.includes(NOW))return `${dot("oo")}Nu: oogst`;
+  const s=starts(c,NOW);if(s.length)return `${dot(s[0])}Nu: ${TKIND[s[0]]}`;
+  for(let i=1;i<=12;i++){const m=((NOW-1+i)%12)+1,k=["zb","zd","pt","oo"].find(k=>c[k].includes(m));if(k)return `Volgende: ${TKIND[k]} in ${MF[m-1]}`;}
+  return "";
+}
+function tuinVolgende(){
+  for(let i=1;i<=12;i++){const m=((NOW-1+i)%12)+1;for(const id of TUIN.crops){const c=BY[id],k=["zb","zd","pt","oo"].find(k=>c[k].includes(m));if(k)return `Volgende taak in ${MF[m-1]}: ${TKIND[k]} ${c.n.toLowerCase()}.`;}}
+  return "";
+}
+function miniNu(c){return `<div class="mini" role="img" aria-label="${esc(textCal(c))}">${MN.map((n,i)=>{const m=i+1;return `<div${m===NOW?' class="nu"':""}><span>${n.slice(0,1).toUpperCase()}</span>`+["zb","zd","pt"].map(k=>`<b class="${c[k].includes(m)?"on k-"+k:""}"></b>`).join("")+`<b class="${c.oo.includes(m)?"on k-oo":""}"></b></div>`;}).join("")}</div>`;}
+function tuinRing(){
+  const t=tuinTasks(),ds=doneSet(),d=t.filter(x=>ds.has(x.key)).length,p=t.length?Math.round(d/t.length*100):0;
+  const r=document.getElementById("tring");if(r){r.style.setProperty("--p",p);document.getElementById("tring-n").textContent=t.length?d+"/"+t.length:"–";}
+  const pg=document.getElementById("tprogress");if(pg){pg.max=Math.max(t.length,1);pg.value=d;}
+  const tp=document.getElementById("tprog");if(tp)tp.textContent=tuinProg();
+}
 function viewTuin(){
   const n=TUIN.crops.length,tasks=tuinTasks(),ds=doneSet();
-  const grpDef=[["Zaaien",["zb","zd"]],["Plant uit",["pt"]],["Oogst",["oo"]]];
-  const taskHtml=grpDef.map(([t,ks])=>{const l=tasks.filter(x=>ks.includes(x.k));
-    return l.length?`<h3 class="sub-h">${t}</h3><ul class="tasks">${l.map(x=>`<li><label class="task"><input type="checkbox" data-task="${x.key}"${ds.has(x.key)?" checked":""}><span>${esc(x.c.n)}: ${TKIND[x.k]}${tinstr(x)}</span></label><button class="lnk" data-open="${x.id}" aria-label="Uitleg over ${esc(x.c.n)}">Uitleg</button></li>`).join("")}</ul>`:"";}).join("");
   const fits=c=>TUIN.plek==="alle"||c.pl.includes(TUIN.plek);
   const bakNodig=n>0&&(!TUIN.bak||Date.now()-TUIN.bak>BAKDAGEN*864e5);
   const sug=C.filter(c=>!inTuin(c.id)&&c.d===1&&fits(c)&&starts(c,NOW).length).sort(byEase).slice(0,4);
-  return `<section class="sec" style="margin-top:14px">
-   ${bakNodig?`<p class="art-p" id="tbak" role="note">Je tuin staat alleen op dit toestel. <button class="lnk" data-act="export">Bewaar nu een back-up</button></p>`:""}
-   ${n?"":`<p class="art-p">Voeg gewassen toe die je kweekt of wilt kweken. Dan zie je hier wat je deze maand kunt doen. Open een gewas en kies "Zet in mijn tuin".</p>`}
+  const done=tasks.filter(x=>ds.has(x.key)).length,pct=tasks.length?Math.round(done/tasks.length*100):0;
+  const volgende=tuinVolgende();
+  const top=n?`<section class="tt" aria-labelledby="tt-t"><div class="ring" id="tring" aria-hidden="true" style="--p:${pct}"><span id="tring-n">${tasks.length?done+"/"+tasks.length:"–"}</span></div><div><h2 id="tt-t">${MF[NOW-1][0].toUpperCase()+MF[NOW-1].slice(1)}</h2><p id="tprog" role="status">${tuinProg()}</p>${volgende?`<p class="tt-next">${esc(volgende)}</p>`:""}</div><progress id="tprogress" class="sr" max="${Math.max(tasks.length,1)}" value="${done}" aria-label="Taken in ${MF[NOW-1]}"></progress></section>`:"";
+  const taskHtml=tasks.length?`<ul class="tasks tcards">${tasks.map(x=>`<li${ds.has(x.key)?' class="gedaan"':""}><label class="task"><input type="checkbox" data-task="${x.key}"${ds.has(x.key)?" checked":""}><img class="tphoto" src="${PIC[x.id]||""}" alt="" loading="lazy"><span><b class="tnaam">${esc(x.c.n)}</b><span class="tfase"><i class="k-${x.k}" aria-hidden="true"></i>${TKIND[x.k]}</span>${tinstr(x)}</span></label><button class="lnk" data-open="${x.id}" aria-label="Uitleg over ${esc(x.c.n)}">Uitleg</button></li>`).join("")}</ul>`:`<div class="empty">In ${MF[NOW-1]} is er niets te doen voor je gewassen.${volgende?" "+esc(volgende):""}</div>`;
+  const cards=`<div class="gcards">${TUIN.crops.map(id=>{const c=BY[id];return `<article class="gcard"><button class="gc-top" data-open="${id}" aria-label="Open ${esc(c.n)}"><img class="ph" src="${PIC[id]||""}" alt="" loading="lazy"><span><b>${esc(c.n)}</b><span class="gc-nu">${gcNu(c)}</span></span></button>${miniNu(c)}<div class="gc-act"><button class="lnk" data-guide="${id}">Hoe teel ik dit?</button><button class="lnk" data-tuin="${id}" aria-label="Haal ${esc(c.n)} uit mijn tuin">Uit mijn tuin halen</button></div></article>`;}).join("")}</div>`;
+  const leeg=`<section class="tleeg" aria-labelledby="tl-t"><h2 id="tl-t">Je tuin is nog leeg</h2><p>Kies een gewas om te beginnen.</p><button class="btn pri" data-tab="alle">Kies een gewas</button></section>`;
+  return `${bakNodig?`<p class="hint" id="tbak" role="note">Je tuin staat alleen op dit toestel. <button class="lnk" data-act="export">Bewaar nu een back-up</button></p>`:""}
+  ${n?top:leeg}
+  ${n?`<section class="sec" style="margin-top:22px"><h2>Te doen in ${MF[NOW-1]}</h2>${taskHtml}</section>
+  <section class="sec" style="margin-top:28px"><h2>Mijn gewassen<small>${n} ${n===1?"gewas":"gewassen"}</small></h2>${cards}</section>`:""}
+  <section class="sec" style="margin-top:28px"><h2>${n?"Nog een gewas toevoegen":"Dit past nu bij jou"}</h2>
    <div class="tprof" role="group" aria-label="Waar teel je?"><span class="tlab">Waar teel je?</span><div class="chips">${PLEKKEN.map(([v,l])=>`<button class="chip" data-tplek="${v}" aria-pressed="${TUIN.plek===v}">${l}</button>`).join("")}</div></div>
+   ${sug.length?`<div class="grid">${sug.map(c=>`<div class="stile">${tile(c,starts(c,NOW),actieZin(c,starts(c,NOW)[0]))}<button class="btn" data-tuin="${c.id}" aria-label="Voeg ${esc(c.n)} toe aan mijn tuin">Voeg toe</button></div>`).join("")}</div>`:`<div class="empty">Deze maand is er voor deze plek niets makkelijks te starten. Kijk in de kalender wat er in de volgende maanden komt.</div>`}
+   ${n?`<div class="fbtn"><button class="btn" data-tab="alle">Alle gewassen bekijken</button></div>`:""}
   </section>
-  ${n?`<section class="sec"><h2>Taken in ${MF[NOW-1]}<small id="tprog" role="status">${tuinProg()}</small></h2>${tasks.length?taskHtml:`<div class="empty">Voor je gewassen is er in ${MF[NOW-1]} niets te doen. Kijk in de kalender wat er in de volgende maanden komt.</div>`}</section>
-  <section class="sec"><h2>Mijn gewassen<small>${n} ${n===1?"gewas":"gewassen"}</small></h2><div class="grid">${TUIN.crops.map(id=>{const t=starts(BY[id],NOW);return tile(BY[id],t,t.length?actieZin(BY[id],t[0]):"");}).join("")}</div></section>`:""}
-  ${sug.length?`<section class="sec"><h2>Dit past nu bij jou<small>Makkelijke gewassen om deze maand te starten${TUIN.plek==="alle"?"":", "+PLEKKEN.find(p=>p[0]===TUIN.plek)[1].toLowerCase()}</small></h2><div class="grid">${sug.map(c=>`<div class="stile">${tile(c,starts(c,NOW),actieZin(c,starts(c,NOW)[0]))}<button class="btn" data-tuin="${c.id}" aria-label="Voeg ${esc(c.n)} toe aan mijn tuin">Voeg toe</button></div>`).join("")}</div></section>`:""}
-  <section class="sec"><h2>Back-up van je tuin</h2><p class="art-p">Je tuin wordt bewaard in je browser op dit toestel. Wis je browsergegevens of gebruik je een ander toestel, dan is hij weg. Bewaar daarom af en toe een back-up.</p>
-   <div class="fbtn"><button class="btn" data-act="export">Bewaar back-up</button><button class="btn" data-act="import">Herstel back-up</button></div><input type="file" id="tfile" accept="application/json,.json" hidden></section>`;
+  <details class="tback"><summary>Back-up en herstel</summary><div><p class="art-p">Je tuin wordt bewaard in je browser op dit toestel. Wis je browsergegevens of gebruik je een ander toestel, dan is hij weg. Bewaar daarom af en toe een back-up.</p>
+   <div class="fbtn"><button class="btn" data-act="export">Bewaar back-up</button><button class="btn" data-act="import">Herstel back-up</button></div><input type="file" id="tfile" accept="application/json,.json" hidden></div></details>`;
 }
 function tuinExport(){const blob=new Blob([JSON.stringify({versie:1,bewaard:new Date().toISOString(),tuin:TUIN},null,1)],{type:"application/json"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download="mijn-moestuin.json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);TUIN.bak=Date.now();tuinSave();const hb=document.getElementById("tbak");if(hb)hb.remove();notify("Back-up gedownload.");}
 async function tuinImport(file){
@@ -2447,7 +2498,7 @@ document.addEventListener("input",e=>{if(e.target.id==="q"){S.q=e.target.value;c
 document.addEventListener("toggle",e=>{const d=e.target;if(!d.classList||!d.classList.contains("grp"))return;const set=d.dataset.view==="jaar"?S.jgrp:S.grp;if(!(S.q||S.type!=="alle"||S.diep!=="alle"||S.plek!=="alle")){if(d.open)set.add(d.dataset.grp);else set.delete(d.dataset.grp);}},true);
 document.addEventListener("change",e=>{const t=e.target;
   if(t.id==="hg"){S.hg=t.value;render();const g=document.getElementById("hg");if(g)g.focus();}
-  else if(t.dataset&&t.dataset.task){const ds=doneSet();if(t.checked)ds.add(t.dataset.task);else ds.delete(t.dataset.task);TUIN.done[MKEY]=[...ds];tuinSave();const pr=document.getElementById("tprog");if(pr)pr.textContent=tuinProg();}
+  else if(t.dataset&&t.dataset.task){const ds=doneSet();if(t.checked)ds.add(t.dataset.task);else ds.delete(t.dataset.task);TUIN.done[MKEY]=[...ds];tuinSave();const li=t.closest("li");if(li)li.classList.toggle("gedaan",t.checked);tuinRing();}
   else if(t.id==="tfile"&&t.files&&t.files[0]){tuinImport(t.files[0]);t.value="";}
 });
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!document.getElementById("ov").hidden)closeOv();});

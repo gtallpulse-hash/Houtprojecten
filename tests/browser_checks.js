@@ -488,6 +488,67 @@ checks.terugknop = async () => {
   return { ok: f.length === 0, detail: f.join("; ") || "8 onderdelen" };
 };
 
+// Mijn tuin als overzicht: voortgangsring, taakkaarten, gewaskaarten en back-up in een opklapblok.
+checks.tuinOverzicht = async () => {
+  const f = [];
+  const bewaar = { crops: TUIN.crops.slice(), bak: TUIN.bak, done: JSON.stringify(TUIN.done) };
+  try {
+    TUIN.crops = []; TUIN.done = {};
+    await go("tuin");
+    if (!document.querySelector("#main .tleeg")) f.push("geen lege toestand");
+    else if (!document.querySelector('#main .tleeg [data-tab="alle"]')) f.push("lege toestand heeft geen actie");
+    if (document.querySelector("#main .tt")) f.push("overzichtskaart bij lege tuin");
+    const ids = C.filter((c) => ["zb", "zd", "pt", "oo"].some((k) => c[k].includes(NOW))).slice(0, 3).map((c) => c.id);
+    TUIN.crops = ids; TUIN.bak = Date.now(); TUIN.done = {};
+    await go("kal"); await go("tuin");
+    const taken = [...document.querySelectorAll("#main .task input")];
+    if (!document.querySelector("#main .tt .ring")) f.push("geen voortgangsring");
+    const pg = document.getElementById("tprogress");
+    if (!pg || Number(pg.max) !== taken.length || Number(pg.value) !== 0) f.push("voortgang start fout: " + (pg && pg.value + "/" + pg.max) + " bij " + taken.length + " taken");
+    if (document.querySelectorAll("#main .gcard").length !== ids.length) f.push("aantal gewaskaarten");
+    for (const k of document.querySelectorAll("#main .gcard")) {
+      if (!k.querySelector(".gc-nu").textContent.trim()) f.push("kaart zonder status");
+      const m = k.querySelector('.mini[role="img"]');
+      if (!m || !m.getAttribute("aria-label")) f.push("jaarbalk zonder tekst");
+      if (!k.querySelector(".mini .nu")) f.push("huidige maand niet gemarkeerd");
+    }
+    // afvinken werkt ring, teller en kaart bij zonder te herschikken
+    if (taken.length) {
+      taken[0].click();
+      await sleep(150);
+      if (Number(document.getElementById("tprogress").value) !== 1) f.push("ring telt niet mee na afvinken");
+      if (!taken[0].closest("li").classList.contains("gedaan")) f.push("taak niet gemarkeerd als gedaan");
+      if (!/gedaan/.test(document.getElementById("tprog").textContent)) f.push("tekst niet bijgewerkt");
+      for (const t of document.querySelectorAll("#main .task input:not(:checked)")) { t.click(); await sleep(60); }
+      if (!/Alles gedaan/.test(document.getElementById("tprog").textContent)) f.push("geen melding als alles klaar is: " + document.getElementById("tprog").textContent);
+      if (document.getElementById("tring-n").textContent !== taken.length + "/" + taken.length) f.push("ring toont " + document.getElementById("tring-n").textContent);
+    } else f.push("geen taken om af te vinken");
+    // kaart opent het gewas; opruimen
+    document.querySelector("#main .gc-top").click();
+    await sleep(300);
+    if (document.getElementById("ov").hidden) f.push("kaart opent geen gewas");
+    closeOv(); await sleep(300);
+    // back-up staat in een opklapblok
+    const bk = document.querySelector("#main details.tback");
+    if (!bk) f.push("geen back-upblok");
+    else {
+      if (bk.open) f.push("back-upblok staat open");
+      bk.open = true; await sleep(100);
+      if (!bk.querySelector('[data-act="export"]') || !bk.querySelector("#tfile")) f.push("back-upblok mist knoppen");
+    }
+    const kd = kleineDoelen();
+    if (kd.length) f.push("kleine doelen: " + kd[0]);
+    if (document.documentElement.scrollWidth > document.documentElement.clientWidth) f.push("horizontale overflow");
+  } finally {
+    TUIN.crops = bewaar.crops; TUIN.bak = bewaar.bak; TUIN.done = JSON.parse(bewaar.done);
+    tuinSave();
+    if (!document.getElementById("ov").hidden) closeOv();
+    hideToast();
+    await go("kal");
+  }
+  return { ok: f.length === 0, detail: f.slice(0, 4).join("; ") || "9 onderdelen" };
+};
+
 // Doelkeuze en eerste stap op de Gids.
 checks.gidsDoel = async () => {
   const f = [];
@@ -865,6 +926,7 @@ export function kleineDoelen() {
     .filter((e) => e.offsetParent !== null && !e.closest("[hidden]") && !e.closest("[inert]"))
     .filter((e) => !(e.tagName === "A" && e.closest("p, li")))  // links in lopende tekst zijn uitgezonderd (WCAG 2.2, doelgrootte)
     .filter((e) => !e.classList.contains("tl"))  // verwijzing in lopende tekst (artikel, kader)
+    .filter((e) => !(e.type === "checkbox" && e.closest("label") && e.closest("label").getBoundingClientRect().height >= 43.5))  // het hele label is het doel
     .map((e) => ({ e, h: e.getBoundingClientRect().height }))
     .filter((x) => x.h > 0 && x.h < 43.5)
     .map((x) => `${x.e.tagName.toLowerCase()}.${(x.e.className || "").toString().split(" ")[0]} ${Math.round(x.h)}px "${(x.e.textContent || x.e.getAttribute("aria-label") || "").trim().slice(0, 25)}"`);
