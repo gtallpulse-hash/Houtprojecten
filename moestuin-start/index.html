@@ -128,6 +128,8 @@ details.dd>summary{cursor:pointer;font-weight:600;color:var(--leaf);padding-bloc
 .nav button svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .nav button[aria-current="page"]{opacity:1;background:rgba(255,255,255,.12)}
 .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:var(--fs-s);margin-block:10px;color:var(--muted)}
+.jleg{position:sticky;top:0;z-index:20;background:var(--bg);margin:0;padding:10px 0 8px;gap:6px 14px;border-bottom:1px solid var(--line)}
+.legend.jleg i{width:22px;height:8px;border-radius:4px;vertical-align:1px}
 .legend i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-right:6px}
 .k-zb{background:transparent;border:2px solid var(--f-zaai)} .k-zd{background:var(--f-zaai)} .k-pt{background:var(--f-plant)} .k-oo{background:var(--f-oogst)}
 .scroll{overflow-x:auto;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
@@ -1861,7 +1863,7 @@ for(const id in PHOTOS)PIC[id]=PHOTOS[id].src;
 const FASEN=[["zb","Zaai in huis"],["zd","Zaai buiten"],["pt","Plant uit"],["oo","Oogst"]];
 const faseLabel=k=>(FASEN.find(f=>f[0]===k)||[])[1]||"";
 const KIND={zb:[faseLabel("zb")],zd:[faseLabel("zd")],pt:[faseLabel("pt")]};
-function legendHtml(){const x={zb:" (open)",zd:" (gevuld)"};return `<div class="legend">${FASEN.map(([k,l])=>`<span><i class="k-${k}"></i>${l}${x[k]||""}</span>`).join("")}</div>`;}
+function legendHtml(extra){const x={zb:" (open)",zd:" (gevuld)"};return `<div class="legend${extra?" "+extra:""}">${FASEN.map(([k,l])=>`<span><i class="k-${k}"></i>${l}${x[k]||""}</span>`).join("")}</div>`;}
 const NOW=new Date().getMonth()+1;const cr=s=>String(s).split(" I\u0027d")[0].replace(/\s*\(.*?$/,"");
 const S={tab:"kal",kv:"maand",m:NOW,type:"alle",diep:"alle",plek:"alle",q:"",more:new Set(),grp:new Set(),jgrp:new Set(),hulp:null,hg:"",gc:null,gq:"",gsel:[],gedit:false,gplek:false,kies:false,gact:null,ch:0};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -2116,7 +2118,7 @@ function viewJaar(){
   const act=!!S.q||S.type!=="alle"||S.diep!=="alle"||S.plek!=="alle";
   const groups=GROUPS.map(g=>({g,l:l.filter(c=>c.c===g).sort((a,b)=>a.n.localeCompare(b.n))})).filter(x=>x.l.length);
   const rij=c=>`<button class="crow" data-open="${c.id}" aria-label="${esc(c.n)}. ${DIFF[c.d]}. ${textCal(c)}"><span class="nmr">${esc(c.n)}<span class="niv">${DIFF[c.d]}</span></span>${track(c)}</button>`;
-  return `${legendHtml()}${qc}
+  return `${legendHtml("jleg")}${qc}
   ${groups.length?`<div class="grps">${groups.map(x=>`<details class="grp cg" data-view="jaar" data-grp="${esc(x.g)}"${act||S.jgrp.has(x.g)?" open":""}><summary><h2 class="gt">${esc(x.g)}<small>${x.l.length} gewassen</small></h2></summary><div class="cbody">${head}${x.l.map(rij).join("")}</div></details>`).join("")}</div>`:'<div class="empty">Geen gewassen gevonden. Pas je zoekopdracht of filters aan.</div>'}
   <p class="p" style="color:var(--muted);margin-top:18px;font-size:var(--fs-m)">Elke rij heeft drie lijnen: bovenaan zaaien (een open balk is in huis, een gevulde balk is buiten), in het midden uitplanten en onderaan oogsten. Tik op een gewas voor het stappenplan.</p>`;
 }
