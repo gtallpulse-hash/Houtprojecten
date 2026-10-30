@@ -41,6 +41,11 @@ check("radijsAfstand", 'afst:"2-3 cm in de rij, 10-15 cm tussen de rijen"' in SR
 check("pompoenRuimte", "2 tot 3 m² per plant" not in SRC and "1,5 tot 2 m² per plant" in SRC)
 check("spruitkoolZaai", "Zaai april-mei in een bed." not in SRC and "Zaai van eind maart tot mei in een bed." in SRC)
 
+# --- Audit fase 1: structuur van het document
+check("titelInHead", SRC.index("<title>") < SRC.index("<body>"))
+check("navVoorMain", SRC.index('<nav class="nav"') < SRC.index('<main id="main"'))
+check("naam", "Moestuin Start" not in SRC and "<title>Mijn Moestuin</title>" in SRC)
+
 # --- Reviewer-herstel
 check("pompoenillustratie", "Courgette en pompoen: 1 plant per m" not in SRC)
 

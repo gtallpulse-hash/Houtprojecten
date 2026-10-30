@@ -488,6 +488,21 @@ checks.terugknop = async () => {
   return { ok: f.length === 0, detail: f.join("; ") || "8 onderdelen" };
 };
 
+// Navigatie staat vooraan in het document en blijft visueel onderaan.
+checks.navigatieVolgorde = async () => {
+  const f = [];
+  const nav = document.querySelector("nav.nav"), main = document.getElementById("main");
+  if (!(nav.compareDocumentPosition(main) & Node.DOCUMENT_POSITION_FOLLOWING)) f.push("nav staat niet voor main");
+  const r = nav.getBoundingClientRect();
+  if (Math.abs(r.bottom - window.innerHeight) > 2) f.push("nav staat niet onderaan: " + Math.round(r.bottom) + " van " + window.innerHeight);
+  const eerste = [...document.querySelectorAll("a[href], button, input, select, summary")].filter((e) => e.offsetParent !== null || e.classList.contains("skip"));
+  if (!eerste[0] || !eerste[0].classList.contains("skip")) f.push("skiplink is niet het eerste element");
+  if (!eerste[1] || !eerste[1].closest("nav.nav")) f.push("na de skiplink volgt niet de navigatie");
+  if (document.title !== "Mijn Moestuin") f.push("titel: " + document.title);
+  if (document.querySelector("head title") === null) f.push("title staat niet in head");
+  return { ok: f.length === 0, detail: f.join("; ") || "5 onderdelen" };
+};
+
 // Actiezin op de tegels: elk gewas in een zaai- of plantfase heeft een zin met echte getallen.
 checks.actiezin = async () => {
   const f = [];
