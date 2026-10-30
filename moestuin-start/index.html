@@ -1863,7 +1863,7 @@ const faseLabel=k=>(FASEN.find(f=>f[0]===k)||[])[1]||"";
 const KIND={zb:[faseLabel("zb")],zd:[faseLabel("zd")],pt:[faseLabel("pt")]};
 function legendHtml(){const x={zb:" (open)",zd:" (gevuld)"};return `<div class="legend">${FASEN.map(([k,l])=>`<span><i class="k-${k}"></i>${l}${x[k]||""}</span>`).join("")}</div>`;}
 const NOW=new Date().getMonth()+1;const cr=s=>String(s).split(" I\u0027d")[0].replace(/\s*\(.*?$/,"");
-const S={tab:"kal",kv:"maand",m:NOW,type:"alle",diep:"alle",plek:"alle",q:"",more:new Set(),grp:new Set(),jgrp:new Set(),hulp:null,hg:"",gc:null,gq:"",gsel:[],gedit:false,gplek:false,gact:null,ch:0};
+const S={tab:"kal",kv:"maand",m:NOW,type:"alle",diep:"alle",plek:"alle",q:"",more:new Set(),grp:new Set(),jgrp:new Set(),hulp:null,hg:"",gc:null,gq:"",gsel:[],gedit:false,gplek:false,kies:false,gact:null,ch:0};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function ranges(arr){if(!arr||!arr.length)return "-";const s=new Set(arr);if(s.size===12)return "heel jaar";let st=1;while(s.has(st))st++;const out=[];let run=null;for(let k=1;k<=12;k++){const m=((st+k-1)%12)+1;if(s.has(m)){if(!run){run=[m,m];out.push(run);}else run[1]=m;}else run=null;}return out.map(x=>x[0]===x[1]?MN[x[0]-1]:MN[x[0]-1]+"-"+MN[x[1]-1]).join(", ");}
 const nm=id=>BY[id].n;
@@ -1915,8 +1915,8 @@ function renderChrome(){
   document.getElementById("nav").innerHTML=T.map(([k,v])=>`<button data-tab="${k}" ${S.tab===k?'aria-current="page"':""}><svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[k]}</svg>${v}</button>`).join("");
   const maand=S.tab==="kal"&&S.kv==="maand";
   const gcat=S.tab==="gids"&&S.gc&&S.gc!=="start"?GROEPEN.find(g=>g.id===S.gc):null;const gstart=S.tab==="gids"&&S.gc==="start";
-  document.getElementById("h1").textContent=maand?MF[S.m-1].charAt(0).toUpperCase()+MF[S.m-1].slice(1):{alle:"Alle gewassen",kal:"Jaaroverzicht",tuin:"Mijn tuin",hulp:(HELP.find(x=>x.id===S.hulp)||{t:"Hulp"}).t,gids:gstart?"Startersgids":gcat?gcat.t:"Gids"}[S.tab];
-  const subs={alle:C.length+" groenten, fruit en kruiden voor België.",kal:S.kv==="maand"?(S.m===NOW?"Dit kan je nu doen in je moestuin.":S.m===VOLG?"Dit komt eraan. Bereid je voor.":"Dit kan je doen in "+MF[S.m-1]+"."):"Wanneer je wat zaait, plant en oogst. De gele band is deze maand.",tuin:TUIN.crops.length?TUIN.crops.length+" "+(TUIN.crops.length===1?"gewas":"gewassen")+" in je tuin.":"Je tuin is nog leeg.",hulp:(HELP.find(x=>x.id===S.hulp)||{s:"Wat gaat er mis met je plant?"}).s,gids:gstart?SG[S.ch].t:gcat?gcat.d:"Begin hier en leer stap voor stap."};
+  document.getElementById("h1").textContent=maand?MF[S.m-1].charAt(0).toUpperCase()+MF[S.m-1].slice(1):{alle:S.kies?"Kies een gewas":"Alle gewassen",kal:"Jaaroverzicht",tuin:"Mijn tuin",hulp:(HELP.find(x=>x.id===S.hulp)||{t:"Hulp"}).t,gids:gstart?"Startersgids":gcat?gcat.t:"Gids"}[S.tab];
+  const subs={alle:S.kies?"Tik op een gewas om het aan je tuin toe te voegen.":C.length+" groenten, fruit en kruiden voor België.",kal:S.kv==="maand"?(S.m===NOW?"Dit kan je nu doen in je moestuin.":S.m===VOLG?"Dit komt eraan. Bereid je voor.":"Dit kan je doen in "+MF[S.m-1]+"."):"Wanneer je wat zaait, plant en oogst. De gele band is deze maand.",tuin:TUIN.crops.length?TUIN.crops.length+" "+(TUIN.crops.length===1?"gewas":"gewassen")+" in je tuin.":"Je tuin is nog leeg.",hulp:(HELP.find(x=>x.id===S.hulp)||{s:"Wat gaat er mis met je plant?"}).s,gids:gstart?SG[S.ch].t:gcat?gcat.d:"Begin hier en leer stap voor stap."};
   document.getElementById("sub").textContent=subs[S.tab];
   const kv=document.getElementById("kv");kv.hidden=S.tab!=="kal";
   kv.innerHTML=[["maand","Deze maand"],["jaar","Jaaroverzicht"]].map(([v,t])=>`<button class="chip" data-kv="${v}" aria-pressed="${S.kv===v}">${t}</button>`).join("");
@@ -1960,13 +1960,14 @@ function viewKal(){return S.kv==="jaar"?viewJaar():introHtml()+viewMaand();}
 const GROUPS=["Vruchtgroente","Bladgroente","Wortelgroente","Koolgroente","Uigewas","Knolgewas","Peulvrucht","Vaste groente","Kruid","Klein fruit","Boomfruit"];
 function viewAlle(){
   const l=filtered().sort((a,b)=>a.n.localeCompare(b.n));
-  if(!l.length)return `<section class="sec" style="margin-top:14px"><div class="empty">Geen gewassen gevonden. Pas je zoekopdracht of filters aan.</div></section>`;
+  const kies=S.kies?`<p class="hint" role="note">Kies hieronder een gewas. Het komt meteen in je tuin. <button class="lnk" data-act="kiesstop">Annuleren</button></p>`:"";
+  if(!l.length)return kies+`<section class="sec" style="margin-top:14px"><div class="empty">Geen gewassen gevonden. Pas je zoekopdracht of filters aan.</div></section>`;
   const act=!!S.q||S.type!=="alle"||S.diep!=="alle"||S.plek!=="alle";
   const names=[...GROUPS,...new Set(l.map(c=>c.c).filter(g=>!GROUPS.includes(g)))].filter(g=>l.some(c=>c.c===g));
   const fq=S.q?fold(S.q.trim()):"";
   const via=fq.length>=3?l.filter(c=>!fold(c.n+" "+c.l).includes(fq)&&fold(SYN[c.id]||"").includes(fq)):[];
   const note=via.length?`<p class="credit" role="note" style="margin:10px 0 0">Je zocht "${esc(S.q.trim())}". Dat vind je onder ${via.map(c=>esc(c.n)).join(", ")}.</p>`:"";
-  return note+`<div class="grps">${names.map(g=>{const arr=l.filter(c=>c.c===g);
+  return kies+note+`<div class="grps">${names.map(g=>{const arr=l.filter(c=>c.c===g);
     return `<details class="grp" data-grp="${esc(g)}"${act||S.grp.has(g)?" open":""}><summary><h2 class="gt">${esc(g)}<small>${arr.length} ${arr.length===1?"gewas":"gewassen"}</small></h2><span class="thumbs" aria-hidden="true">${arr.slice(0,3).map(c=>`<img src="${PIC[c.id]||""}" alt="" loading="lazy">`).join("")}</span></summary><div class="grid">${arr.map(c=>tile(c)).join("")}</div></details>`;}).join("")}</div>`;
 }
 
@@ -2082,9 +2083,10 @@ function viewTuin(){
   const top=n?`<section class="tt" aria-labelledby="tt-t"><div class="ring" id="tring" aria-hidden="true" style="--p:${pct}"><span id="tring-n">${tasks.length?done+"/"+tasks.length:"–"}</span></div><div><h2 id="tt-t">${MF[NOW-1][0].toUpperCase()+MF[NOW-1].slice(1)}</h2><p id="tprog" role="status">${tuinProg()}</p>${volgende?`<p class="tt-next">${esc(volgende)}</p>`:""}</div><progress id="tprogress" class="sr" max="${Math.max(tasks.length,1)}" value="${done}" aria-label="Taken in ${MF[NOW-1]}"></progress></section>`:"";
   const taskHtml=tasks.length?`<ul class="tasks tcards">${tasks.map(x=>`<li${ds.has(x.key)?' class="gedaan"':""}><label class="task"><input type="checkbox" data-task="${x.key}"${ds.has(x.key)?" checked":""}><img class="tphoto" src="${PIC[x.id]||""}" alt="" loading="lazy"><span><b class="tnaam">${esc(x.c.n)}</b><span class="tfase"><i class="k-${x.k}" aria-hidden="true"></i>${TKIND[x.k]}</span>${tinstr(x)}</span></label><button class="lnk" data-open="${x.id}" aria-label="Uitleg over ${esc(x.c.n)}">Uitleg</button></li>`).join("")}</ul>`:`<div class="empty">In ${MF[NOW-1]} is er niets te doen voor je gewassen.${volgende?" "+esc(volgende):""}</div>`;
   const cards=`<div class="gcards">${TUIN.crops.map(id=>{const c=BY[id];return `<article class="gcard"><button class="gc-top" data-open="${id}" aria-label="Open ${esc(c.n)}"><img class="ph" src="${PIC[id]||""}" alt="" loading="lazy"><span><b>${esc(c.n)}</b><span class="gc-nu">${gcNu(c)}</span></span></button>${miniNu(c)}<div class="gc-act"><button class="lnk" data-guide="${id}">Hoe teel ik dit?</button><button class="lnk" data-tuin="${id}" aria-label="Haal ${esc(c.n)} uit mijn tuin">Uit mijn tuin halen</button></div></article>`;}).join("")}</div>`;
-  const leeg=`<section class="tleeg" aria-labelledby="tl-t"><h2 id="tl-t">Je tuin is nog leeg</h2><p>Kies een gewas om te beginnen.</p><button class="btn pri" data-tab="alle">Kies een gewas</button></section>`;
+  const leeg=`<section class="tleeg" aria-labelledby="tl-t"><h2 id="tl-t">Je tuin is nog leeg</h2><p>Kies een gewas om te beginnen.</p><button class="btn pri" data-act="kies">Voeg een gewas toe</button></section>`;
   return `${bakNodig?`<p class="hint" id="tbak" role="note">Je tuin staat alleen op dit toestel. <button class="lnk" data-act="export">Bewaar nu een back-up</button></p>`:""}
   ${n?top:leeg}
+  ${n?`<div class="fbtn"><button class="btn pri" data-act="kies">Voeg een gewas toe</button></div>`:""}
   ${n?`<section class="sec" style="margin-top:22px"><h2>Te doen in ${MF[NOW-1]}</h2>${taskHtml}</section>
   <section class="sec" style="margin-top:28px"><h2>Mijn gewassen<small>${n} ${n===1?"gewas":"gewassen"}</small></h2>${cards}</section>`:""}
   <details class="tback"><summary>Back-up en herstel</summary><div><p class="art-p">Je tuin wordt bewaard in je browser op dit toestel. Wis je browsergegevens of gebruik je een ander toestel, dan is hij weg. Bewaar daarom af en toe een back-up.</p>
@@ -2450,7 +2452,7 @@ document.addEventListener("click",e=>{navY=window.scrollY;
   if(t.dataset.gdoel){const i=S.gsel.indexOf(t.dataset.gdoel);if(i>=0)S.gsel.splice(i,1);else S.gsel.push(t.dataset.gdoel);render();gdFocus(`[data-gdoel="${t.dataset.gdoel}"]`);return;}
   if(t.dataset.gplek){gdKies({d:[t.dataset.gplek],skip:false,eerste:true},"#es-t");return;}
   if(t.dataset.gact){S.gact=t.dataset.gact;render();gdFocus(`[data-gact="${t.dataset.gact}"]`);return;}
-  if(t.dataset.tab){S.tab=t.dataset.tab;if(S.tab==="gids"){S.gc=null;S.gq="";S.gedit=false;S.gplek=false;}if(S.tab==="hulp")S.hulp=null;render();window.scrollTo(0,0);return;}
+  if(t.dataset.tab){S.tab=t.dataset.tab;S.kies=false;if(S.tab==="gids"){S.gc=null;S.gq="";S.gedit=false;S.gplek=false;}if(S.tab==="hulp")S.hulp=null;render();window.scrollTo(0,0);return;}
   if(t.dataset.mo){S.m=+t.dataset.mo;S.more.clear();render();return;}
   if(t.dataset.more){const k=t.dataset.more;S.more.add(k);render();const b=document.querySelectorAll(`[data-sec="${k}"] .tile>button`)[6];if(b)b.focus();return;}
   if(t.dataset.f){S[t.dataset.f]=t.dataset.v;const open=!document.getElementById("ov").hidden;render();if(open)openFilter();return;}
@@ -2460,6 +2462,8 @@ document.addEventListener("click",e=>{navY=window.scrollY;
     notify(BY[id].n+(was?" is uit je tuin gehaald.":" staat nu in je tuin."),()=>{const j=TUIN.crops.indexOf(id);if(was){if(j<0)TUIN.crops.splice(Math.min(i,TUIN.crops.length),0,id);}else if(j>=0)TUIN.crops.splice(j,1);tuinSave();render();if(!document.getElementById("ov").hidden)openDetail(id);notify(BY[id].n+(was?" staat weer in je tuin.":" is weer uit je tuin gehaald."));});return;}
   if(t.dataset.tplek){TUIN.plek=t.dataset.tplek;tuinSave();render();const b=document.querySelector('[data-tplek="'+TUIN.plek+'"]');if(b)b.focus();return;}
   if(t.dataset.hulp){S.hulp=t.dataset.hulp;S.hg="";render();window.scrollTo(0,0);document.getElementById("main").focus({preventScroll:true});return;}
+  if(t.dataset.open&&S.kies&&S.tab==="alle"&&!t.closest("#sheet")){const id=t.dataset.open,nieuw=!TUIN.crops.includes(id);if(nieuw){TUIN.crops.push(id);tuinSave();}S.kies=false;S.tab="tuin";render();window.scrollTo(0,0);document.getElementById("main").focus({preventScroll:true});
+    notify(BY[id].n+(nieuw?" staat nu in je tuin.":" stond al in je tuin."),nieuw?()=>{const j=TUIN.crops.indexOf(id);if(j>=0)TUIN.crops.splice(j,1);tuinSave();render();notify(BY[id].n+" is weer uit je tuin gehaald.");}:undefined);return;}
   if(t.dataset.open){openDetail(t.dataset.open);return;}
   if(t.dataset.art){openArticle(t.dataset.art);return;}
   if(t.dataset.cat){S.gc=t.dataset.cat;render();window.scrollTo(0,0);return;}
@@ -2475,6 +2479,8 @@ document.addEventListener("click",e=>{navY=window.scrollY;
   if(a==="gklaar"){if(S.gsel.length)gdKies({d:S.gsel.slice(),skip:false,eerste:false},"#es-t");return;}
   if(a==="gskip"){gdKies({d:[],skip:true,eerste:false});window.scrollTo(0,0);return;}
   if(a==="gedit"){S.gedit=true;S.gplek=false;S.gsel=DOEL?DOEL.d.slice():[];render();window.scrollTo(0,0);gdFocus("#gdoel-t");return;}
+  if(a==="kies"){S.kies=true;S.tab="alle";render();window.scrollTo(0,0);document.getElementById("main").focus({preventScroll:true});return;}
+  if(a==="kiesstop"){S.kies=false;S.tab="tuin";render();window.scrollTo(0,0);return;}
   if(a==="introok"){lsSet("mt-intro-v1","1");render();document.getElementById("main").focus({preventScroll:true});return;}
   if(a==="askok"){const r=askRes;askRes=null;closeOv();if(r)r(true);return;}
   if(a==="undo"){const f=toastUndo;hideToast();if(f)f();return;}
