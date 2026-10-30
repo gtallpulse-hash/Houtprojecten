@@ -670,6 +670,48 @@ checks.begrippen = async () => {
   return { ok: f.length === 0, detail: f.slice(0, 4).join("; ") || "4 begrippen" };
 };
 
+checks.begrippenLinks = async () => {
+  const f = [];
+  const ids = new Set();
+  for (const b of BEGR) {
+    if (ids.has(b.id)) f.push("dubbel id " + b.id);
+    ids.add(b.id);
+    if (!b.t || !b.kort || !b.u || !b.u.length) f.push(b.id + ": tekst ontbreekt");
+    for (const z of b.z || []) if (!BG[z] && !TERM[z]) f.push(b.id + " verwijst naar onbekend " + z);
+    if (b.art && !artT(b.art)) f.push(b.id + ": artikel bestaat niet " + b.art);
+  }
+  // elk begrip opent een scherm met titel, zonder verwijzing naar zichzelf
+  for (const b of BEGR) {
+    openBegrip(b.id); await sleep(60);
+    const sh = document.getElementById("sheet");
+    if (document.getElementById("ov").hidden || !sh.querySelector("h2")) { f.push(b.id + ": geen scherm"); closeOv(); continue; }
+    if (sh.querySelector('.art-p [data-term="' + b.id + '"], .lead [data-term="' + b.id + '"]')) f.push(b.id + " linkt naar zichzelf");
+    closeOv(); await sleep(150);
+  }
+  // artikels koppelen, elk begrip hoogstens één keer per artikel en nergens in een knop
+  let totaal = 0;
+  for (const cat of GIDS) for (const a of cat.arts) {
+    if (a.id === "woordenlijst") continue;
+    TLK.clear();
+    const d = document.createElement("div"); d.innerHTML = artBody(a);
+    const l = [...d.querySelectorAll("[data-term]")].map((e) => e.dataset.term);
+    totaal += l.length;
+    if (new Set(l).size !== l.length) f.push(a.id + ": begrip meer dan eens gelinkt");
+    if (d.querySelector("button button, a button")) f.push(a.id + ": knop in knop");
+  }
+  if (totaal < 80) f.push("te weinig gekoppelde begrippen: " + totaal);
+  // woordenlijst toont alles op alfabet
+  openArticle("kennis/woordenlijst"); await sleep(200);
+  const n = document.querySelectorAll("#sheet .gloss .gl-b").length;
+  if (n !== BEGR.length + 4) f.push("woordenlijst telt " + n);
+  const namen = [...document.querySelectorAll("#sheet .gloss .gl-b b")].map((e) => e.textContent);
+  if (namen.join("|") !== namen.slice().sort((x, y) => x.localeCompare(y, "nl")).join("|")) f.push("woordenlijst niet op alfabet");
+  document.querySelector("#sheet .gl-b").click(); await sleep(200);
+  if (!document.querySelector("#sheet h2")) f.push("woord opent geen uitleg");
+  closeOv();
+  return { ok: f.length === 0, detail: f.slice(0, 4).join("; ") || totaal + " koppelingen in artikels" };
+};
+
 checks.eersteGebruik = async () => {
   const f = [];
   const bewaar = localStorage.getItem("mt-intro-v1");
