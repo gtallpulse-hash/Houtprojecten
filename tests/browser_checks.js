@@ -488,6 +488,51 @@ checks.terugknop = async () => {
   return { ok: f.length === 0, detail: f.join("; ") || "8 onderdelen" };
 };
 
+// Uitleg bij eerste gebruik, instructie bij taken, maandkiezer en kleine correcties.
+checks.eersteGebruik = async () => {
+  const f = [];
+  const bewaar = localStorage.getItem("mt-intro-v1");
+  const tuinBewaar = { crops: TUIN.crops.slice(), bak: TUIN.bak };
+  try {
+    localStorage.removeItem("mt-intro-v1");
+    await go("kal");
+    S.kv = "maand"; render(); await sleep(200);
+    const intro = document.querySelector("#main .intro");
+    if (!intro) f.push("geen uitleg bij eerste gebruik");
+    else {
+      const knop = intro.querySelector('[data-act="introok"]');
+      if (Math.round(knop.getBoundingClientRect().height) < 44) f.push("knop Begrepen te klein");
+      knop.click(); await sleep(250);
+      if (document.querySelector("#main .intro")) f.push("uitleg blijft na Begrepen");
+      if (localStorage.getItem("mt-intro-v1") !== "1") f.push("keuze niet bewaard");
+    }
+    await go("hulp"); await go("kal");
+    if (document.querySelector("#main .intro")) f.push("uitleg komt terug");
+    // taken in de tuin hebben een instructie
+    TUIN.crops = faseLijst("zd", NOW).slice(0, 1).map((c) => c.id).concat(faseLijst("zb", NOW).slice(0, 1).map((c) => c.id));
+    if (!TUIN.crops.length) TUIN.crops = ["tuinboon"];
+    await go("tuin");
+    const taken = [...document.querySelectorAll("#main .task")];
+    const zonder = taken.filter((t) => !t.querySelector(".tinstr") && !/oogst/i.test(t.textContent));
+    if (!taken.length) f.push("geen taken om te controleren");
+    if (zonder.length) f.push("taak zonder instructie: " + zonder[0].textContent.trim().slice(0, 30));
+    // maandkiezer: meer maanden dan zichtbaar, en een fade-aanwijzing
+    await go("kal");
+    const mo = document.getElementById("months");
+    if (mo.scrollWidth <= mo.clientWidth) f.push("alle maanden passen: geen aanwijzing nodig");
+    const m = getComputedStyle(mo);
+    if (!/gradient/.test(m.maskImage || m.webkitMaskImage || "")) f.push("geen fade aan de randen");
+    // tekstverwijzing in kader
+    const tekst = JSON.stringify(HINT);
+    if (/In Ukkel viel/.test(tekst)) f.push("vorstkader noemt nog 'In Ukkel'");
+  } finally {
+    if (bewaar === null) localStorage.removeItem("mt-intro-v1"); else localStorage.setItem("mt-intro-v1", bewaar);
+    TUIN.crops = tuinBewaar.crops; TUIN.bak = tuinBewaar.bak; tuinSave();
+    await go("kal");
+  }
+  return { ok: f.length === 0, detail: f.join("; ") || "6 onderdelen" };
+};
+
 // Eigen bevestiging bij het herstellen van een back-up, zonder dialogen van de browser.
 checks.bevestiging = async () => {
   const f = [];

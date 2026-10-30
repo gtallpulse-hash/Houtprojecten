@@ -45,7 +45,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .top .brand{font:700 var(--fs-b) var(--f-display);color:var(--leaf);display:flex;gap:8px;align-items:center}
 .top h1{font-size:clamp(2.4rem,9vw,4rem);letter-spacing:-.02em;margin-top:10px}
 .top p{margin:6px 0 0;color:var(--muted);font-size:var(--fs-l);max-width:44ch}
-.months{display:flex;gap:6px;overflow-x:auto;padding-block:14px 4px;scrollbar-width:none}
+.months{display:flex;gap:6px;overflow-x:auto;padding-block:14px 4px;scrollbar-width:none;-webkit-mask-image:linear-gradient(to right,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%);mask-image:linear-gradient(to right,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%)}
 .months::-webkit-scrollbar{display:none}
 .mo{border:0;background:transparent;padding:11px 14px;min-height:44px;border-radius:999px;font-weight:600;color:var(--muted);flex:none}
 .mo[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
@@ -84,7 +84,7 @@ details.grp>.grid{padding:0 14px 18px;margin-top:4px}
 .hc p b{font-weight:600;display:block}
 .hc .links{margin-top:10px}
 .hc .links button{min-height:44px;padding:8px 14px}
-.tprof{display:flex;flex-direction:column;gap:8px}
+.tprof{display:flex;flex-direction:column;gap:8px;margin-top:16px}
 .tlab{font-weight:600}
 .tasks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
 .tasks li{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:2px 8px 2px 4px}
@@ -248,6 +248,9 @@ details.grp.cg>.cbody{padding:0 14px 10px}
 .buur p b{font-weight:600}
 .lnk{all:unset;cursor:pointer;font:700 var(--fs-b) var(--f-display);color:var(--ink);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px;min-height:44px;display:inline-flex;align-items:center}
 .lnk:hover{text-decoration-color:var(--leaf)}
+.tinstr{display:block;font-weight:400;color:var(--muted);font-size:var(--fs-s);line-height:1.35}
+.intro{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;justify-content:space-between}
+.intro p{margin:0}
 .btn:active,.chip:active,.mo:active,.gcat:active,.acard:active,.tile button:active,.kswitch button:active,.nav button:active,.toast-b:active{filter:brightness(.9)}
 .doen{display:block;margin-top:4px;font-size:var(--fs-m);line-height:1.35;color:var(--ink);text-align:left}
 .toast{position:fixed;left:12px;right:12px;bottom:calc(76px + env(safe-area-inset-bottom,0px));z-index:60;max-width:520px;margin-inline:auto;background:var(--nav);color:var(--on-nav);border-radius:14px;padding:6px 8px 6px 16px;display:flex;gap:12px;align-items:center;justify-content:space-between}
@@ -268,7 +271,7 @@ details.grp.cg>.cbody{padding:0 14px 10px}
 .figure{margin:16px 0 0;max-width:520px}
 .ill{display:block;width:100%;height:auto;background:var(--surface);border-radius:18px}
 .ill text{font:600 12.5px var(--f-body);fill:var(--ink)}
-.ill text.sm{font-weight:500;font-size:11px;fill:var(--muted)}
+.ill text.sm{font-weight:500;font-size:12px;fill:var(--muted)}
 .ill .o{stroke:var(--ink);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;fill:none}
 .ill .fl{fill:var(--leaf)}.ill .fll{fill:var(--leaf-soft)}.ill .fs{fill:var(--soil)}.ill .fy{fill:var(--sun)}
 .ill .o.fl{fill:var(--leaf)}.ill .o.fll{fill:var(--leaf-soft)}.ill .o.fs{fill:var(--soil)}.ill .o.fy{fill:var(--sun)}
@@ -319,7 +322,7 @@ details.grp.cg>.cbody{padding:0 14px 10px}
   </section>
   <main id="main" tabindex="-1"></main>
   <div id="live" class="sr" role="status" aria-live="polite"></div>
-  <footer><p class="src">Gegevens zijn gemiddelden voor Vlaanderen. In Ukkel viel de laatste vorst gemiddeld op 27 maart en de eerste op 21 november (KMI, 1991 tot 2020). Plant vorstgevoelige gewassen pas na de ijsheiligen (11-13 mei). Controleer bij twijfel het zaadzakje van je ras. Foto's komen van Wikimedia Commons met vrije licenties. De fotograaf staat onder elke foto in het detailscherm.</p><p class="src">Deze pagina telt bezoeken zonder cookies en zonder persoonlijke gegevens (GoatCounter). Je tuin blijft alleen op je eigen toestel.</p></footer>
+  <footer><p class="src">Gegevens zijn gemiddelden voor Vlaanderen. Bij Brussel (meetstation Ukkel) viel de laatste vorst gemiddeld op 27 maart en de eerste op 21 november (KMI, 1991 tot 2020). Plant vorstgevoelige gewassen pas na de ijsheiligen (11-13 mei). Controleer bij twijfel het zaadzakje van je ras. Foto's komen van Wikimedia Commons met vrije licenties. De fotograaf staat onder elke foto in het detailscherm.</p><p class="src">Deze pagina telt bezoeken zonder cookies en zonder persoonlijke gegevens (GoatCounter). Je tuin blijft alleen op je eigen toestel.</p></footer>
 </div>
 
 <div class="toast" id="toast" hidden><span id="toast-t" aria-hidden="true"></span><button class="toast-b" data-act="undo" hidden>Ongedaan maken</button></div>
@@ -1836,6 +1839,7 @@ function actieZin(c,k){
   if(k==="pt")return d>0?`Plant ${nl(d)} cm diep, ${nl(sp)} cm uit elkaar.`:`Plant ${nl(sp)} cm uit elkaar.`;
   return "";
 }
+const tinstr=x=>{const z=actieZin(x.c,x.k);return z?`<small class="tinstr">${esc(z)}</small>`:"";};
 function tile(c,tag,actie){
   const t=tag||[];
   const act=t.map(k=>`<span class="pl"><i class="k-${k}" aria-hidden="true"></i>${faseLabel(k)}</span>`).join("");
@@ -1871,7 +1875,7 @@ function renderChrome(){
 }
 
 /* ---------- Kalender: Deze maand ---------- */
-const HINT={2:"Warmteminnende gewassen zoals paprika zaai je nu alleen binnen.",3:"Warmteminnende gewassen zoals tomaat en paprika zaai je nu alleen binnen.",4:"In Ukkel viel de laatste vorst gemiddeld op 27 maart. Tot half mei kan het buiten nog vriezen.",5:"Plant vorstgevoelige gewassen pas na de ijsheiligen (11 tot 13 mei).",10:"In Ukkel viel de eerste vorst gemiddeld op 21 november (KMI, 1991 tot 2020).",11:"In Ukkel viel de eerste vorst gemiddeld op 21 november (KMI, 1991 tot 2020)."};
+const HINT={2:"Warmteminnende gewassen zoals paprika zaai je nu alleen binnen.",3:"Warmteminnende gewassen zoals tomaat en paprika zaai je nu alleen binnen.",4:"Bij Brussel (meetstation Ukkel) viel de laatste vorst gemiddeld op 27 maart. Tot half mei kan het buiten nog vriezen.",5:"Plant vorstgevoelige gewassen pas na de ijsheiligen (11 tot 13 mei).",10:"Bij Brussel (meetstation Ukkel) viel de eerste vorst gemiddeld op 21 november (KMI, 1991 tot 2020).",11:"Bij Brussel (meetstation Ukkel) viel de eerste vorst gemiddeld op 21 november (KMI, 1991 tot 2020)."};
 const hintVoor=m=>HINT[m]||"";
 const faseLijst=(k,m)=>filtered().filter(c=>c[k].includes(m)).sort(byEase);
 const LIM=6;
@@ -1885,7 +1889,8 @@ function viewMaand(){
   const geenZaai=!fase.some(f=>f.k!=="oo");
   return hint+(geenZaai?`<div class="empty">In ${mn} valt er niets te zaaien of planten. Kijk bij oogst, of kies een andere maand.</div>`:"")+fase.map(f=>fSec(f.k,f.l,f.arr)).join("");
 }
-function viewKal(){return S.kv==="jaar"?viewJaar():viewMaand();}
+const introHtml=()=>lsGet("mt-intro-v1")?"":`<div class="hint intro" role="note"><p>Op elke tegel staat wat je nu doet: zaai in huis, zaai buiten, plant uit of oogst. Tik op een gewas voor uitleg.</p><button class="btn" data-act="introok">Begrepen</button></div>`;
+function viewKal(){return S.kv==="jaar"?viewJaar():introHtml()+viewMaand();}
 const GROUPS=["Vruchtgroente","Bladgroente","Wortelgroente","Koolgroente","Uigewas","Knolgewas","Peulvrucht","Vaste groente","Kruid","Klein fruit","Boomfruit"];
 function viewAlle(){
   const l=filtered().sort((a,b)=>a.n.localeCompare(b.n));
@@ -1989,7 +1994,7 @@ function viewTuin(){
   const n=TUIN.crops.length,tasks=tuinTasks(),ds=doneSet();
   const grpDef=[["Zaaien",["zb","zd"]],["Plant uit",["pt"]],["Oogst",["oo"]]];
   const taskHtml=grpDef.map(([t,ks])=>{const l=tasks.filter(x=>ks.includes(x.k));
-    return l.length?`<h3 class="sub-h">${t}</h3><ul class="tasks">${l.map(x=>`<li><label class="task"><input type="checkbox" data-task="${x.key}"${ds.has(x.key)?" checked":""}><span>${esc(x.c.n)}: ${TKIND[x.k]}</span></label><button class="lnk" data-open="${x.id}" aria-label="Uitleg over ${esc(x.c.n)}">Uitleg</button></li>`).join("")}</ul>`:"";}).join("");
+    return l.length?`<h3 class="sub-h">${t}</h3><ul class="tasks">${l.map(x=>`<li><label class="task"><input type="checkbox" data-task="${x.key}"${ds.has(x.key)?" checked":""}><span>${esc(x.c.n)}: ${TKIND[x.k]}${tinstr(x)}</span></label><button class="lnk" data-open="${x.id}" aria-label="Uitleg over ${esc(x.c.n)}">Uitleg</button></li>`).join("")}</ul>`:"";}).join("");
   const fits=c=>TUIN.plek==="alle"||c.pl.includes(TUIN.plek);
   const bakNodig=n>0&&(!TUIN.bak||Date.now()-TUIN.bak>BAKDAGEN*864e5);
   const sug=C.filter(c=>!inTuin(c.id)&&c.d===1&&fits(c)&&starts(c,NOW).length).sort(byEase).slice(0,4);
@@ -2338,6 +2343,7 @@ document.addEventListener("click",e=>{navY=window.scrollY;
   if(a==="filter"){openFilter();return;}
   if(a==="export"){tuinExport();return;}
   if(a==="import"){document.getElementById("tfile").click();return;}
+  if(a==="introok"){lsSet("mt-intro-v1","1");render();document.getElementById("main").focus({preventScroll:true});return;}
   if(a==="askok"){const r=askRes;askRes=null;closeOv();if(r)r(true);return;}
   if(a==="undo"){const f=toastUndo;hideToast();if(f)f();return;}
   if(a==="tokal"){if(!document.getElementById("ov").hidden)closeOv();S.tab="kal";S.kv="maand";render();window.scrollTo(0,0);return;}
