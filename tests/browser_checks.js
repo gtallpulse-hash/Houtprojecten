@@ -488,6 +488,81 @@ checks.terugknop = async () => {
   return { ok: f.length === 0, detail: f.join("; ") || "8 onderdelen" };
 };
 
+// Doelkeuze en eerste stap op de Gids.
+checks.gidsDoel = async () => {
+  const f = [];
+  const tuinB = { crops: TUIN.crops.slice(), bak: TUIN.bak };
+  const klik = async (sel) => {
+    const e = document.querySelector(sel);
+    if (!e) { f.push("ontbreekt: " + sel); return false; }
+    e.click();
+    await sleep(200);
+    return true;
+  };
+  try {
+    localStorage.removeItem(GDK); DOEL = gdLoad(); S.gedit = false; S.gplek = false;
+    await go("kal"); await go("gids");
+    if (!document.querySelector("#main .gdoel")) f.push("geen vraag bij eerste bezoek");
+    if (document.querySelector("#main .hero-card")) f.push("rest van de Gids zichtbaar bij eerste bezoek");
+    if (document.querySelectorAll("#main .gopt").length !== 6) f.push("aantal keuzes");
+    if (!document.querySelector("#main .gstart")) f.push("geen keuze voor beginners");
+    const kd = kleineDoelen();
+    if (kd.length) f.push("kleine doelen: " + kd[0]);
+    if (!document.querySelector('#main [data-act="gklaar"]').disabled) f.push("knop staat aan zonder keuze");
+    await klik('#main [data-gdoel="kruid"]'); await klik('#main [data-gdoel="fruit"]');
+    if (document.querySelectorAll('#main .gopt[aria-pressed="true"]').length !== 2) f.push("twee keuzes niet aangevinkt");
+    if (document.activeElement.dataset.gdoel !== "fruit") f.push("focus kwijt na kiezen");
+    await klik('#main [data-act="gklaar"]');
+    if (!document.querySelector("#main .es-card")) f.push("geen eerste stap");
+    if (document.querySelectorAll("#main [data-gact]").length !== 2) f.push("geen wisselrij");
+    if (JSON.parse(localStorage.getItem(GDK)).d.join() !== "kruid,fruit") f.push("keuze niet bewaard");
+    await klik('#main [data-gact="fruit"]');
+    if (document.querySelector('#main [data-gact="fruit"]').getAttribute("aria-pressed") !== "true") f.push("wisselen werkt niet");
+    if (!document.querySelector("#main .hero-card")) f.push("Gids komt niet terug na keuze");
+    await klik('#main [data-act="gedit"]');
+    if (document.querySelectorAll('#main .gopt[aria-pressed="true"]').length !== 2) f.push("bewaarde keuzes niet getoond bij aanpassen");
+    await klik('#main [data-act="gstart"]');
+    if (document.querySelectorAll("#main [data-gplek]").length !== 5) f.push("vervolgvraag heeft geen 5 keuzes");
+    await klik('#main [data-act="gterug"]');
+    if (!document.querySelector("#main .gstart")) f.push("terug naar de vraag mislukt");
+    await klik('#main [data-act="gstart"]');
+    await klik('#main [data-gplek="tuin"]');
+    const o = JSON.parse(localStorage.getItem(GDK));
+    if (o.d.join() !== "tuin" || !o.eerste) f.push("beginnerskeuze bewaard als " + JSON.stringify(o));
+    if (!/Je eerste project/.test(document.querySelector("#main .es-t").textContent)) f.push("kop Je eerste project ontbreekt");
+    await klik('#main [data-act="gedit"]'); await klik('#main [data-act="gskip"]');
+    if (!JSON.parse(localStorage.getItem(GDK)).skip) f.push("overslaan niet bewaard");
+    if (document.querySelector("#main .gdoel") || !document.querySelector("#main .hero-card")) f.push("Gids niet normaal na overslaan");
+    localStorage.setItem(GDK, "{kapot"); DOEL = gdLoad();
+    if (DOEL !== null) f.push("kapot bestand geeft geen nieuwe vraag");
+    // elke keuze, elke maand: een bruikbare eerste stap
+    let n = 0;
+    for (const [id] of DOELEN) {
+      for (let m = 1; m <= 12; m++) {
+        const st = gdStap(id, m);
+        n++;
+        if (st.kind === "gewas") {
+          if (!actieZin(st.c, st.tag)) f.push(id + " " + m + ": geen zin");
+          if (st.c.st.length < 3) f.push(id + " " + m + ": te weinig stappen");
+        } else if (st.kind === "voorbereiding") {
+          if (!GDVOORB[id].every((p) => artByPath(p))) f.push(id + ": voorbereidend artikel bestaat niet");
+          if (!st.volgende) f.push(id + " " + m + ": geen volgende maand");
+        } else if (id !== "leren") f.push(id + ": onbekend soort");
+        if (GDMEER[id] && !GDMEER[id].every((p) => artByPath(p))) f.push(id + ": meer-artikel bestaat niet");
+      }
+    }
+    DOEL = { d: DOELEN.map((x) => x[0]), skip: false, eerste: false };
+    for (const [id] of DOELEN) { const h = gdKaart(id); if (/undefined|NaN/.test(h)) f.push("kaart " + id + " bevat undefined"); }
+    void n;
+  } finally {
+    gidsStil();
+    TUIN.crops = tuinB.crops; TUIN.bak = tuinB.bak; tuinSave();
+    hideToast();
+    await go("kal");
+  }
+  return { ok: f.length === 0, detail: f.slice(0, 4).join("; ") || "alle keuzes in alle maanden" };
+};
+
 // Uitleg bij eerste gebruik, instructie bij taken, maandkiezer en kleine correcties.
 checks.eersteGebruik = async () => {
   const f = [];
@@ -871,8 +946,18 @@ checks.consistentie = async () => {
   return { ok: fouten.length === 0, detail: fouten.join("; ") };
 };
 
+export function gidsStil() {
+  // de meeste tests bekijken de gewone Gids: zet de doelkeuze op overgeslagen
+  localStorage.setItem("mt-gids-doel-v1", JSON.stringify({ v: 1, d: [], skip: true }));
+  DOEL = gdLoad();
+  S.gedit = false;
+  S.gplek = false;
+}
+
 export async function runAll(names) {
   const out = {};
+  const gdBewaar = localStorage.getItem("mt-gids-doel-v1");
+  gidsStil();
   for (const naam of names || Object.keys(checks)) {
     try {
       out[naam] = await checks[naam]();
@@ -880,5 +965,7 @@ export async function runAll(names) {
       out[naam] = { ok: false, detail: "fout: " + e.message };
     }
   }
+  if (gdBewaar === null) localStorage.removeItem("mt-gids-doel-v1"); else localStorage.setItem("mt-gids-doel-v1", gdBewaar);
+  DOEL = gdLoad();
   return out;
 }
