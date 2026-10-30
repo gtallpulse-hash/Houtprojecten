@@ -225,7 +225,7 @@ checks.jaarRij = async () => {
   const rijen = [...document.querySelectorAll(".crow")];
   if (!rijen.length) return { ok: false, detail: "geen rijen" };
   const h = Math.max(...rijen.map((r) => r.getBoundingClientRect().height));
-  if (h > 60) fouten.push("hoogte " + Math.round(h));
+  if (Math.round(h) > 60) fouten.push("hoogte " + Math.round(h));  // afgerond: 60,4 px is geen overschrijding
   if (document.querySelector(".crow .dots")) fouten.push("bolletjes");
   for (const r of rijen) {
     const c = BY[r.dataset.open], niv = r.querySelector(".niv");
@@ -245,8 +245,8 @@ checks.jaarLegenda = async () => {
   await jaar();
   const l = document.querySelector(".legend"), t = l.innerText.replace(/\s+/g, " ");
   const labels = ["Zaai in huis (open)", "Zaai buiten (gevuld)", "Plant uit", "Oogst"].every((x) => t.includes(x));
-  const regels = l.getBoundingClientRect().height / parseFloat(getComputedStyle(l).lineHeight || "20");
-  return { ok: labels && regels <= 2.6, detail: regels.toFixed(1) + " regels" };
+  const rijen = new Set([...l.children].map((c) => Math.round(c.getBoundingClientRect().top))).size;  // aantal rijen waarin de legenda wrapt
+  return { ok: labels && rijen <= 2, detail: rijen + " rijen" };
 };
 
 checks.jaarDonker = async () => {
@@ -486,6 +486,54 @@ checks.terugknop = async () => {
   if (y0 > 0 && Math.abs(window.scrollY - y0) > 5) f.push("scrollpositie niet hersteld: " + window.scrollY + " i.p.v. " + y0);
   window.scrollTo(0, 0);
   return { ok: f.length === 0, detail: f.join("; ") || "8 onderdelen" };
+};
+
+// Eigen bevestiging bij het herstellen van een back-up, zonder dialogen van de browser.
+checks.bevestiging = async () => {
+  const f = [];
+  const bewaar = { crops: TUIN.crops.slice(), bak: TUIN.bak, plek: TUIN.plek, done: JSON.stringify(TUIN.done) };
+  const toast = () => document.getElementById("toast");
+  const bestand = (o) => new File([JSON.stringify(o)], "t.json", { type: "application/json" });
+  try {
+    TUIN.crops = ["tomaat"];
+    await go("tuin");
+    // annuleren laat de tuin ongemoeid
+    let p = tuinImport(bestand({ versie: 1, tuin: { crops: ["radijs"], plek: "pot", done: {} } }));
+    await sleep(300);
+    if (document.getElementById("ov").hidden) f.push("geen bevestigingsvenster");
+    if (!/Tuin vervangen/.test(document.getElementById("sheet").textContent)) f.push("andere tekst in venster");
+    document.querySelector('#sheet [data-act="close"]').click();
+    await p;
+    await sleep(300);
+    if (TUIN.crops.join() !== "tomaat") f.push("annuleren veranderde de tuin");
+    // bevestigen vervangt en biedt ongedaan maken
+    p = tuinImport(bestand({ versie: 1, tuin: { crops: ["radijs"], plek: "pot", done: {} } }));
+    await sleep(300);
+    document.querySelector('#sheet [data-act="askok"]').click();
+    await p;
+    await sleep(300);
+    if (TUIN.crops.join() !== "radijs") f.push("bevestigen vervangt niet: " + TUIN.crops.join());
+    if (!document.getElementById("ov").hidden) f.push("venster blijft open");
+    const knop = toast().querySelector("button");
+    if (toast().hidden || knop.hidden) f.push("geen ongedaan maken na herstellen");
+    else { knop.click(); await sleep(250); if (TUIN.crops.join() !== "tomaat") f.push("ongedaan maken herstelt niet: " + TUIN.crops.join()); }
+    // kapot bestand: melding in een venster, zonder keuze
+    p = tuinImport(new File(["geen json"], "x.json"));
+    await sleep(300);
+    if (!/niet worden gelezen/.test(document.getElementById("sheet").textContent)) f.push("geen melding bij kapot bestand");
+    if (document.querySelector('#sheet [data-act="askok"]')) f.push("keuzeknop bij foutmelding");
+    document.querySelector('#sheet [data-act="close"]').click();
+    await p;
+    await sleep(300);
+    if (navSkip !== 0) f.push("geschiedenisteller blijft hangen");
+  } finally {
+    TUIN.crops = bewaar.crops; TUIN.bak = bewaar.bak; TUIN.plek = bewaar.plek; TUIN.done = JSON.parse(bewaar.done);
+    tuinSave();
+    if (!document.getElementById("ov").hidden) closeOv();
+    hideToast();
+    await go("kal");
+  }
+  return { ok: f.length === 0, detail: f.join("; ") || "5 onderdelen" };
 };
 
 // Navigatie staat vooraan in het document en blijft visueel onderaan.

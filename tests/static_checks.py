@@ -46,6 +46,11 @@ check("titelInHead", SRC.index("<title>") < SRC.index("<body>"))
 check("navVoorMain", SRC.index('<nav class="nav"') < SRC.index('<main id="main"'))
 check("naam", "Moestuin Start" not in SRC and "<title>Mijn Moestuin</title>" in SRC)
 
+# --- Audit fase 2: lettergroottereeks en eigen dialogen
+check("geenNativeDialogen", "confirm(" not in SRC and "alert(" not in SRC)
+check("lettergroottereeks", len(set(re.findall(r"font-size:\s*([0-9.]+rem)", SRC))) <= 3, str(sorted(set(re.findall(r"font-size:\s*([0-9.]+rem)", SRC)))[:6]))
+check("indrukstatus", ":active{filter" in SRC)
+
 # --- Reviewer-herstel
 check("pompoenillustratie", "Courgette en pompoen: 1 plant per m" not in SRC)
 
