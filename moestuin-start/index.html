@@ -2057,9 +2057,7 @@ function tuinRing(){
 }
 function viewTuin(){
   const n=TUIN.crops.length,tasks=tuinTasks(),ds=doneSet();
-  const fits=c=>TUIN.plek==="alle"||c.pl.includes(TUIN.plek);
   const bakNodig=n>0&&(!TUIN.bak||Date.now()-TUIN.bak>BAKDAGEN*864e5);
-  const sug=C.filter(c=>!inTuin(c.id)&&c.d===1&&fits(c)&&starts(c,NOW).length).sort(byEase).slice(0,4);
   const done=tasks.filter(x=>ds.has(x.key)).length,pct=tasks.length?Math.round(done/tasks.length*100):0;
   const volgende=tuinVolgende();
   const top=n?`<section class="tt" aria-labelledby="tt-t"><div class="ring" id="tring" aria-hidden="true" style="--p:${pct}"><span id="tring-n">${tasks.length?done+"/"+tasks.length:"–"}</span></div><div><h2 id="tt-t">${MF[NOW-1][0].toUpperCase()+MF[NOW-1].slice(1)}</h2><p id="tprog" role="status">${tuinProg()}</p>${volgende?`<p class="tt-next">${esc(volgende)}</p>`:""}</div><progress id="tprogress" class="sr" max="${Math.max(tasks.length,1)}" value="${done}" aria-label="Taken in ${MF[NOW-1]}"></progress></section>`:"";
@@ -2070,11 +2068,6 @@ function viewTuin(){
   ${n?top:leeg}
   ${n?`<section class="sec" style="margin-top:22px"><h2>Te doen in ${MF[NOW-1]}</h2>${taskHtml}</section>
   <section class="sec" style="margin-top:28px"><h2>Mijn gewassen<small>${n} ${n===1?"gewas":"gewassen"}</small></h2>${cards}</section>`:""}
-  <section class="sec" style="margin-top:28px"><h2>${n?"Nog een gewas toevoegen":"Dit past nu bij jou"}</h2>
-   <div class="tprof" role="group" aria-label="Waar teel je?"><span class="tlab">Waar teel je?</span><div class="chips">${PLEKKEN.map(([v,l])=>`<button class="chip" data-tplek="${v}" aria-pressed="${TUIN.plek===v}">${l}</button>`).join("")}</div></div>
-   ${sug.length?`<div class="grid">${sug.map(c=>`<div class="stile">${tile(c,starts(c,NOW),actieZin(c,starts(c,NOW)[0]))}<button class="btn" data-tuin="${c.id}" aria-label="Voeg ${esc(c.n)} toe aan mijn tuin">Voeg toe</button></div>`).join("")}</div>`:`<div class="empty">Deze maand is er voor deze plek niets makkelijks te starten. Kijk in de kalender wat er in de volgende maanden komt.</div>`}
-   ${n?`<div class="fbtn"><button class="btn" data-tab="alle">Alle gewassen bekijken</button></div>`:""}
-  </section>
   <details class="tback"><summary>Back-up en herstel</summary><div><p class="art-p">Je tuin wordt bewaard in je browser op dit toestel. Wis je browsergegevens of gebruik je een ander toestel, dan is hij weg. Bewaar daarom af en toe een back-up.</p>
    <div class="fbtn"><button class="btn" data-act="export">Bewaar back-up</button><button class="btn" data-act="import">Herstel back-up</button></div><input type="file" id="tfile" accept="application/json,.json" hidden></div></details>`;
 }
