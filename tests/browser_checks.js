@@ -381,6 +381,62 @@ checks.bronnen = async () => {
 };
 
 // Acceptatiecriterium 8: interactieve elementen zijn minstens 44 px hoog.
+// Vangnet voor de opgeslagen tuin: niets gaat stilzwijgend verloren.
+checks.tuinVangnet = async () => {
+  const bewaar = { a: localStorage.getItem(TK), b: localStorage.getItem(TKOPIE) };
+  const oud = { crops: TUIN.crops.slice(), bak: TUIN.bak };
+  const fouten = [];
+  try {
+    const id = C[0].id;
+    // 1. onbekend id: kopie van het origineel blijft bewaard
+    localStorage.removeItem(TKOPIE);
+    const raw1 = JSON.stringify({ v: 1, crops: [id, "bestaat-niet"], plek: "alle", done: {} });
+    localStorage.setItem(TK, raw1);
+    const t1 = tuinLoad();
+    if (t1.crops.length !== 1 || t1.crops[0] !== id) fouten.push("onbekend id niet gefilterd");
+    if (localStorage.getItem(TKOPIE) !== raw1) fouten.push("geen kopie bij onbekend id");
+    // 2. kapot bestand: lege tuin, maar kopie bewaard
+    localStorage.removeItem(TKOPIE);
+    localStorage.setItem(TK, "{kapot");
+    const t2 = tuinLoad();
+    if (t2.crops.length !== 0) fouten.push("kapot bestand geeft gewassen");
+    if (localStorage.getItem(TKOPIE) !== "{kapot") fouten.push("geen kopie bij kapot bestand");
+    // 3. een eerste kopie wordt niet overschreven
+    localStorage.setItem(TK, "[1,2]");
+    tuinLoad();
+    if (localStorage.getItem(TKOPIE) !== "{kapot") fouten.push("eerste kopie overschreven");
+    // 4. gezond bestand: geen kopie, oude gegevens zonder versie of back-upveld blijven werken
+    localStorage.removeItem(TKOPIE);
+    localStorage.setItem(TK, JSON.stringify({ crops: [id], plek: "pot", done: { "10": ["x"] } }));
+    const t4 = tuinLoad();
+    if (t4.crops.length !== 1 || t4.plek !== "pot" || !t4.done["10"] || t4.bak !== 0) fouten.push("oud formaat niet gelezen");
+    if (localStorage.getItem(TKOPIE) !== null) fouten.push("onnodige kopie");
+    // 5. opslaan schrijft de versie
+    TUIN.crops = [id];
+    tuinSave();
+    if (JSON.parse(localStorage.getItem(TK)).v !== TVERSIE) fouten.push("versie niet bewaard");
+    // 6. herinnering: zichtbaar zonder recente back-up, weg na een verse
+    TUIN.bak = 0;
+    await go("tuin");
+    if (!document.getElementById("tbak")) fouten.push("herinnering ontbreekt");
+    TUIN.bak = Date.now();
+    await go("tuin");
+    if (document.getElementById("tbak")) fouten.push("herinnering blijft staan");
+    TUIN.crops = [];
+    TUIN.bak = 0;
+    await go("tuin");
+    if (document.getElementById("tbak")) fouten.push("herinnering bij lege tuin");
+  } finally {
+    for (const [k, v] of [[TK, bewaar.a], [TKOPIE, bewaar.b]]) {
+      if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v);
+    }
+    TUIN.crops = oud.crops;
+    TUIN.bak = oud.bak;
+    await go("kal");
+  }
+  return { ok: fouten.length === 0, detail: fouten.join("; ") || "6 onderdelen" };
+};
+
 export function kleineDoelen() {
   const sel = "button, a[href], input:not([type=hidden]), select, summary";
   return [...document.querySelectorAll(sel)]

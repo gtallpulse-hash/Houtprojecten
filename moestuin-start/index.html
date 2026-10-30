@@ -1940,12 +1940,15 @@ function viewHulp(){
 }
 
 /* ---------- Mijn tuin ---------- */
-const TK="mt-tuin-v1",PLEKKEN=[["alle","Overal"],["pot","In pot"],["bak","In bak"],["grond","In grond"]];
-function tuinLoad(){let o=null;try{o=JSON.parse(lsGet(TK)||"null");}catch(e){}
-  o=o&&typeof o==="object"?o:{};
-  return {crops:(Array.isArray(o.crops)?o.crops:[]).filter(id=>BY[id]),plek:PLEKKEN.some(p=>p[0]===o.plek)?o.plek:"alle",done:o.done&&typeof o.done==="object"&&!Array.isArray(o.done)?o.done:{}};}
+const TK="mt-tuin-v1",TKOPIE="mt-tuin-v1-kopie",TVERSIE=1,BAKDAGEN=30,PLEKKEN=[["alle","Overal"],["pot","In pot"],["bak","In bak"],["grond","In grond"]];
+function tuinLoad(){const raw=lsGet(TK);let o=null,stuk=false;try{o=JSON.parse(raw||"null");}catch(e){stuk=true;}
+  if(raw&&!(o&&typeof o==="object"&&!Array.isArray(o)))stuk=true;
+  o=o&&typeof o==="object"&&!Array.isArray(o)?o:{};
+  const ids=Array.isArray(o.crops)?o.crops:[],crops=ids.filter(id=>BY[id]);
+  if(raw&&(stuk||crops.length<ids.length)&&!lsGet(TKOPIE))lsSet(TKOPIE,raw);
+  return {bak:typeof o.bak==="number"?o.bak:0,crops,plek:PLEKKEN.some(p=>p[0]===o.plek)?o.plek:"alle",done:o.done&&typeof o.done==="object"&&!Array.isArray(o.done)?o.done:{}};}
 const TUIN=tuinLoad();
-const tuinSave=()=>lsSet(TK,JSON.stringify(TUIN));
+const tuinSave=()=>{if(!lsSet(TK,JSON.stringify(Object.assign({v:TVERSIE},TUIN))))say("Opslaan op dit toestel lukt niet. Bewaar een back-up.");};
 const MKEY=new Date().getFullYear()+"-"+NOW;
 const doneSet=()=>new Set(Array.isArray(TUIN.done[MKEY])?TUIN.done[MKEY]:[]);
 const say=t=>setTimeout(()=>{const l=document.getElementById("live");if(l)l.textContent=t;},60);
@@ -1959,8 +1962,10 @@ function viewTuin(){
   const taskHtml=grpDef.map(([t,ks])=>{const l=tasks.filter(x=>ks.includes(x.k));
     return l.length?`<h3 class="sub-h">${t}</h3><ul class="tasks">${l.map(x=>`<li><label class="task"><input type="checkbox" data-task="${x.key}"${ds.has(x.key)?" checked":""}><span>${esc(x.c.n)}: ${TKIND[x.k]}</span></label><button class="lnk" data-open="${x.id}" aria-label="Uitleg over ${esc(x.c.n)}">Uitleg</button></li>`).join("")}</ul>`:"";}).join("");
   const fits=c=>TUIN.plek==="alle"||c.pl.includes(TUIN.plek);
+  const bakNodig=n>0&&(!TUIN.bak||Date.now()-TUIN.bak>BAKDAGEN*864e5);
   const sug=C.filter(c=>!inTuin(c.id)&&c.d===1&&fits(c)&&starts(c,NOW).length).sort(byEase).slice(0,4);
   return `<section class="sec" style="margin-top:14px">
+   ${bakNodig?`<p class="art-p" id="tbak" role="note">Je tuin staat alleen op dit toestel. <button class="lnk" data-act="export">Bewaar nu een back-up</button></p>`:""}
    ${n?"":`<p class="art-p">Voeg gewassen toe die je kweekt of wilt kweken. Dan zie je hier wat je deze maand kunt doen. Open een gewas en kies "Zet in mijn tuin".</p>`}
    <div class="tprof" role="group" aria-label="Waar teel je?"><span class="tlab">Waar teel je?</span><div class="chips">${PLEKKEN.map(([v,l])=>`<button class="chip" data-tplek="${v}" aria-pressed="${TUIN.plek===v}">${l}</button>`).join("")}</div></div>
   </section>
@@ -1970,14 +1975,14 @@ function viewTuin(){
   <section class="sec"><h2>Back-up van je tuin</h2><p class="art-p">Je tuin wordt bewaard in je browser op dit toestel. Wis je browsergegevens of gebruik je een ander toestel, dan is hij weg. Bewaar daarom af en toe een back-up.</p>
    <div class="fbtn"><button class="btn" data-act="export">Bewaar back-up</button><button class="btn" data-act="import">Herstel back-up</button></div><input type="file" id="tfile" accept="application/json,.json" hidden></section>`;
 }
-function tuinExport(){const blob=new Blob([JSON.stringify({versie:1,bewaard:new Date().toISOString(),tuin:TUIN},null,1)],{type:"application/json"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download="mijn-moestuin.json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);say("Back-up gedownload.");}
+function tuinExport(){const blob=new Blob([JSON.stringify({versie:1,bewaard:new Date().toISOString(),tuin:TUIN},null,1)],{type:"application/json"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download="mijn-moestuin.json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);TUIN.bak=Date.now();tuinSave();const hb=document.getElementById("tbak");if(hb)hb.remove();say("Back-up gedownload.");}
 async function tuinImport(file){
   let o=null;try{o=JSON.parse(await file.text());}catch(e){}
   const t=o&&o.tuin;
   if(!t||!Array.isArray(t.crops)){say("Dit bestand kan niet worden gelezen. Kies een back-up van Mijn Moestuin.");alert("Dit bestand kan niet worden gelezen. Kies een back-up van Mijn Moestuin.");return;}
   if(!confirm("Je huidige tuin wordt vervangen door de back-up. Doorgaan?"))return;
   const done={};if(t.done&&typeof t.done==="object")for(const k in t.done)if(Array.isArray(t.done[k]))done[k]=t.done[k].filter(x=>typeof x==="string").slice(0,500);
-  TUIN.crops=t.crops.filter(id=>typeof id==="string"&&BY[id]);TUIN.plek=PLEKKEN.some(p=>p[0]===t.plek)?t.plek:"alle";TUIN.done=done;tuinSave();render();say("Back-up hersteld.");
+  TUIN.crops=t.crops.filter(id=>typeof id==="string"&&BY[id]);TUIN.plek=PLEKKEN.some(p=>p[0]===t.plek)?t.plek:"alle";TUIN.done=done;TUIN.bak=Date.now();tuinSave();render();say("Back-up hersteld.");
 }
 
 /* ---------- Kalender ---------- */
@@ -2039,7 +2044,7 @@ function overview(){
   return `<div class="scroll"><table><thead><tr><th>Gewas</th><th>Goed naast</th><th>Liever niet naast</th></tr></thead><tbody>${rows.map(c=>`<tr><td><button class="lnk" style="font-size:.95rem" data-open="${c.id}">${esc(c.n)}</button></td><td>${esc(c.goed.map(nm).join(", ")||"-")}</td><td>${esc(c.slecht.map(nm).join(", ")||"-")}</td></tr>`).join("")}</tbody></table></div>`;
 }
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
-function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+function lsSet(k,v){try{localStorage.setItem(k,v);return true;}catch(e){return false;}}
 /* ---------- Gids: taakgroepen ---------- */
 const P=(c,...ids)=>ids.map(i=>c+"/"+i);
 const GROEPEN=[
