@@ -130,6 +130,14 @@ details.dd>summary{cursor:pointer;font-weight:600;color:var(--leaf);padding-bloc
 .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:var(--fs-s);margin-block:10px;color:var(--muted)}
 .jleg{position:sticky;top:0;z-index:20;background:var(--bg);margin:0;padding:10px 0 8px;gap:6px 14px;border-bottom:1px solid var(--line)}
 .legend.jleg i{width:22px;height:8px;border-radius:4px;vertical-align:1px}
+.lt{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:6px;min-height:32px;padding:0 4px;border-radius:8px;text-decoration:underline dotted;text-decoration-color:var(--muted);text-underline-offset:4px}
+.lt:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+.lt.wat{min-height:44px;color:var(--muted);font-size:var(--fs-m);padding:0}
+.lt i{display:inline-block;flex:none}
+.tdot{width:14px;height:14px;border-radius:50%;display:inline-block;margin-right:10px;vertical-align:1px}
+.th{font:700 var(--fs-l) var(--f-display);margin:20px 0 0}
+.tsteps{margin:8px 0 0;padding-left:22px;max-width:66ch}
+.tsteps li{margin:6px 0}
 .legend i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-right:6px}
 .k-zb{background:transparent;border:2px solid var(--f-zaai)} .k-zd{background:var(--f-zaai)} .k-pt{background:var(--f-plant)} .k-oo{background:var(--f-oogst)}
 .scroll{overflow-x:auto;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
@@ -1867,7 +1875,7 @@ for(const id in PHOTOS)PIC[id]=PHOTOS[id].src;
 const FASEN=[["zb","Zaai in huis"],["zd","Zaai buiten"],["pt","Plant uit"],["oo","Oogst"]];
 const faseLabel=k=>(FASEN.find(f=>f[0]===k)||[])[1]||"";
 const KIND={zb:[faseLabel("zb")],zd:[faseLabel("zd")],pt:[faseLabel("pt")]};
-function legendHtml(extra){const x={zb:" (open)",zd:" (gevuld)"};return `<div class="legend${extra?" "+extra:""}">${FASEN.map(([k,l])=>`<span><i class="k-${k}"></i>${l}${x[k]||""}</span>`).join("")}</div>`;}
+function legendHtml(extra){return `<div class="legend${extra?" "+extra:""}">${FASEN.map(([k,l])=>`<button class="lt" data-term="${k}" aria-label="${l}: uitleg"><i class="k-${k}" aria-hidden="true"></i>${l}</button>`).join("")}</div>`;}
 const NOW=new Date().getMonth()+1;const cr=s=>String(s).split(" I\u0027d")[0].replace(/\s*\(.*?$/,"");
 const S={tab:"kal",kv:"maand",m:NOW,type:"alle",diep:"alle",plek:"alle",q:"",more:new Set(),grp:new Set(),jgrp:new Set(),hulp:null,hg:"",gc:null,gq:"",gsel:[],gedit:false,gplek:false,kies:false,gact:null,ch:0};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -1941,7 +1949,7 @@ const hintVoor=m=>HINT[m]||"";
 const faseLijst=(k,m)=>filtered().filter(c=>c[k].includes(m)).sort(byEase);
 const LIM=6;
 function fSec(key,t,arr){const all=S.more.has(key)||arr.length<=LIM+1,shown=all?arr:arr.slice(0,LIM);
-  return `<section class="sec" data-sec="${key}"><h2>${esc(t)}<small>${arr.length} gewassen</small></h2><div class="grid">${shown.map(c=>tile(c,null,actieZin(c,key))).join("")}</div>${all?"":`<div class="morewrap"><button class="btn" data-more="${key}">Toon alle ${arr.length}</button></div>`}</section>`;}
+  return `<section class="sec" data-sec="${key}"><h2>${esc(t)}<small>${arr.length} gewassen</small></h2><button class="lt wat" data-term="${key}">Wat is ${esc(t.toLowerCase())}?</button><div class="grid">${shown.map(c=>tile(c,null,actieZin(c,key))).join("")}</div>${all?"":`<div class="morewrap"><button class="btn" data-more="${key}">Toon alle ${arr.length}</button></div>`}</section>`;}
 const PREP={zb:["Maak zaaibakken en potjes schoon.","Haal zaaizaad en zaaigrond in huis.","Zoek een lichte plek, bijvoorbeeld een vensterbank."],zd:["Maak het bed vrij van onkruid en oude resten.","Werk de grond los en meng er compost door.","Leg zaaizaad, een touw en labels klaar."],pt:["Maak de plek klaar met verse grond en compost.","Koop of bestel plantgoed vlak voor je plant.","Markeer de afstand tussen de planten."],oo:["Zet manden of kratten klaar.","Kijk of het gewas rijp is voor je plukt of rooit.","Bedenk waar je de oogst bewaart of laat drogen."]};
 function prepHtml(m){
   const mn=MF[m-1],groepen=FASEN.map(([k,l])=>({k,l,arr:faseLijst(k,m)})).filter(f=>f.arr.length);
@@ -2087,7 +2095,7 @@ function viewTuin(){
   const done=tasks.filter(x=>ds.has(x.key)).length,pct=tasks.length?Math.round(done/tasks.length*100):0;
   const volgende=tuinVolgende();
   const top=n?`<section class="tt" aria-labelledby="tt-t"><div class="ring" id="tring" aria-hidden="true" style="--p:${pct}"><span id="tring-n">${tasks.length?done+"/"+tasks.length:"–"}</span></div><div><h2 id="tt-t">${MF[NOW-1][0].toUpperCase()+MF[NOW-1].slice(1)}</h2><p id="tprog" role="status">${tuinProg()}</p>${volgende?`<p class="tt-next">${esc(volgende)}</p>`:""}</div><progress id="tprogress" class="sr" max="${Math.max(tasks.length,1)}" value="${done}" aria-label="Taken in ${MF[NOW-1]}"></progress></section>`:"";
-  const taskHtml=tasks.length?`<ul class="tasks tcards">${tasks.map(x=>`<li${ds.has(x.key)?' class="gedaan"':""}><label class="task"><input type="checkbox" data-task="${x.key}"${ds.has(x.key)?" checked":""}><img class="tphoto" src="${PIC[x.id]||""}" alt="" loading="lazy"><span><b class="tnaam">${esc(x.c.n)}</b><span class="tfase"><i class="k-${x.k}" aria-hidden="true"></i>${TKIND[x.k]}</span>${tinstr(x)}</span></label><button class="lnk" data-open="${x.id}" aria-label="Uitleg over ${esc(x.c.n)}">Uitleg</button></li>`).join("")}</ul>`:`<div class="empty">In ${MF[NOW-1]} is er niets te doen voor je gewassen.${volgende?" "+esc(volgende):""}</div>`;
+  const taskHtml=tasks.length?`<ul class="tasks tcards">${tasks.map(x=>`<li${ds.has(x.key)?' class="gedaan"':""}><label class="task"><input type="checkbox" data-task="${x.key}"${ds.has(x.key)?" checked":""}><img class="tphoto" src="${PIC[x.id]||""}" alt="" loading="lazy"><span><b class="tnaam">${esc(x.c.n)}</b><span class="tfase"><button class="lt" data-term="${x.k}" aria-label="${TKIND[x.k]}: uitleg"><i class="k-${x.k}" aria-hidden="true"></i>${TKIND[x.k]}</button></span>${tinstr(x)}</span></label><button class="lnk" data-open="${x.id}" aria-label="Uitleg over ${esc(x.c.n)}">Uitleg</button></li>`).join("")}</ul>`:`<div class="empty">In ${MF[NOW-1]} is er niets te doen voor je gewassen.${volgende?" "+esc(volgende):""}</div>`;
   const cards=`<div class="gcards">${TUIN.crops.map(id=>{const c=BY[id];return `<article class="gcard"><button class="gc-top" data-open="${id}" aria-label="Open ${esc(c.n)}"><img class="ph" src="${PIC[id]||""}" alt="" loading="lazy"><span><b>${esc(c.n)}</b><span class="gc-nu">${gcNu(c)}</span></span></button>${miniNu(c)}<div class="gc-act"><button class="lnk" data-guide="${id}">Hoe teel ik dit?</button><button class="lnk" data-tuin="${id}" aria-label="Haal ${esc(c.n)} uit mijn tuin">Uit mijn tuin halen</button></div></article>`;}).join("")}</div>`;
   const leeg=`<section class="tleeg" aria-labelledby="tl-t"><h2 id="tl-t">Je tuin is nog leeg</h2><p>Kies een gewas om te beginnen.</p><button class="btn pri" data-act="kies">Voeg een gewas toe</button></section>`;
   return `${bakNodig?`<p class="hint" id="tbak" role="note">Je tuin staat alleen op dit toestel. <button class="lnk" data-act="export">Bewaar nu een back-up</button></p>`:""}
@@ -2328,6 +2336,31 @@ function artMeta(path,cat){
   for(const g of GROEPEN)for(const x of g.subs)if(x.arts.includes(path))return g.t+(x.t?" › "+x.t:"");
   return PLAGEN.includes(path)?"Hulp › Plagen en ziektes":cat.t;
 }
+const TERM={
+zb:{t:"Zaai in huis",lead:"Je zaait de zaadjes binnen in een potje of zaaibakje, terwijl het buiten nog te koud is. De jonge plantjes groeien binnen op en gaan later naar buiten.",
+ stap:["Vul potjes of een zaaibak met zaaigrond en maak die licht vochtig.","Leg het zaad op de diepte die op het zakje staat en bedek het met een laagje grond.","Zet de bak op een warme, lichte plek, bijvoorbeeld op een vensterbank.","Houd de grond vochtig, maar niet drassig. Na een paar dagen of weken komen de eerste kiemen boven.","Hebben de plantjes echte bladeren en is het buiten warm genoeg, dan zet je ze buiten. Dat heet uitplanten."],
+ wanneer:"Voor planten die warmte en een lang seizoen nodig hebben, zoals tomaat, paprika en aubergine. Zo hebben ze al een voorsprong als het buiten warm wordt.",
+ let:"Te weinig licht maakt lange, slappe plantjes. Zet ze daarom zo dicht mogelijk bij het raam."},
+zd:{t:"Zaai buiten",lead:"Je zaait het zaad meteen in de tuin of in een pot buiten, op de plek waar de plant blijft groeien. Je hoeft niets over te zetten.",
+ stap:["Maak de grond los, haal onkruid weg en hark de grond vlak.","Trek een rij of maak kuiltjes op de diepte en afstand die op het zakje staan.","Leg het zaad erin, dek het af met grond en druk het zachtjes aan.","Geef water met een fijne sproeier en houd de grond vochtig tot er kiemen zijn.","Staan er te veel plantjes dicht bij elkaar, dun ze dan uit tot de afstand die op het zakje staat."],
+ wanneer:"Voor gewassen die tegen de buitentemperatuur kunnen of niet graag verplant worden, zoals radijs, wortel, sla en erwten.",
+ let:"In koude, natte grond kiemt zaad slecht of het rot. Wacht op de maand die bij het gewas staat."},
+pt:{t:"Plant uit",lead:"Je zet een plantje dat je eerst elders hebt opgekweekt in de tuin of in een grote pot buiten. Dat plantje heb je zelf binnen gezaaid of je koopt het in een tuincentrum. Ook aardappelen, knoflookteentjes en uien zet je zo in de grond.",
+ stap:["Laat jonge plantjes eerst 1 tot 2 weken wennen aan buiten: overdag een paar uur buiten, 's nachts binnen.","Maak de plek klaar met losse grond en wat compost. Graaf een gat dat iets groter is dan de kluit.","Zet het plantje erin, op de afstand die bij het gewas staat, en vul het gat met grond.","Druk de grond zachtjes aan en geef meteen flink water."],
+ wanneer:"Pas als het buiten warm genoeg is. Plant vorstgevoelige gewassen zoals tomaat, courgette en paprika niet buiten voor de ijsheiligen (11 tot 13 mei) voorbij zijn.",
+ let:"Plant op een bewolkte dag of 's avonds. In de felle zon krijgen jonge plantjes een schok."},
+oo:{t:"Oogst",lead:"Je haalt het eetbare deel van de plant: vruchten, bladeren, wortels, knollen, peulen of bloemen. Bij veel gewassen kun je dit over een langere periode doen.",
+ stap:["Kijk bij het gewas welk deel je eet en hoe je weet dat het klaar is.","Pluk of snijd met schone handen of een scherp mes of schaar. Trek niet aan de plant.","Oogst regelmatig: bij courgette en bonen geeft dat meer opbrengst.","Gebruik of bewaar de oogst snel. Sommige gewassen rijpen of drogen nog na."],
+ wanneer:"De maanden in de kalender zijn gemiddelden voor Vlaanderen. Het weer en het ras bepalen wanneer jouw gewas echt klaar is.",
+ let:"Oogst niet te vroeg of te laat: onrijpe vruchten smaken minder en te late worden hard of draderig."}};
+function openTerm(k){
+  const d=TERM[k];if(!d)return;
+  showSheet(`<div class="art"><button class="x" style="top:18px" data-act="close" aria-label="Sluiten">×</button><h2><i class="k-${k} tdot" aria-hidden="true"></i>${d.t}</h2><p class="art-p">${d.lead}</p>
+  <h3 class="th">Zo doe je het</h3><ol class="tsteps">${d.stap.map(x=>`<li>${x}</li>`).join("")}</ol>
+  <h3 class="th">Wanneer?</h3><p class="art-p" style="margin-top:6px">${d.wanneer}</p>
+  <h3 class="th">Let op</h3><p class="art-p" style="margin-top:6px">${d.let}</p>
+  <h3 class="th">Ook uitgelegd</h3><div class="chips">${FASEN.filter(([x])=>x!==k).map(([x,l])=>`<button class="chip" data-term="${x}">${l}</button>`).join("")}</div></div>`);
+}
 function openArticle(path){
   const [cid,aid]=path.split("/"),cat=GIDS.find(g=>g.id===cid),a=cat&&cat.arts.find(x=>x.id===aid);if(!a)return;
   showSheet(`<div class="art"><button class="x" style="top:18px" data-act="close" aria-label="Sluiten">×</button><h2>${esc(a.t)}</h2><div class="meta">${esc(artMeta(path,cat))} · ${a.min} min lezen</div>${artBody(a)}${a.bron&&a.nagekeken?`<p class="credit" style="margin-top:18px">Bron: ${esc(a.bron)}. Nagekeken: ${MF[+a.nagekeken.slice(5)-1]} ${a.nagekeken.slice(0,4)}.</p>`:""}${artFooter(path,a,cat)}</div>`);
@@ -2468,6 +2501,7 @@ document.addEventListener("click",e=>{navY=window.scrollY;
     notify(BY[id].n+(was?" is uit je tuin gehaald.":" staat nu in je tuin."),()=>{const j=TUIN.crops.indexOf(id);if(was){if(j<0)TUIN.crops.splice(Math.min(i,TUIN.crops.length),0,id);}else if(j>=0)TUIN.crops.splice(j,1);tuinSave();render();if(!document.getElementById("ov").hidden)openDetail(id);notify(BY[id].n+(was?" staat weer in je tuin.":" is weer uit je tuin gehaald."));});return;}
   if(t.dataset.tplek){TUIN.plek=t.dataset.tplek;tuinSave();render();const b=document.querySelector('[data-tplek="'+TUIN.plek+'"]');if(b)b.focus();return;}
   if(t.dataset.hulp){S.hulp=t.dataset.hulp;S.hg="";render();window.scrollTo(0,0);document.getElementById("main").focus({preventScroll:true});return;}
+  if(t.dataset.term){openTerm(t.dataset.term);return;}
   if(t.dataset.open&&S.kies&&S.tab==="alle"&&!t.closest("#sheet")){const id=t.dataset.open,nieuw=!TUIN.crops.includes(id);if(nieuw){TUIN.crops.push(id);tuinSave();}S.kies=false;S.tab="tuin";render();window.scrollTo(0,0);document.getElementById("main").focus({preventScroll:true});
     notify(BY[id].n+(nieuw?" staat nu in je tuin.":" stond al in je tuin."),nieuw?()=>{const j=TUIN.crops.indexOf(id);if(j>=0)TUIN.crops.splice(j,1);tuinSave();render();notify(BY[id].n+" is weer uit je tuin gehaald.");}:undefined);return;}
   if(t.dataset.open){openDetail(t.dataset.open);return;}
