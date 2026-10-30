@@ -488,6 +488,34 @@ checks.terugknop = async () => {
   return { ok: f.length === 0, detail: f.join("; ") || "8 onderdelen" };
 };
 
+// Actiezin op de tegels: elk gewas in een zaai- of plantfase heeft een zin met echte getallen.
+checks.actiezin = async () => {
+  const f = [];
+  let n = 0;
+  for (let m = 1; m <= 12; m++) {
+    for (const [k] of FASEN) {
+      for (const c of faseLijst(k, m)) {
+        const z = actieZin(c, k);
+        n++;
+        if (k !== "oo" && !z) f.push(c.id + " " + k + " " + m + ": geen zin");
+        if (/undefined|NaN|null/.test(z)) f.push(c.id + ": " + z);
+      }
+    }
+  }
+  const oud = { tab: S.tab, kv: S.kv, m: S.m };
+  S.tab = "kal"; S.kv = "maand"; S.m = 4; render();
+  await sleep(250);
+  const tegels = document.querySelectorAll('#main [data-sec="zd"] .tile').length;
+  const zinnen = document.querySelectorAll('#main [data-sec="zd"] .tile .doen').length;
+  if (!tegels) f.push("geen tegels in april");
+  if (tegels !== zinnen) f.push("april: " + zinnen + " zinnen op " + tegels + " tegels");
+  const naam = document.querySelector('#main [data-sec="zd"] .tile button').getAttribute("aria-label");
+  if (!/cm diep/.test(naam)) f.push("zin niet in toegankelijke naam: " + naam);
+  S.tab = oud.tab; S.kv = oud.kv; S.m = oud.m; render();
+  await sleep(150);
+  return { ok: f.length === 0, detail: f.slice(0, 4).join("; ") || n + " tegels gecontroleerd" };
+};
+
 // Melding met ongedaan maken na toevoegen, verwijderen en herstellen.
 checks.melding = async () => {
   const f = [];

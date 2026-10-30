@@ -247,6 +247,7 @@ details.grp.cg>.cbody{padding:0 14px 10px}
 .buur p b{font-weight:600}
 .lnk{all:unset;cursor:pointer;font:700 1rem var(--f-display);color:var(--ink);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px;min-height:44px;display:inline-flex;align-items:center}
 .lnk:hover{text-decoration-color:var(--leaf)}
+.doen{display:block;margin-top:4px;font-size:.9rem;line-height:1.35;color:var(--ink);text-align:left}
 .toast{position:fixed;left:12px;right:12px;bottom:calc(76px + env(safe-area-inset-bottom,0px));z-index:60;max-width:520px;margin-inline:auto;background:var(--nav);color:var(--on-nav);border-radius:14px;padding:6px 8px 6px 16px;display:flex;gap:12px;align-items:center;justify-content:space-between}
 .toast[hidden],.toast-b[hidden]{display:none}
 .toast-b{all:unset;cursor:pointer;font-weight:700;text-decoration:underline;min-height:44px;display:inline-flex;align-items:center;padding:0 10px;color:inherit}
@@ -1821,13 +1822,26 @@ function rel(a,b){const x=BY[a].buren.find(y=>y.id===b);return x?(x.t==="g"?"goo
 
 /* ---------- Kaartjes ---------- */
 function names(ids,max){const l=ids.slice(0,max).map(nm).join(", ");return l+(ids.length>max?" +"+(ids.length-max):"");}
-function tile(c,tag){
+/* Eén zin per tegel: wat doe je nu. Alleen uit bestaande gegevens (GEO en de stappen). */
+const nl=n=>String(n).replace(".",",");
+function actieZin(c,k){
+  const g=GEO[c.id];
+  if(k==="oo"){const st=(c.st||[]).find(x=>/^Oogst/.test(x));return st?st.split(/(?<=\.)\s/)[0]:"";}
+  if(!g)return "";
+  const [d,sp]=g;
+  if(k==="zb")return `Zaai binnen, ${nl(d)} cm diep.`;
+  if(k==="zd")return `Zaai ${nl(d)} cm diep, ${nl(sp)} cm uit elkaar.`;
+  if(k==="pt")return d>0?`Plant ${nl(d)} cm diep, ${nl(sp)} cm uit elkaar.`:`Plant ${nl(sp)} cm uit elkaar.`;
+  return "";
+}
+function tile(c,tag,actie){
   const t=tag||[];
   const act=t.map(k=>`<span class="pl"><i class="k-${k}" aria-hidden="true"></i>${faseLabel(k)}</span>`).join("");
   const what=t.map(faseLabel).join(", ");
-  return `<article class="tile"><button data-open="${c.id}" aria-label="${esc(c.n)}${what?", "+esc(what):""}, ${DIFF[c.d]}">
+  return `<article class="tile"><button data-open="${c.id}" aria-label="${esc(c.n)}${what?", "+esc(what):""}${actie?". "+esc(actie):""}. ${DIFF[c.d]}">
    <span class="phw"><img class="ph" src="${PIC[c.id]||""}" alt="" loading="lazy">${act?`<span class="act">${act}</span>`:""}</span>
    <h3>${esc(c.n)}</h3>
+   ${actie?`<span class="doen">${esc(actie)}</span>`:""}
    <div class="line">${dots(c.d)}<span>${DIFF[c.d]}</span></div>
   </button></article>`;
 }
@@ -1860,7 +1874,7 @@ const hintVoor=m=>HINT[m]||"";
 const faseLijst=(k,m)=>filtered().filter(c=>c[k].includes(m)).sort(byEase);
 const LIM=6;
 function fSec(key,t,arr){const all=S.more.has(key)||arr.length<=LIM+1,shown=all?arr:arr.slice(0,LIM);
-  return `<section class="sec" data-sec="${key}"><h2>${esc(t)}<small>${arr.length} gewassen</small></h2><div class="grid">${shown.map(c=>tile(c,null)).join("")}</div>${all?"":`<div class="morewrap"><button class="btn" data-more="${key}">Toon alle ${arr.length}</button></div>`}</section>`;}
+  return `<section class="sec" data-sec="${key}"><h2>${esc(t)}<small>${arr.length} gewassen</small></h2><div class="grid">${shown.map(c=>tile(c,null,actieZin(c,key))).join("")}</div>${all?"":`<div class="morewrap"><button class="btn" data-more="${key}">Toon alle ${arr.length}</button></div>`}</section>`;}
 function viewMaand(){
   const m=S.m,mn=MF[m-1];
   const fase=FASEN.map(([k,l])=>({k,l,arr:faseLijst(k,m)})).filter(f=>f.arr.length);
@@ -1983,8 +1997,8 @@ function viewTuin(){
    <div class="tprof" role="group" aria-label="Waar teel je?"><span class="tlab">Waar teel je?</span><div class="chips">${PLEKKEN.map(([v,l])=>`<button class="chip" data-tplek="${v}" aria-pressed="${TUIN.plek===v}">${l}</button>`).join("")}</div></div>
   </section>
   ${n?`<section class="sec"><h2>Taken in ${MF[NOW-1]}<small id="tprog" role="status">${tuinProg()}</small></h2>${tasks.length?taskHtml:`<div class="empty">Voor je gewassen is er in ${MF[NOW-1]} niets te doen. Kijk in de kalender wat er in de volgende maanden komt.</div>`}</section>
-  <section class="sec"><h2>Mijn gewassen<small>${n} ${n===1?"gewas":"gewassen"}</small></h2><div class="grid">${TUIN.crops.map(id=>tile(BY[id],starts(BY[id],NOW))).join("")}</div></section>`:""}
-  ${sug.length?`<section class="sec"><h2>Dit past nu bij jou<small>Makkelijke gewassen om deze maand te starten${TUIN.plek==="alle"?"":", "+PLEKKEN.find(p=>p[0]===TUIN.plek)[1].toLowerCase()}</small></h2><div class="grid">${sug.map(c=>`<div class="stile">${tile(c,starts(c,NOW))}<button class="btn" data-tuin="${c.id}" aria-label="Voeg ${esc(c.n)} toe aan mijn tuin">Voeg toe</button></div>`).join("")}</div></section>`:""}
+  <section class="sec"><h2>Mijn gewassen<small>${n} ${n===1?"gewas":"gewassen"}</small></h2><div class="grid">${TUIN.crops.map(id=>{const t=starts(BY[id],NOW);return tile(BY[id],t,t.length?actieZin(BY[id],t[0]):"");}).join("")}</div></section>`:""}
+  ${sug.length?`<section class="sec"><h2>Dit past nu bij jou<small>Makkelijke gewassen om deze maand te starten${TUIN.plek==="alle"?"":", "+PLEKKEN.find(p=>p[0]===TUIN.plek)[1].toLowerCase()}</small></h2><div class="grid">${sug.map(c=>`<div class="stile">${tile(c,starts(c,NOW),actieZin(c,starts(c,NOW)[0]))}<button class="btn" data-tuin="${c.id}" aria-label="Voeg ${esc(c.n)} toe aan mijn tuin">Voeg toe</button></div>`).join("")}</div></section>`:""}
   <section class="sec"><h2>Back-up van je tuin</h2><p class="art-p">Je tuin wordt bewaard in je browser op dit toestel. Wis je browsergegevens of gebruik je een ander toestel, dan is hij weg. Bewaar daarom af en toe een back-up.</p>
    <div class="fbtn"><button class="btn" data-act="export">Bewaar back-up</button><button class="btn" data-act="import">Herstel back-up</button></div><input type="file" id="tfile" accept="application/json,.json" hidden></section>`;
 }
