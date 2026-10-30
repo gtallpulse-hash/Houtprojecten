@@ -1,6 +1,6 @@
 # Controle van de gewasgegevens (fase B, eerste ronde), 2026-10-30
 
-Er is **niets in `index.html` gewijzigd**. Dit is een rapport met voorstellen. Het gaat om de lijst `C` (35 gewassen) en de artikels die dezelfde cijfers noemen.
+De drie correcties hieronder zijn daarna doorgevoerd (radijs, pompoen, spruitkool; ook de tekening van de radijs gebruikt nu 3 cm). Het gaat om de lijst `C` (35 gewassen) en de artikels die dezelfde cijfers noemen.
 
 Let op: de lijst telt **35 gewassen**. Het getal 59 in het overdrachtsdocument is het aantal foto's, niet het aantal gewassen.
 
@@ -21,7 +21,7 @@ De overige 31 gewassen zijn **niet** aan externe bronnen getoetst. Dit is dus ee
 
 1. **Radijs, plantafstand.** Het veld `afst` zegt "3-5 cm in de rij". Het artikel zegt "2 tot 3 cm". De bronnen die ik vond, noemen 2 tot 3 cm tussen de planten (Brussels infofiche, Plukkers: 3 cm) en 10 tot 15 cm tussen de rijen. **Voorstel:** het veld `afst` wordt "2-3 cm in de rij, 10-15 cm tussen de rijen".
 2. **Pompoen, ruimte.** Het veld `afst` zegt "100-150 cm". Het artikel zegt "2 tot 3 m² per plant". Dat spreekt elkaar tegen (100 tot 150 cm is ongeveer 1 tot 2 m²). Zaadleveranciers noemen 120 tot 150 cm voor grote rassen (ongeveer 1,5 tot 2 m²) en 60 x 140 cm voor kleine rassen (ongeveer 0,85 m²). Een gemeentepagina noemt "zeker 1 m²". **Voorstel:** het artikel wordt "ongeveer 1,5 tot 2 m² per plant voor grote rassen, 1 m² voor compacte rassen". Het veld `afst` mag blijven staan.
-3. **Spruitkool, zaaimaand.** Het veld `zd` bevat maart tot mei, de stap zegt "april-mei in een bed". De bronnen die ik vond, noemen maart tot april (zaaikistje of bed) of half april tot half mei. **Voorstel:** de stap wordt "Zaai van half maart tot mei", zodat tekst en velden overeenkomen. Dit is een kleine correctie en geen fout die een seizoen kost.
+3. **Spruitkool, zaaimaand.** Het veld `zd` bevat maart tot mei, de stap zegt "april-mei in een bed". De bronnen die ik vond, noemen maart tot april (zaaikistje of bed) of half april tot half mei. **Voorstel:** de stap wordt "Zaai van eind maart tot mei in een bed", zodat tekst en velden overeenkomen. Dit is een kleine correctie en geen fout die een seizoen kost.
 
 ### Bevestigd door bronnen
 
