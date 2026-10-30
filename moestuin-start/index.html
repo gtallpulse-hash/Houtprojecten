@@ -333,6 +333,12 @@ details.grp.cg>.cbody{padding:0 14px 10px}
 .tl{all:unset;cursor:pointer;font:inherit;font-weight:700;color:var(--ink);text-decoration:underline;text-decoration-color:var(--leaf);text-underline-offset:3px}
 .tl:hover{text-decoration-thickness:2px}
 .tl:focus-visible{outline:3px solid var(--sky);border-radius:4px}
+.tg{font-weight:inherit;text-decoration:underline dotted;text-decoration-color:var(--leaf);text-underline-offset:4px}
+.gloss{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:8px}
+.gl-b{all:unset;box-sizing:border-box;cursor:pointer;display:block;width:100%;min-height:44px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 14px}
+.gl-b:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+.gl-b b{display:block}
+.gl-b span{display:block;color:var(--muted);font-size:var(--fs-m)}
 .lnk:focus-visible{outline:3px solid var(--sky);border-radius:4px}
 .pg{margin-top:6px}
 .srcs a{color:inherit}
@@ -732,6 +738,137 @@ PAIRS.push(
 
 /* Gids: categorieen met artikels. Blokken: p, h, ul, ol, tb (tabel), tip, warn. */
 const p=t=>({k:"p",t}),h=t=>({k:"h",t}),ul=t=>({k:"ul",t}),ol=t=>({k:"ol",t}),tb=(head,rows)=>({k:"tb",head,rows}),tip=t=>({k:"tip",t}),warn=t=>({k:"warn",t});
+/* ---------- Begrippen: uitleg van vakwoorden (met koppeling in lopende tekst) ---------- */
+const BEGR=[
+{id:"afharden",t:"Afharden",a:["afharden","afgehard","afharding","verharden"],art:"zaaien/verspenen-afharden",kort:"Binnen opgekweekte plantjes langzaam laten wennen aan het weer buiten.",
+ u:["Plantjes die binnen zijn opgegroeid kennen geen wind, felle zon of koude nachten. Zet je ze meteen buiten, dan krijgen ze een schok: de bladeren kunnen verbranden of verkleuren."],
+ st:["Zet de plantjes op een beschutte plek buiten, eerst 1 tot 2 uur en niet in de felle zon.","Verleng elke dag de tijd en zet ze steeds meer in de zon en de wind.","Na 7 tot 10 dagen kunnen ze dag en nacht buiten, als er geen vorst komt.","Plant ze daarna uit."],z:["pt","verspenen"]},
+{id:"verspenen",t:"Verspenen",a:["verspenen","verspeen","verspeend"],art:"zaaien/verspenen-afharden",kort:"Een kiemplantje voorzichtig overzetten in een eigen, groter potje.",
+ u:["Zaai je dicht op elkaar in een zaaibak, dan hebben de plantjes na een paar weken te weinig ruimte. Verspenen geeft elke plant eigen wortelruimte en verse grond."],
+ st:["Wacht tot het plantje 2 tot 4 echte bladeren heeft. De allereerste twee blaadjes zijn de zaadlobben en tellen niet mee.","Maak de grond vochtig en wip het plantje met een lepeltje of potlood los.","Pak het plantje vast bij een blaadje, niet bij de stengel. Een blaadje groeit terug, een geknakte stengel niet.","Zet het in een potje met verse grond, druk aan en geef water."],z:["kiemplant","afharden"]},
+{id:"kiemplant",t:"Kiemplant",a:["kiemplant","kiemplantje","kiemplantjes","kiemplanten"],kort:"Een jonge plant vlak nadat het zaadje is gekiemd.",
+ u:["Uit het zaadje komt eerst een worteltje naar beneden en een stengeltje naar boven met twee eerste blaadjes, de zaadlobben. Die lijken meestal niet op de echte bladeren die daarna komen.","Kiemplantjes zijn kwetsbaar. Ze hebben licht, gelijkmatig vocht en rust nodig."],z:["kiemen","verspenen"]},
+{id:"kiemen",t:"Kiemen en kiemtijd",a:["kiemen","kiemt","gekiemd","kieming","kiemtijd"],art:"zaaien/kiemtijd",kort:"Het moment waarop een zaadje opengaat en begint te groeien.",
+ u:["Een zaadje heeft vocht, warmte en lucht nodig om te kiemen. De kiemtijd is het aantal dagen tot je iets boven de grond ziet. Dat verschilt per gewas: radijs enkele dagen, wortel en peterselie soms weken."],
+ l:"Ligt een zaadje te diep, of in koude en natte grond, dan kiemt het slecht of rot het.",z:["kiemplant","zaaidiepte"]},
+{id:"uitdunnen",t:"Uitdunnen",a:["uitdunnen","uitgedund","uitdun"],kort:"Een deel van de jonge plantjes weghalen zodat de rest genoeg ruimte krijgt.",
+ u:["Zaai je buiten, dan komen er vaak meer plantjes op dan nodig. Laat je ze allemaal staan, dan strijden ze om licht, water en voeding en blijven ze klein.","Knip de zwakste plantjes af tot de afstand die op het zaadzakje staat."],
+ l:"Trek de plantjes niet uit de grond. Dat beschadigt de wortels van de buren. Knip ze liever af.",z:["plantafstand"]},
+{id:"plantafstand",t:"Plantafstand",a:["plantafstand","plantafstanden","rijafstand"],art:"zaaien/plantafstand",kort:"De ruimte tussen twee planten in een rij en tussen de rijen.",
+ u:["Elke plant heeft ruimte nodig voor bladeren en wortels. Staan ze te dicht, dan krijgen ze minder licht en lucht en worden ze eerder ziek. Staan ze te ver uit elkaar, dan groeit er onkruid en gebruik je je grond slecht.","Bij elk gewas in de app staat de afstand."],z:["uitdunnen"]},
+{id:"zaaidiepte",t:"Zaaidiepte",a:["zaaidiepte"],kort:"Hoe diep je een zaadje in de grond legt.",
+ u:["Als vuistregel ligt een zaadje twee tot drie keer zo diep als het zelf dik is. Heel fijn zaad, zoals van wortel en sla, leg je bijna op de grond en bedek je met een heel dun laagje.","Op het zaadzakje staat de juiste diepte."],z:["kiemen"]},
+{id:"doorschieten",t:"Doorschieten",a:["doorschieten","doorgeschoten","schiet door","schieten door"],kort:"Een plant gaat bloeien en zaad zetten voordat je hem hebt geoogst.",
+ u:["Sla, spinazie, radijs en ui doen dit vaak bij hitte, droogte of lange dagen. De plant stopt met bladeren maken, schiet omhoog en vormt een bloemstengel. De bladeren worden bitter of de wortel houtig."],
+ l:"Zaai gevoelige gewassen niet in de warmste maanden, of kies een ras dat langzaam doorschiet.",z:["ras"]},
+{id:"f1",t:"F1-hybride",a:["f1-hybride","f1-hybriden","f1","hybride","hybriden"],kort:"Zaad van een kruising dat gelijke planten geeft, maar waar je zelf geen zaad van kunt bewaren.",
+ u:["F1-zaad komt van twee zuivere ouders. De planten zijn sterk en lijken op elkaar. Zaad dat je van zulke planten bewaart, geeft volgend jaar ongelijke planten.","Wil je zelf zaad winnen, kies dan een 'zaadvast' of 'open bestoven' ras."],z:["ras"]},
+{id:"ras",t:"Ras",a:["ras","rassen"],kort:"Een bepaalde soort van een gewas, met eigen kenmerken.",
+ u:["Van tomaat bestaan honderden rassen: klein, groot, vroeg, laat, rood, geel. De rasnaam staat op het zaadzakje.","Rassen verschillen in smaak, opbrengst en in hoe goed ze tegen kou of ziektes kunnen."],z:["f1"]},
+{id:"pootgoed",t:"Pootgoed",a:["pootgoed","pootaardappel","pootaardappelen","pootaardappels"],kort:"Knollen, teentjes of bolletjes die je in de grond zet om een nieuwe plant te krijgen.",
+ u:["Aardappel, knoflook, sjalot en ui plant je niet uit zaad, maar uit een deel van de plant zelf. Koop dit als pootgoed. Dat is op ziektes gecontroleerd.","Zet je gewone aardappelen of knoflook uit de winkel, dan kunnen ziektes mee de tuin in."]},
+{id:"compost",t:"Compost",a:["compost"],art:"grond/compost",kort:"Donkere, kruimelige grond die ontstaat uit vergane planten- en keukenresten.",
+ u:["Compost maak je door tuin- en groenteafval te laten verteren. Het voedt de grond, houdt vocht vast en maakt zware grond losser. Je kunt het zelf maken of kopen."],z:["mulchen","humus"]},
+{id:"mulchen",t:"Mulchen",a:["mulchen","mulch","mulchlaag","gemulcht"],art:"grond/mulchen",kort:"Een laag organisch materiaal op de grond leggen, rond je planten.",
+ u:["Met stro, gras, bladeren of compost. Mulch houdt de grond vochtig, remt onkruid en beschermt tegen hitte en hevige regen. Na een tijd verteert het en voedt het de grond."],
+ l:"Leg mulch niet tegen de stengel, want die kan gaan rotten. Wacht in het voorjaar tot de grond is opgewarmd.",z:["compost"]},
+{id:"humus",t:"Humus",a:["humus"],kort:"Het donkere, stabiele deel van de grond dat ontstaat uit vergane planten.",
+ u:["Humus houdt water en voedingsstoffen vast en maakt de grond kruimelig. Je bouwt het op door elk jaar compost en plantenresten in de grond te brengen."],z:["compost"]},
+{id:"stikstof",t:"Stikstof",a:["stikstof","stikstoftekort"],kort:"Een voedingsstof die planten nodig hebben voor groen blad.",
+ u:["Stikstof (N) zorgt voor bladgroei. Te weinig geeft bleke, gele onderste bladeren en trage groei. Te veel geeft veel slap blad, weinig vruchten en meer luizen.","Bladgroenten en koolsoorten hebben veel stikstof nodig, wortelgroenten en peulvruchten weinig."],z:["meststof","peulvrucht"]},
+{id:"meststof",t:"Meststof",a:["meststof","meststoffen","bemesten","bemesting"],kort:"Iets wat je aan de grond of het water toevoegt om planten te voeden.",
+ u:["Het kan organisch zijn, zoals compost, stalmest of hoornmeel, of kunstmatig. Op de verpakking staan drie cijfers, de N-P-K: stikstof, fosfor en kalium.","Meer is niet beter. Te veel voeding schaadt de plant en de grond."],z:["stikstof","compost"]},
+{id:"ph",t:"pH en zuurgraad",a:["ph","zuurgraad","zuurtegraad"],art:"grond/ph-kalk",kort:"Een getal dat zegt hoe zuur of kalkrijk de grond is.",
+ u:["De pH loopt van 0 tot 14. De meeste groenten groeien het best bij een pH van ongeveer 6 tot 7. Een goedkope bodemtest uit het tuincentrum meet het.","Is de grond te zuur, dan kun je er kalk aan toevoegen."],z:["kalk"]},
+{id:"kalk",t:"Kalk",a:["kalk","bekalken"],art:"grond/ph-kalk",kort:"Een stof die zure grond minder zuur maakt.",
+ u:["Je strooit kalk op zure grond om de pH te verhogen."],
+ l:"Doe dit pas na een bodemtest. Te veel kalk geeft ook problemen, bijvoorbeeld ijzertekort bij blauwe bes, die juist zure grond wil.",z:["ph"]},
+{id:"potgrond",t:"Potgrond",a:["potgrond"],art:"grond/potgrond",kort:"Losse, voedzame grond speciaal voor potten en bakken.",
+ u:["Gewone tuingrond wordt in een pot hard en houdt te veel water vast. Potgrond is luchtiger en bevat wat voeding. Voor het zaaien gebruik je liever zaaigrond."],z:["zaaigrond"]},
+{id:"zaaigrond",t:"Zaaigrond",a:["zaaigrond"],kort:"Fijne grond met weinig voeding, voor zaadjes en kiemplantjes.",
+ u:["Kiemplantjes hebben nog weinig voeding nodig en te veel voeding kan ze schaden. Zaaigrond is fijn en luchtig, zodat de worteltjes gemakkelijk groeien."],z:["potgrond","kiemplant"]},
+{id:"grondsoort",t:"Klei, zand en leem",a:["kleigrond","zandgrond","leemgrond","klei","zand","leem"],art:"grond/grondsoorten",kort:"De drie hoofdsoorten grond.",
+ u:["Klei is zwaar, houdt veel water vast en warmt traag op. Zand is licht, droogt snel uit en laat voeding snel wegspoelen. Leem zit daartussen en is voor groenten vaak het beste.","Zo test je het: knijp een beetje vochtige grond in je hand. Blijft het stevig samenhangen en kun je er een worstje van rollen, dan is er veel klei. Valt het meteen uit elkaar en voelt het korrelig, dan is het zand."],z:["compost"]},
+{id:"groenbemester",t:"Groenbemester",a:["groenbemester","groenbemesters"],art:"grond/groenbemesters",kort:"Een gewas dat je zaait om de grond te verbeteren, niet om te eten.",
+ u:["Je zaait het op een leeg stuk grond, laat het groeien en werkt het later in de grond. Het voedt de grond, remt onkruid en beschermt de grond in de winter. Voorbeelden zijn facelia en klaver."],z:["compost"]},
+{id:"vruchtwisseling",t:"Vruchtwisseling",a:["vruchtwisseling"],art:"combineren/vruchtwisseling",kort:"Elk jaar andere gewassen op dezelfde plek zetten.",
+ u:["Zet je jaar na jaar hetzelfde gewas op dezelfde plek, dan stapelen ziektes en plagen zich op en raakt de grond uitgeput. Wissel daarom per plantenfamilie en wacht meestal 3 tot 4 jaar voor dezelfde familie terugkomt.","Tomaat en aardappel zijn dezelfde familie, de nachtschadefamilie."],z:["nachtschade","tussenteelt"]},
+{id:"tussenteelt",t:"Tussenteelt",a:["tussenteelt"],art:"combineren/tussenteelt",kort:"Een snel gewas zaaien tussen of voor een langzaam gewas.",
+ u:["Radijs is al na ongeveer 4 weken klaar en kan tussen traag groeiende gewassen staan. Zo gebruik je je ruimte beter."],z:["vruchtwisseling"]},
+{id:"eenjarig",t:"Eenjarig en tweejarig",a:["eenjarig","eenjarige","eenjarigen","tweejarig","tweejarige"],kort:"Eenjarig: de plant groeit, bloeit en sterft in één jaar. Tweejarig: dat duurt twee jaar.",
+ u:["Eenjarige gewassen zaai je elk jaar opnieuw, bijvoorbeeld tomaat, sla en radijs. Tweejarige gewassen zetten in het eerste jaar blad en wortel aan en bloeien pas in het tweede jaar. Wortel en ui zijn tweejarig, maar je oogst ze meestal in het eerste jaar."],z:["vasteplant"]},
+{id:"vasteplant",t:"Vaste plant",a:["vaste plant","vaste planten","vaste groente","vaste groenten","meerjarig","meerjarige"],kort:"Een plant die jaar na jaar terugkomt.",
+ u:["Bieslook, rabarber, munt en asperge komen elk jaar uit dezelfde wortels terug. Geef ze een vaste plek, want ze verplaats je niet gemakkelijk."],z:["eenjarig"]},
+{id:"vruchtgroente",t:"Vruchtgroente",a:["vruchtgroente","vruchtgroenten"],kort:"Groenten waarvan je de vrucht eet, zoals tomaat, courgette en paprika.",
+ u:["Vruchtgroenten houden van warmte en zon en hebben veel voeding en water nodig. Ze willen 6 tot 8 uur zon per dag."],z:["vorstgevoelig"]},
+{id:"bladgroente",t:"Bladgroente",a:["bladgroente","bladgroenten"],kort:"Groenten waarvan je de bladeren eet, zoals sla, spinazie en snijbiet.",
+ u:["Bladgroenten groeien snel en doen het ook in halfschaduw. In de zomer is wat schaduw voor sla zelfs beter."],z:["doorschieten"]},
+{id:"wortelgroente",t:"Wortelgroente",a:["wortelgroente","wortelgroenten"],kort:"Groenten waarvan je de wortel of knol eet, zoals wortel, biet en radijs.",
+ u:["Wortelgroenten hebben losse, steenvrije grond nodig. Stenen of verse mest in de grond geven gevorkte wortels."],z:["wortelvlieg"]},
+{id:"koolgroente",t:"Koolgroente",a:["koolgroente","koolgroenten","koolsoort","koolsoorten"],kort:"Groenten uit de koolfamilie, zoals broccoli, bloemkool, boerenkool en spruitkool.",
+ u:["Koolgroenten hebben veel voeding en vaste grond nodig. Ze trekken koolwitjes aan, dus bedek ze met insectengaas."],z:["koolwitje","insectengaas"]},
+{id:"peulvrucht",t:"Peulvrucht",a:["peulvrucht","peulvruchten"],kort:"Planten met zaden in een peul, zoals bonen en erwten.",
+ u:["Peulvruchten maken met hulp van bacteriën op hun wortels zelf stikstof aan. Na bonen of erwten is de grond daardoor rijker aan stikstof."],z:["stikstof"]},
+{id:"nachtschade",t:"Nachtschadefamilie",a:["nachtschade","nachtschadefamilie","nachtschaden"],kort:"De plantenfamilie van tomaat, aardappel, paprika en aubergine.",
+ u:["Planten uit één familie krijgen vaak dezelfde ziektes, zoals phytophthora. Zet ze daarom niet elk jaar op dezelfde plek."],z:["phytophthora","vruchtwisseling"]},
+{id:"schermbloemigen",t:"Schermbloemigen",a:["schermbloemigen","schermbloemige"],kort:"De plantenfamilie van wortel, pastinaak, selder, peterselie en venkel.",
+ u:["Ze hebben bloemen die op een kleine parasol lijken. Ze krijgen vaak dezelfde plagen, zoals de wortelvlieg."],z:["wortelvlieg","vruchtwisseling"]},
+{id:"vorstgevoelig",t:"Vorstgevoelig",a:["vorstgevoelig","vorstgevoelige"],kort:"Een plant die beschadigd raakt of doodgaat bij vorst.",
+ u:["Tomaat, courgette, bonen en basilicum zijn vorstgevoelig. Zet ze pas buiten na de ijsheiligen, of bescherm ze 's nachts met vliesdoek."],z:["ijsheiligen","nachtvorst","vliesdoek"]},
+{id:"nachtvorst",t:"Nachtvorst",a:["nachtvorst","nachtvorsten"],kort:"Vorst die alleen 's nachts voorkomt, als de temperatuur onder 0 graden zakt.",
+ u:["Ook als het overdag 10 graden is, kan het 's nachts vriezen, vooral bij een heldere hemel. Dek vorstgevoelige planten 's avonds af."],z:["vorstgevoelig","vliesdoek"]},
+{id:"ijsheiligen",t:"IJsheiligen",a:["ijsheiligen"],art:"seizoen/ijsheiligen",kort:"11, 12 en 13 mei: de dagen waarna de kans op nachtvorst klein wordt.",
+ u:["Volgens een oude volksregel is er na die dagen weinig kans meer op nachtvorst. Het is geen garantie. Veel tuiniers wachten tot na de ijsheiligen om tomaat, courgette en andere vorstgevoelige planten uit te planten."],z:["vorstgevoelig","nachtvorst"]},
+{id:"winterhard",t:"Winterhard",a:["winterhard","winterharde"],kort:"Een plant die de winter buiten overleeft.",
+ u:["Boerenkool, prei, knoflook en rabarber zijn winterhard. Tomaat en basilicum niet."],z:["vorstgevoelig"]},
+{id:"vliesdoek",t:"Vliesdoek",a:["vliesdoek","wintervlies"],kort:"Een dun, licht doek dat je over planten legt tegen vorst en insecten.",
+ u:["Het laat licht en water door en houdt een paar graden warmte vast. Leg het los over de planten en zet de randen vast met stenen of aarde."],
+ l:"Haal het weg zodra het ontdooid is en het overdag warm is, anders worden de planten te warm.",z:["nachtvorst","insectengaas"]},
+{id:"insectengaas",t:"Insectengaas",a:["insectengaas"],kort:"Een heel fijn net dat insecten buiten houdt.",
+ u:["Je legt het over kool, wortel of prei zodat koolwitjes en wortelvliegen hun eitjes niet kunnen leggen. Zet de randen dicht tot op de grond."],z:["koolwitje","wortelvlieg"]},
+{id:"koudebak",t:"Koude bak",a:["koude bak","koudebak","koude kas"],art:"seizoen/kas-koude-bak",kort:"Een bak met een doorzichtig deksel waarin je vroeg of laat in het seizoen kunt kweken.",
+ u:["Het deksel vangt zonnewarmte, waardoor het binnen een paar graden warmer is dan buiten. Zo kun je eerder zaaien en later oogsten."],
+ l:"Open het deksel op zonnige dagen, anders wordt het te heet voor de plantjes.",z:["afharden"]},
+{id:"snoeien",t:"Snoeien",a:["snoeien","snoei","gesnoeid"],art:"verzorging/snoeien",kort:"Takken, scheuten of bladeren wegknippen om de plant te sturen.",
+ u:["Je snoeit om een plant vorm te geven, ziek materiaal weg te halen of meer vruchten te krijgen, bijvoorbeeld door de zijscheuten bij tomaat weg te knippen."],z:["geitje"]},
+{id:"geitje",t:"Geitje",a:["geitje","geitjes","zijscheut","zijscheuten"],kort:"Een zijscheutje bij tomaat, tussen de stengel en een blad.",
+ u:["Bij een stoktomaat knijp je de geitjes weg, zodat de plant haar kracht in vruchten steekt. Bij een struiktomaat doe je dat niet."],z:["stoktomaat"]},
+{id:"stoktomaat",t:"Stoktomaat en struiktomaat",a:["stoktomaat","stoktomaten","struiktomaat","struiktomaten","determinate","indeterminate"],kort:"Een stoktomaat blijft doorgroeien, een struiktomaat stopt op een bepaalde hoogte.",
+ u:["Een stoktomaat (indeterminate) groeit en draagt vruchten tot de herfst en heeft een stok of touw nodig. Een struiktomaat (determinate) blijft lager, geeft zijn vruchten in korte tijd en heeft minder steun nodig."],z:["geitje","opbinden"]},
+{id:"opbinden",t:"Opbinden en steunen",a:["opbinden","opgebonden","steunen"],art:"verzorging/steun",kort:"Een plant aan een stok, draad of net laten groeien.",
+ u:["Klimmers en zware planten, zoals tomaat, stokbonen en komkommer, vallen om zonder steun. Zet de steun erbij als je plant, niet later, anders beschadig je de wortels.","Bind zacht, met touw of stroken stof, en niet te strak."],z:["stoktomaat"]},
+{id:"aanaarden",t:"Aanaarden",a:["aanaarden","aangeaard"],kort:"Aarde tegen de onderkant van de plant opscheppen.",
+ u:["Bij aardappel schep je aarde tegen de stengel zodat de knollen niet in het licht komen en groen worden. Bij prei krijg je zo een langer wit deel."]},
+{id:"bestuiving",t:"Bestuiving",a:["bestuiving","bestuiven","bestoven","bestuivers"],kort:"Het overbrengen van stuifmeel zodat een bloem een vrucht kan vormen.",
+ u:["Bijen, hommels en andere insecten doen dit meestal. Courgette, pompoen en komkommer hebben aparte mannelijke en vrouwelijke bloemen. De vrouwelijke herken je aan het kleine vruchtje onder de bloem.","Zijn er weinig insecten, dan kun je met een penseel stuifmeel van een mannelijke naar een vrouwelijke bloem brengen."]},
+{id:"blancheren",t:"Blancheren",a:["blancheren","geblancheerd"],art:"oogsten/invriezen",kort:"Groenten kort in kokend water leggen en meteen afkoelen, voor je ze invriest.",
+ u:["Zo blijven kleur, smaak en vitamines beter bewaard. De tijd hangt af van de groente, meestal 1 tot 3 minuten. Leg ze daarna meteen in ijswater, laat ze goed uitlekken en vries ze dan in."]},
+{id:"stek",t:"Stek",a:["stek","stekken","stekje","stekjes"],kort:"Een afgesneden stukje plant dat wortel schiet en een nieuwe plant wordt.",
+ u:["Knip een stukje van ongeveer 8 tot 10 cm onder een bladknoop, haal de onderste bladeren weg en zet het in water of vochtige potgrond tot er wortels komen. Munt en rozemarijn gaan zo gemakkelijk."]},
+{id:"voljegrond",t:"Volle grond",a:["volle grond","open grond"],kort:"Buiten in de aarde van de tuin zelf, niet in een pot of een kas.",
+ u:["Een gewas in volle grond staat direct in de tuingrond. Tegenover staan potten, bakken en kassen."]},
+{id:"bladluis",t:"Bladluis",a:["bladluis","bladluizen"],art:"plagen/bladluis",kort:"Kleine groene of zwarte insecten die plantensap zuigen.",
+ u:["Ze zitten in kolonies op jonge scheuten en onderaan de bladeren. Gekrulde blaadjes en plakkerige druppels verraden ze. Spoel ze af met water, knijp ze weg en lok lieveheersbeestjes en gaasvliegen."]},
+{id:"meeldauw",t:"Meeldauw",a:["meeldauw"],art:"plagen/meeldauw",kort:"Een schimmel die als wit poeder op de bladeren zit.",
+ u:["Hij komt vaak voor bij droge grond en vochtige lucht, op courgette, komkommer en erwt. Haal aangetaste bladeren weg, geef water aan de grond en niet over het blad, en zorg voor ruimte tussen de planten."]},
+{id:"phytophthora",t:"Phytophthora",a:["phytophthora"],art:"plagen/phytophthora",kort:"Een ziekte die tomaat en aardappel bruin maakt.",
+ u:["Je ziet bruine vlekken op de bladeren, daarna op de vruchten, vooral bij vochtig en lauw weer. Houd het blad droog, geef water bij de voet en ruim aangetaste planten snel op. Gooi ze niet op de composthoop."],z:["nachtschade"]},
+{id:"wortelvlieg",t:"Wortelvlieg",a:["wortelvlieg","wortelvliegen"],art:"plagen/wortelvlieg",kort:"Een vlieg waarvan de maden in wortel, selder en peterselie vreten.",
+ u:["De vlieg legt eitjes bij de wortel en de maden maken gangen in de wortel. Bedek de planten met insectengaas en zaai niet te dicht."],z:["insectengaas"]},
+{id:"koolwitje",t:"Koolwitje",a:["koolwitje","koolwitjes"],art:"plagen/koolwitje",kort:"Een witte vlinder waarvan de rupsen aan koolbladeren vreten.",
+ u:["De eitjes zitten als gele stipjes onderaan het blad. Bedek kool met insectengaas, of kijk regelmatig en haal eitjes en rupsen weg."],z:["insectengaas"]},
+{id:"slakken",t:"Slakken",a:["slak","slakken","naaktslak","naaktslakken"],art:"plagen/slakken",kort:"Weekdieren die jonge plantjes en sla opeten.",
+ u:["Ze zijn vooral actief op natte avonden. Raap ze 's avonds of vroeg in de ochtend weg en leg een plank neer als schuilplaats waaronder je ze kunt verzamelen."]}
+];
+const BG=Object.fromEntries(BEGR.map(b=>[b.id,b]));
+const BGX={zb:["voorzaaien","binnen zaaien","binnenzaaien"],zd:["buiten zaaien","direct zaaien"],pt:["uitplanten","uitplant","uitgeplant"]};
+const BGL=[];BEGR.forEach(b=>b.a.forEach(x=>BGL.push([x.toLowerCase(),b.id])));Object.entries(BGX).forEach(([id,l])=>l.forEach(x=>BGL.push([x,id])));
+const BGMAP=new Map(BGL);
+const BGRE=new RegExp("(^|[^\\p{L}\\d-])("+BGL.slice().sort((x,y)=>y[0].length-x[0].length).map(([x])=>x.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|")+")(?![\\p{L}\\d])","giu");
+const TLK=new Set();
+function linkTerms(html){
+  return html.split(/(<button[\s\S]*?<\/button>|<[^>]*>)/).map((seg,i)=>i%2?seg:seg.replace(BGRE,(m,pre,w)=>{const id=BGMAP.get(w.toLowerCase());if(!id||TLK.has(id))return m;TLK.add(id);return `${pre}<button class="tl tg" data-term="${id}">${w}</button>`;})).join("");
+}
 const GIDS=[
 {id:"beginnen",t:"Beginnen",d:"Plek, materiaal en je eerste jaar",ic:"sprout",arts:[
  {id:"waar-begin-ik",t:"Waar begin ik?",min:3,s:"Een rustig stappenplan voor de eerste twee maanden.",b:[
@@ -1157,23 +1294,9 @@ GIDS.push(
  {id:"soorten-rassen",t:"Soort, ras en F1",min:3,s:"Wat staat er op het zakje?",b:[
   ul(["Soort: tomaat, wortel, sla. Het gewas zelf.","Ras of cultivar: 'Marmande', 'Nantes 2'. Een variant met vaste eigenschappen.","F1-hybride: een kruising van twee zuivere lijnen. Sterk en gelijkmatig, maar zaad bewaren heeft geen zin.","Zaadvast ras: je kan zaad bewaren en krijgt dezelfde plant.","Oud ras (erfgoed): oude variëteit, vaak met bijzondere smaak en meer onderhoud."]),
   tip("Kies als beginner een F1-ras voor kans op succes, en een oud ras om te leren.")]},
- {id:"woordenlijst",t:"Woordenlijst",min:3,s:"Vakwoorden die je tegenkomt.",b:[
-  tb(["Woord","Betekenis"],[
-   ["Afharden","Plantjes langzaam laten wennen aan buiten, 7 tot 10 dagen"],
-   ["Bestuiving","Overdracht van stuifmeel naar de stamper, nodig voor vruchten"],
-   ["Determinate","Tomaat die op een bepaalde hoogte stopt (struiktomaat)"],
-   ["Indeterminate","Tomaat die blijft doorgroeien (stoktomaat)"],
-   ["Doorschieten","Een plant gaat bloeien voortijdig, vaak door hitte"],
-   ["F1-hybride","Kruising met gelijkmatige planten, zaad bewaren zinloos"],
-   ["Geitje","Zijscheut tussen stengel en blad bij tomaat"],
-   ["Groenbemester","Gewas om de grond te voeden of te beschermen"],
-   ["Kiemplant","Jonge plant net na het kiemen"],
-   ["Mulchen","Een laag organisch materiaal op de grond"],
-   ["Uitdunnen","Planten weghalen zodat de rest ruimte krijgt"],
-   ["Vaste plant","Komt elk jaar terug"],
-   ["Verspenen","Een kiemplant overzetten in een groter potje"],
-   ["Voorzaaien","Binnen zaaien voor je naar buiten plant"],
-   ["Vruchtwisseling","Elk jaar andere gewassen op dezelfde plek"]])]},
+ {id:"woordenlijst",t:"Woordenlijst",min:3,s:"Vakwoorden die je tegenkomt, op alfabet.",b:[
+  p("Alle vakwoorden uit de app, op alfabet. Tik op een woord voor een uitleg in gewone taal. In de artikels zelf staan dezelfde woorden onderstreept: tik erop om ze te laten uitleggen."),
+  {k:"gloss",t:BEGR.map(b=>b.t+" "+b.kort).join(" ")}]},
  {id:"faq",t:"Veelgestelde vragen",min:6,s:"Waarom gaat dit mis, en wat doe ik eraan?",b:[
   h("Waarom schiet mijn sla door?"),p("Bij hitte en lange dagen gaat sla bloeien. Zaai sla in juni en juli niet, of op een schaduwrijke plek, en geef regelmatig water. Kies rassen die traag doorschieten (slow bolting)."),
   h("Waarom barsten mijn tomaten?"),p("Door onregelmatig water: een droge periode gevolgd door een regenbui of een flinke gietbeurt. Houd het vochtgehalte gelijkmatig en mulch."),
@@ -2037,6 +2160,7 @@ const HELP=[
 ];
 const artT=p=>{const [c,a]=p.split("/"),cat=GIDS.find(g=>g.id===c),x=cat&&cat.arts.find(y=>y.id===a);return x?x.t:null;};
 function viewHulp(){
+  TLK.clear();
   const h=HELP.find(x=>x.id===S.hulp);
   if(!h)return `<section class="sec" style="margin-top:14px"><p class="art-p">Kies wat je ziet. Je krijgt de mogelijke oorzaken en wat je eraan kunt doen. Eén probleem kan meerdere oorzaken hebben, lees ze dus allemaal.</p>
    <div class="hgrid">${HELP.map(x=>`<button class="hbtn" data-hulp="${x.id}"><b>${esc(x.t)}</b><span>${esc(x.s)}</span></button>`).join("")}</div>
@@ -2049,7 +2173,7 @@ function viewHulp(){
    <p class="art-p">Dit zijn mogelijke oorzaken. Begin bij wat je herkent.</p>
    <div class="hpick"><label for="hg">Welk gewas heb je? Dit is optioneel.</label><select id="hg"><option value="">Weet ik niet</option>${opts}</select></div>
    <div class="hlist">${w.map(({x,fit})=>`<article class="hc"><h2>${esc(x.t)}</h2>${fit===0?`<span class="pill">Komt vaak voor bij ${esc(BY[gv].n.toLowerCase())}</span>`:""}
-    <p><b>Zo herken je het</b> ${esc(x.h)}</p>${x.c?`<p><b>Zo controleer je het</b> ${esc(x.c)}</p>`:""}<p><b>Zo los je het op</b> ${esc(x.d)}</p>
+    <p><b>Zo herken je het</b> ${rich(x.h)}</p>${x.c?`<p><b>Zo controleer je het</b> ${rich(x.c)}</p>`:""}<p><b>Zo los je het op</b> ${rich(x.d)}</p>
     ${links(x).length?`<div class="links">${links(x).map(([p,t])=>`<button data-art="${p}" aria-label="Lees meer: ${esc(t)}">${esc(t)}</button>`).join("")}</div>`:""}</article>`).join("")}</div>
    <p class="credit" style="margin-top:16px">Dit is een inschatting. Twijfel je? Vraag het aan een ervaren tuinier of lees verder in de Gids.</p></section>`;
 }
@@ -2137,7 +2261,7 @@ function viewJaar(){
 
 /* ---------- Gids ---------- */
 /* Verwijzingen in lopende tekst zijn aanklikbaar */
-const rich=t=>esc(t).replace(/\bde Kalender\b/g,'de <button class="tl" data-act="tokal">Kalender</button>').replace(/\bStartgids\b/g,()=>`<button class="tl" data-ch="${S.ch}" data-start="1">Startgids</button>`);
+const rich=t=>linkTerms(esc(t).replace(/\bde Kalender\b/g,'de <button class="tl" data-act="tokal">Kalender</button>').replace(/\bStartgids\b/g,()=>`<button class="tl" data-ch="${S.ch}" data-start="1">Startgids</button>`));
 function nextArt(path){
   for(const g of GROEPEN)for(const x of g.subs){const i=x.arts.indexOf(path);if(i>=0)return x.arts[i+1]||null;}
   const i=PLAGEN.indexOf(path);return i>=0?PLAGEN[i+1]||null:null;
@@ -2162,6 +2286,7 @@ function blocks(bs){return bs.map(b=>{switch(b.k){
   case "tip":return `<div class="callout tip"><b>Tip</b>${rich(b.t)}</div>`;
   case "warn":return `<div class="callout warn"><b>Let op</b>${rich(b.t)}</div>`;
   case "pairs":return pairsBlock(b.t);
+  case "gloss":return glossHtml();
   case "ill":return `<figure class="figure">${ILL[b.id]||""}</figure>`;
   case "more":return `<div class="more"><b>Meer weten (niet verplicht)</b><div class="links">${b.t.map(([ty,id,tt])=>ty==="crop"?`<button data-open="${id}">${esc(tt)}</button>`:`<button data-art="${id}">${esc(tt)}</button>`).join("")}</div></div>`;
   default:return "";}}).join("");}
@@ -2354,15 +2479,31 @@ oo:{t:"Oogst",lead:"Je haalt het eetbare deel van de plant: vruchten, bladeren, 
  wanneer:"De maanden in de kalender zijn gemiddelden voor Vlaanderen. Het weer en het ras bepalen wanneer jouw gewas echt klaar is.",
  let:"Oogst niet te vroeg of te laat: onrijpe vruchten smaken minder en te late worden hard of draderig."}};
 function openTerm(k){
-  const d=TERM[k];if(!d)return;
+  const d=TERM[k];if(!d){openBegrip(k);return;}TLK.clear();
   showSheet(`<div class="art"><button class="x" style="top:18px" data-act="close" aria-label="Sluiten">×</button><h2><i class="k-${k} tdot" aria-hidden="true"></i>${d.t}</h2><p class="art-p">${d.lead}</p>
   <h3 class="th">Zo doe je het</h3><ol class="tsteps">${d.stap.map(x=>`<li>${x}</li>`).join("")}</ol>
   <h3 class="th">Wanneer?</h3><p class="art-p" style="margin-top:6px">${d.wanneer}</p>
   <h3 class="th">Let op</h3><p class="art-p" style="margin-top:6px">${d.let}</p>
   <h3 class="th">Ook uitgelegd</h3><div class="chips">${FASEN.filter(([x])=>x!==k).map(([x,l])=>`<button class="chip" data-term="${x}">${l}</button>`).join("")}</div></div>`);
 }
+function glossLijst(){
+  const f=Object.entries(TERM).map(([id,d])=>({id,t:d.t,k:d.lead.split(". ")[0].replace(/\.$/,"")+"."}));
+  return BEGR.map(b=>({id:b.id,t:b.t,k:b.kort})).concat(f).sort((x,y)=>x.t.localeCompare(y.t,"nl"));
+}
+function glossHtml(){return `<ul class="gloss">${glossLijst().map(g=>`<li><button class="gl-b" data-term="${g.id}"><b>${esc(g.t)}</b><span>${esc(g.k)}</span></button></li>`).join("")}</ul>`;}
+function openBegrip(id){
+  const b=BG[id];if(!b)return;TLK.clear();TLK.add(id);
+  const zie=(b.z||[]).map(x=>BG[x]?[x,BG[x].t]:TERM[x]?[x,TERM[x].t]:null).filter(Boolean);
+  const art=b.art&&artT(b.art)?artT(b.art):"";
+  showSheet(`<div class="art"><button class="x" style="top:18px" data-act="close" aria-label="Sluiten">×</button><div class="rmeta">Begrip</div><h2>${esc(b.t)}</h2>
+  <div class="lead"><b>In het kort</b><p>${rich(b.kort)}</p></div>
+  ${b.u.map(x=>`<p class="art-p">${rich(x)}</p>`).join("")}
+  ${b.st?`<h3 class="th">Zo doe je het</h3><ol class="tsteps">${b.st.map(x=>`<li>${rich(x)}</li>`).join("")}</ol>`:""}
+  ${b.l?`<div class="callout warn"><b>Let op</b>${rich(b.l)}</div>`:""}
+  ${zie.length||art?`<h3 class="th">Lees ook</h3><div class="chips">${art?`<button class="chip" data-art="${b.art}">Artikel: ${esc(art)}</button>`:""}${zie.map(([i,t])=>`<button class="chip" data-term="${i}">${esc(t)}</button>`).join("")}</div>`:""}</div>`);
+}
 function openArticle(path){
-  const [cid,aid]=path.split("/"),cat=GIDS.find(g=>g.id===cid),a=cat&&cat.arts.find(x=>x.id===aid);if(!a)return;
+  TLK.clear();const [cid,aid]=path.split("/"),cat=GIDS.find(g=>g.id===cid),a=cat&&cat.arts.find(x=>x.id===aid);if(!a)return;
   showSheet(`<div class="art"><button class="x" style="top:18px" data-act="close" aria-label="Sluiten">×</button><h2>${esc(a.t)}</h2><div class="meta">${esc(artMeta(path,cat))} · ${a.min} min lezen</div>${artBody(a)}${a.bron&&a.nagekeken?`<p class="credit" style="margin-top:18px">Bron: ${esc(a.bron)}. Nagekeken: ${MF[+a.nagekeken.slice(5)-1]} ${a.nagekeken.slice(0,4)}.</p>`:""}${artFooter(path,a,cat)}</div>`);
 }
 
@@ -2418,6 +2559,7 @@ addEventListener("popstate",e=>{
 
 /* ---------- Render ---------- */
 function render(){
+  TLK.clear();
   renderChrome();
   document.getElementById("main").innerHTML={alle:viewAlle,kal:viewKal,tuin:viewTuin,hulp:viewHulp,gids:viewGids}[S.tab]();
   document.getElementById("live").textContent=S.tab==="alle"?filtered().length+" gewassen":(S.tab==="gids"&&!S.gc&&S.gq.trim()?(gidsFind(S.gq).length||gidsFind(S.gq,true).length)+" resultaten":"");
@@ -2430,7 +2572,7 @@ const closeBtn='<button class="x" data-act="close" aria-label="Sluiten">×</butt
 function miniRow(c){return `<div class="mini">${MN.map((n,i)=>{const m=i+1;return `<div><span>${n.slice(0,1).toUpperCase()}</span>`+["zb","zd","pt"].map(k=>`<b class="${c[k].includes(m)?"on k-"+k:""}"></b>`).join("")+`<b class="${c.oo.includes(m)?"on k-oo":""}"></b></div>`;}).join("")}</div>`;}
 
 function openDetail(id){
-  const c=BY[id];if(!c)return;const p=PHOTOS[id];
+  TLK.clear();const c=BY[id];if(!c)return;const p=PHOTOS[id];
   const fold=(t,body,open)=>`<details class="fold"${open?" open":""}><summary>${t}</summary><div>${body}</div></details>`;
   const good=c.buren.filter(x=>x.t==="g"),bad=c.buren.filter(x=>x.t==="s");
   const row=(arr,cls,sym)=>`<div class="bs ${cls}">${arr.map(x=>`<button data-open="${x.id}"><i aria-hidden="true">${sym}</i>${esc(nm(x.id))}</button>`).join("")}</div>`;
@@ -2445,9 +2587,9 @@ function openDetail(id){
   <div style="margin-top:18px">${legendHtml()}${miniRow(c)}</div>
   <div class="guide-cta"><button class="btn pri big" data-guide="${id}">Hoe teel ik dit? ›</button><span>Volledig stappenplan van voorbereiding tot oogst</span></div><div class="fbtn"><button class="btn${inTuin(id)?" pri":""}" data-tuin="${id}">${inTuin(id)?"In mijn tuin":"Zet in mijn tuin"}</button></div>
   <div style="margin-top:18px">
-  ${fold("In het kort",`<ol class="steps">${c.st.map(s=>`<li><span>${esc(s)}</span></li>`).join("")}</ol>`)}
+  ${fold("In het kort",`<ol class="steps">${c.st.map(s=>`<li><span>${rich(s)}</span></li>`).join("")}</ol>`)}
   ${fold("Met wie combineer je dit?",buren,true)}
-  ${fold("Tips en let op",`<h3 class="sub-h" style="margin-top:0">Tips</h3><ul class="bul">${c.tip.map(s=>`<li>${esc(s)}</li>`).join("")}</ul><h3 class="sub-h">Let op</h3><ul class="bul">${c.val.map(s=>`<li>${esc(s)}</li>`).join("")}</ul>`)}
+  ${fold("Tips en let op",`<h3 class="sub-h" style="margin-top:0">Tips</h3><ul class="bul">${c.tip.map(s=>`<li>${rich(s)}</li>`).join("")}</ul><h3 class="sub-h">Let op</h3><ul class="bul">${c.val.map(s=>`<li>${rich(s)}</li>`).join("")}</ul>`)}
   ${c.sub&&c.sub.length?fold("Soorten en rassen vergeleken",`<div class="scroll"><table><thead><tr><th>Soort</th><th>Voorbeelden</th><th>Kenmerken</th></tr></thead><tbody>${c.sub.map(s=>`<tr><td><b>${esc(s.n)}</b></td><td>${esc(s.ex)}</td><td>${esc(s.k)}</td></tr>`).join("")}</tbody></table></div>`):""}
   ${fold("Alle gegevens",`<table><tbody>
    <tr><th>Zon</th><td>${esc(c.zon)}</td></tr><tr><th>Potgrootte</th><td>${esc(c.pot)}</td></tr><tr><th>Duur</th><td>${esc(c.dagen)}</td></tr>
@@ -2460,12 +2602,12 @@ function openDetail(id){
 /* ---------- Hoe teel ik dit? ---------- */
 const SEC=[["v","Voorbereiding"],["z","Zaaien of planten"],["g","Verzorgen"],["p","Problemen voorkomen"],["o","Oogsten"],["n","Na de oogst"]];
 function openGuide(id){
-  const c=BY[id],gd=GD[id];if(!c)return;
+  TLK.clear();const c=BY[id],gd=GD[id];if(!c)return;
   if(!gd){showSheet(`<div class="art"><button class="x" style="top:18px" data-act="close" aria-label="Sluiten">×</button><h2>Hoe teel ik ${esc(c.n.toLowerCase())}?</h2>${blocks([p("Voor dit gewas is nog geen volledig stappenplan. Bekijk de korte uitleg in het detailscherm.")])}</div>`);return;}
   const g=GEO[id]||[0,0,0];
   const fact=(l,v)=>`<div><span>${l}</span><b>${v}</b></div>`;
   const facts=`<div class="facts4">${fact("Zaaien of planten",ranges(c.zb.concat(c.zd,c.pt)))}${fact("Oogst",ranges(c.oo))}${fact("Plantafstand",esc(c.afst))}${fact("Zon",esc(c.zon))}${fact("Plek",c.pl.join(", "))}${fact("Duur",esc(short(c.dagen)))}</div>`;
-  const body=SEC.filter(([k])=>gd[k]&&gd[k].length).map(([k,t],i)=>`<section class="gsec"><h3><span class="gn">${i+1}</span>${t}</h3><ul class="gl">${gd[k].map(x=>`<li>${esc(x)}</li>`).join("")}</ul></section>`).join("");
+  const body=SEC.filter(([k])=>gd[k]&&gd[k].length).map(([k,t],i)=>`<section class="gsec"><h3><span class="gn">${i+1}</span>${t}</h3><ul class="gl">${gd[k].map(x=>`<li>${rich(x)}</li>`).join("")}</ul></section>`).join("");
   const good=c.buren.filter(x=>x.t==="g").slice(0,4);
   const nb=good.length?`<section class="gsec"><h3><span class="gn">+</span>Goede buren</h3><p class="art-p">${good.map(x=>esc(nm(x.id))).join(", ")}${c.buren.filter(x=>x.t==="g").length>4?" en meer":""}. <button class="lnk" data-open="${id}">Bekijk waarom en hoe</button></p></section>`:"";
   showSheet(`<div class="art"><button class="x" style="top:18px" data-act="close" aria-label="Sluiten">×</button>
