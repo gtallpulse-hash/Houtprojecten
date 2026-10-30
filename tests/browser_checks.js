@@ -488,6 +488,63 @@ checks.terugknop = async () => {
   return { ok: f.length === 0, detail: f.join("; ") || "8 onderdelen" };
 };
 
+// Melding met ongedaan maken na toevoegen, verwijderen en herstellen.
+checks.melding = async () => {
+  const f = [];
+  const bewaar = { crops: TUIN.crops.slice(), bak: TUIN.bak, done: JSON.stringify(TUIN.done) };
+  const toast = () => document.getElementById("toast");
+  const knop = () => toast().querySelector("button");
+  try {
+    TUIN.crops = ["tomaat", "radijs"];
+    await go("tuin");
+    // verwijderen via de tegel in de tuin: eerst open het detail
+    openDetail("radijs");
+    await sleep(250);
+    document.querySelector('#sheet [data-tuin="radijs"]').click();
+    await sleep(250);
+    if (toast().hidden || !/uit je tuin gehaald/.test(toast().textContent)) f.push("geen melding na verwijderen");
+    if (knop().hidden) f.push("geen knop Ongedaan maken");
+    if (TUIN.crops.includes("radijs")) f.push("radijs niet verwijderd");
+    knop().click();
+    await sleep(250);
+    if (TUIN.crops.join() !== "tomaat,radijs") f.push("ongedaan maken herstelt volgorde niet: " + TUIN.crops.join());
+    if (toast().hidden) f.push("geen melding na ongedaan maken");
+    if (!knop().hidden) f.push("ongedaan maken van ongedaan maken aangeboden");
+    // toevoegen en weer ongedaan
+    TUIN.crops = ["tomaat"];
+    openDetail("sla");
+    await sleep(250);
+    document.querySelector('#sheet [data-tuin="sla"]').click();
+    await sleep(250);
+    if (!TUIN.crops.includes("sla") || !/staat nu in je tuin/.test(toast().textContent)) f.push("geen melding na toevoegen");
+    knop().click();
+    await sleep(250);
+    if (TUIN.crops.includes("sla")) f.push("toevoegen niet ongedaan");
+    // verdwijnt vanzelf
+    notify("test");
+    if (toast().hidden) f.push("melding zonder knop niet zichtbaar");
+    hideToast();
+    if (!toast().hidden) f.push("melding blijft staan");
+    // staat boven het bladscherm en is niet inert
+    openDetail("sla");
+    await sleep(250);
+    notify("boven", () => {});
+    if (toast().closest("[inert]")) f.push("melding is inert bij open bladscherm");
+    closeOv();
+    await sleep(300);
+    hideToast();
+  } finally {
+    TUIN.crops = bewaar.crops;
+    TUIN.bak = bewaar.bak;
+    TUIN.done = JSON.parse(bewaar.done);
+    tuinSave();
+    if (!document.getElementById("ov").hidden) closeOv();
+    hideToast();
+    await go("kal");
+  }
+  return { ok: f.length === 0, detail: f.join("; ") || "6 onderdelen" };
+};
+
 // Zoeken in de Gids en het korte antwoord bovenaan artikels.
 checks.gidsZoeken = async () => {
   const f = [];

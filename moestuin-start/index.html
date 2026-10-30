@@ -247,6 +247,10 @@ details.grp.cg>.cbody{padding:0 14px 10px}
 .buur p b{font-weight:600}
 .lnk{all:unset;cursor:pointer;font:700 1rem var(--f-display);color:var(--ink);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px;min-height:44px;display:inline-flex;align-items:center}
 .lnk:hover{text-decoration-color:var(--leaf)}
+.toast{position:fixed;left:12px;right:12px;bottom:calc(76px + env(safe-area-inset-bottom,0px));z-index:60;max-width:520px;margin-inline:auto;background:var(--nav);color:var(--on-nav);border-radius:14px;padding:6px 8px 6px 16px;display:flex;gap:12px;align-items:center;justify-content:space-between}
+.toast[hidden],.toast-b[hidden]{display:none}
+.toast-b{all:unset;cursor:pointer;font-weight:700;text-decoration:underline;min-height:44px;display:inline-flex;align-items:center;padding:0 10px;color:inherit}
+.toast-b:focus-visible{outline:3px solid var(--sky);border-radius:8px}
 .gsearch{margin-top:14px}
 .gsearch input{width:100%;box-sizing:border-box;padding:11px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit}
 .lead{margin-top:14px;padding:2px 0 2px 14px;border-left:4px solid var(--leaf)}
@@ -315,6 +319,7 @@ details.grp.cg>.cbody{padding:0 14px 10px}
 </div>
 
 <nav class="nav" aria-label="Hoofdmenu"><div class="nav-in" id="nav"></div></nav>
+<div class="toast" id="toast" hidden><span id="toast-t" aria-hidden="true"></span><button class="toast-b" data-act="undo" hidden>Ongedaan maken</button></div>
 <div class="overlay" id="ov" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-t"></div></div>
 <div class="tray" id="tray" hidden></div>
 
@@ -1956,7 +1961,7 @@ function tuinLoad(){const raw=lsGet(TK);let o=null,stuk=false;try{o=JSON.parse(r
   if(raw&&(stuk||crops.length<ids.length)&&!lsGet(TKOPIE))lsSet(TKOPIE,raw);
   return {bak:typeof o.bak==="number"?o.bak:0,crops,plek:PLEKKEN.some(p=>p[0]===o.plek)?o.plek:"alle",done:o.done&&typeof o.done==="object"&&!Array.isArray(o.done)?o.done:{}};}
 const TUIN=tuinLoad();
-const tuinSave=()=>{if(!lsSet(TK,JSON.stringify(Object.assign({v:TVERSIE},TUIN))))say("Opslaan op dit toestel lukt niet. Bewaar een back-up.");};
+const tuinSave=()=>{if(!lsSet(TK,JSON.stringify(Object.assign({v:TVERSIE},TUIN))))notify("Opslaan op dit toestel lukt niet. Bewaar een back-up.");};
 const MKEY=new Date().getFullYear()+"-"+NOW;
 const doneSet=()=>new Set(Array.isArray(TUIN.done[MKEY])?TUIN.done[MKEY]:[]);
 const say=t=>setTimeout(()=>{const l=document.getElementById("live");if(l)l.textContent=t;},60);
@@ -1983,14 +1988,14 @@ function viewTuin(){
   <section class="sec"><h2>Back-up van je tuin</h2><p class="art-p">Je tuin wordt bewaard in je browser op dit toestel. Wis je browsergegevens of gebruik je een ander toestel, dan is hij weg. Bewaar daarom af en toe een back-up.</p>
    <div class="fbtn"><button class="btn" data-act="export">Bewaar back-up</button><button class="btn" data-act="import">Herstel back-up</button></div><input type="file" id="tfile" accept="application/json,.json" hidden></section>`;
 }
-function tuinExport(){const blob=new Blob([JSON.stringify({versie:1,bewaard:new Date().toISOString(),tuin:TUIN},null,1)],{type:"application/json"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download="mijn-moestuin.json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);TUIN.bak=Date.now();tuinSave();const hb=document.getElementById("tbak");if(hb)hb.remove();say("Back-up gedownload.");}
+function tuinExport(){const blob=new Blob([JSON.stringify({versie:1,bewaard:new Date().toISOString(),tuin:TUIN},null,1)],{type:"application/json"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download="mijn-moestuin.json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);TUIN.bak=Date.now();tuinSave();const hb=document.getElementById("tbak");if(hb)hb.remove();notify("Back-up gedownload.");}
 async function tuinImport(file){
   let o=null;try{o=JSON.parse(await file.text());}catch(e){}
   const t=o&&o.tuin;
   if(!t||!Array.isArray(t.crops)){say("Dit bestand kan niet worden gelezen. Kies een back-up van Mijn Moestuin.");alert("Dit bestand kan niet worden gelezen. Kies een back-up van Mijn Moestuin.");return;}
   if(!confirm("Je huidige tuin wordt vervangen door de back-up. Doorgaan?"))return;
   const done={};if(t.done&&typeof t.done==="object")for(const k in t.done)if(Array.isArray(t.done[k]))done[k]=t.done[k].filter(x=>typeof x==="string").slice(0,500);
-  TUIN.crops=t.crops.filter(id=>typeof id==="string"&&BY[id]);TUIN.plek=PLEKKEN.some(p=>p[0]===t.plek)?t.plek:"alle";TUIN.done=done;TUIN.bak=Date.now();tuinSave();render();say("Back-up hersteld.");
+  const prev=JSON.stringify({crops:TUIN.crops,plek:TUIN.plek,done:TUIN.done,bak:TUIN.bak});TUIN.crops=t.crops.filter(id=>typeof id==="string"&&BY[id]);TUIN.plek=PLEKKEN.some(p=>p[0]===t.plek)?t.plek:"alle";TUIN.done=done;TUIN.bak=Date.now();tuinSave();render();notify("Back-up hersteld.",()=>{const o=JSON.parse(prev);TUIN.crops=o.crops;TUIN.plek=o.plek;TUIN.done=o.done;TUIN.bak=o.bak;tuinSave();render();notify("Je vorige tuin staat weer terug.");});
 }
 
 /* ---------- Kalender ---------- */
@@ -2155,6 +2160,21 @@ function openArticle(path){
   showSheet(`<div class="art"><button class="x" style="top:18px" data-act="close" aria-label="Sluiten">×</button><h2>${esc(a.t)}</h2><div class="meta">${esc(artMeta(path,cat))} · ${a.min} min lezen</div>${artBody(a)}${a.bron&&a.nagekeken?`<p class="credit" style="margin-top:18px">Bron: ${esc(a.bron)}. Nagekeken: ${MF[+a.nagekeken.slice(5)-1]} ${a.nagekeken.slice(0,4)}.</p>`:""}${artFooter(path,a,cat)}</div>`);
 }
 
+/* ---------- Melding met ongedaan maken ---------- */
+let toastTimer=null,toastUndo=null;
+function hideToast(){const el=document.getElementById("toast");if(el)el.hidden=true;toastUndo=null;clearTimeout(toastTimer);}
+function toastStart(){clearTimeout(toastTimer);toastTimer=setTimeout(hideToast,toastUndo?8000:4500);}
+function notify(msg,undo){
+  say(msg);
+  const el=document.getElementById("toast");if(!el)return;
+  toastUndo=undo||null;
+  document.getElementById("toast-t").textContent=msg;
+  el.querySelector("button").hidden=!undo;
+  el.hidden=false;toastStart();
+}
+document.addEventListener("focusin",e=>{if(e.target.closest&&e.target.closest("#toast"))clearTimeout(toastTimer);});
+document.addEventListener("focusout",e=>{if(e.target.closest&&e.target.closest("#toast")&&!document.getElementById("toast").hidden)toastStart();});
+
 /* ---------- Geschiedenis: terugknop en scrollpositie ---------- */
 const navSnap=()=>({tab:S.tab,kv:S.kv,gc:S.gc,hulp:S.hulp});
 const navId=s=>[s.tab,s.kv,s.gc,s.hulp].join("|");
@@ -2277,7 +2297,9 @@ document.addEventListener("click",e=>{navY=window.scrollY;
   if(t.dataset.more){const k=t.dataset.more;S.more.add(k);render();const b=document.querySelectorAll(`[data-sec="${k}"] .tile>button`)[6];if(b)b.focus();return;}
   if(t.dataset.f){S[t.dataset.f]=t.dataset.v;const open=!document.getElementById("ov").hidden;render();if(open)openFilter();return;}
   if(t.dataset.kv){S.kv=t.dataset.kv;S.more.clear();render();window.scrollTo(0,0);const b=document.querySelector('[data-kv="'+S.kv+'"]');if(b)b.focus();return;}
-  if(t.dataset.tuin){const id=t.dataset.tuin,i=TUIN.crops.indexOf(id),inSheet=!!t.closest("#sheet");if(i>=0)TUIN.crops.splice(i,1);else TUIN.crops.push(id);tuinSave();render();if(inSheet)openDetail(id);say(BY[id].n+(i>=0?" is uit je tuin gehaald.":" staat nu in je tuin."));return;}
+  if(t.dataset.tuin){const id=t.dataset.tuin,i=TUIN.crops.indexOf(id),inSheet=!!t.closest("#sheet");if(i>=0)TUIN.crops.splice(i,1);else TUIN.crops.push(id);tuinSave();render();if(inSheet)openDetail(id);
+    const was=i>=0;
+    notify(BY[id].n+(was?" is uit je tuin gehaald.":" staat nu in je tuin."),()=>{const j=TUIN.crops.indexOf(id);if(was){if(j<0)TUIN.crops.splice(Math.min(i,TUIN.crops.length),0,id);}else if(j>=0)TUIN.crops.splice(j,1);tuinSave();render();if(!document.getElementById("ov").hidden)openDetail(id);notify(BY[id].n+(was?" staat weer in je tuin.":" is weer uit je tuin gehaald."));});return;}
   if(t.dataset.tplek){TUIN.plek=t.dataset.tplek;tuinSave();render();const b=document.querySelector('[data-tplek="'+TUIN.plek+'"]');if(b)b.focus();return;}
   if(t.dataset.hulp){S.hulp=t.dataset.hulp;S.hg="";render();window.scrollTo(0,0);document.getElementById("main").focus({preventScroll:true});return;}
   if(t.dataset.open){openDetail(t.dataset.open);return;}
@@ -2291,6 +2313,7 @@ document.addEventListener("click",e=>{navY=window.scrollY;
   if(a==="filter"){openFilter();return;}
   if(a==="export"){tuinExport();return;}
   if(a==="import"){document.getElementById("tfile").click();return;}
+  if(a==="undo"){const f=toastUndo;hideToast();if(f)f();return;}
   if(a==="tokal"){if(!document.getElementById("ov").hidden)closeOv();S.tab="kal";S.kv="maand";render();window.scrollTo(0,0);return;}
   if(a==="tohulp"){S.tab="hulp";S.hulp=null;render();window.scrollTo(0,0);return;}
   if(a==="hback"){S.hulp=null;S.hg="";render();window.scrollTo(0,0);document.getElementById("main").focus({preventScroll:true});return;}
