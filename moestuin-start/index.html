@@ -191,6 +191,10 @@ details.fold>div{padding-bottom:18px}
 .gh h2{font-size:var(--fs-3xl)}
 .p{max-width:68ch;margin:0}
 .src{font-size:var(--fs-s);color:var(--muted);margin-top:36px;max-width:70ch}
+footer{display:grid;gap:0 32px;margin-top:36px}
+footer .src{margin:0 0 12px;max-width:none}
+footer .src:first-child{border-top:1px solid var(--line);padding-top:16px}
+@media(min-width:760px){footer{grid-template-columns:2fr 1fr}footer .src:first-child{border-top:0;padding-top:0}footer{border-top:1px solid var(--line);padding-top:16px}}
 .rowc{display:flex;flex-direction:column;gap:2px}
 .nb{font-size:var(--fs-s);color:var(--muted);margin-top:4px;line-height:1.35}
 .nb b{font-weight:600}.nb .g{color:var(--leaf)}.nb .s{color:var(--tom)}
