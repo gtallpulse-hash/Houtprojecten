@@ -488,6 +488,72 @@ checks.terugknop = async () => {
   return { ok: f.length === 0, detail: f.join("; ") || "8 onderdelen" };
 };
 
+// Zoeken in de Gids en het korte antwoord bovenaan artikels.
+checks.gidsZoeken = async () => {
+  const f = [];
+  await go("gids");
+  const veld = () => document.getElementById("gq");
+  const typ = async (t) => {
+    const v = veld();
+    v.value = t;
+    v.dispatchEvent(new Event("input", { bubbles: true }));
+    await sleep(150);
+  };
+  if (!veld()) f.push("geen zoekveld");
+  else {
+    await typ("slakken");
+    const kaarten = [...document.querySelectorAll("#main [data-art]")].map((b) => b.dataset.art);
+    if (!kaarten.includes("plagen/slakken")) f.push("slakken niet gevonden: " + kaarten.slice(0, 3).join(","));
+    if (document.activeElement.id !== "gq") f.push("focus kwijt na typen");
+    if (document.getElementById("live").textContent.indexOf("resultaat") < 0 && document.getElementById("live").textContent.indexOf("resultaten") < 0) f.push("geen melding voor schermlezers");
+    await typ("gele bladeren");
+    if (!document.querySelector("#main [data-art]")) f.push("gele bladeren: niets");
+    await typ("Zaaien");
+    if (document.querySelectorAll("#main [data-art]").length < 3) f.push("zaaien: te weinig");
+    await typ("mijn zaadjes kiemen niet");
+    if (!document.querySelector("#main [data-art]")) f.push("zaadjes kiemen niet: niets");
+    await typ("xyzxyz");
+    if (!document.querySelector("#main .empty")) f.push("geen lege toestand");
+    if (!document.querySelector('#main [data-act="tohulp"]')) f.push("geen link naar Hulp");
+    await typ("");
+    if (!document.querySelector("#main .gcat")) f.push("groepen komen niet terug");
+    await typ("water");
+    document.querySelector('#nav [data-tab="kal"]').click();
+    await sleep(200);
+    document.querySelector('#nav [data-tab="gids"]').click();
+    await sleep(200);
+    if (S.gq !== "" || (veld() && veld().value !== "")) f.push("zoekterm blijft na tabwissel");
+  }
+  // kort antwoord
+  let kort = null, lang = null;
+  for (const g of GIDS) for (const a of g.arts) {
+    if (!kort && a.b[0] && a.b[0].k === "p" && a.b[0].t.length <= 320) kort = g.id + "/" + a.id;
+    if (!lang && a.b[0] && a.b[0].k !== "p") lang = g.id + "/" + a.id;
+  }
+  if (!kort) f.push("geen artikel met kort antwoord");
+  else {
+    openArticle(kort);
+    await sleep(200);
+    const lead = document.querySelector("#sheet .lead");
+    if (!lead || !/In het kort/.test(lead.textContent)) f.push("geen In het kort");
+    else {
+      const tekst = lead.querySelector("p").textContent.slice(0, 40);
+      if (document.getElementById("sheet").textContent.split(tekst).length !== 2) f.push("kort antwoord staat dubbel");
+    }
+    closeOv();
+    await sleep(200);
+  }
+  if (lang) {
+    openArticle(lang);
+    await sleep(200);
+    if (document.querySelector("#sheet .lead")) f.push("In het kort bij artikel met eigen opbouw");
+    closeOv();
+    await sleep(200);
+  }
+  await go("kal");
+  return { ok: f.length === 0, detail: f.join("; ") || "3 onderdelen" };
+};
+
 // Doorklikpaden: artikel naar volgend artikel en Kalender, tekstverwijzingen, teeltgids.
 checks.doorklik = async () => {
   const f = [];
@@ -587,7 +653,7 @@ checks.hintGewassen = async () => {
 
 checks.artikelGroep = async () => {
   const fouten = [];
-  const verwacht = { "grond/mulchen": "Zo doe je het › Verzorgen", "seizoen/ijsheiligen": "Weten waarom", "plagen/slakken": "Hulp", "combineren/combi-goed": "Naslag" };
+  const verwacht = { "grond/mulchen": "Ik wil aan de slag › Verzorgen", "seizoen/ijsheiligen": "Ik wil begrijpen waarom", "plagen/slakken": "Hulp", "combineren/combi-goed": "Ik zoek iets na" };
   for (const [pad, tekst] of Object.entries(verwacht)) {
     openArticle(pad);
     const meta = document.querySelector("#sheet .meta").textContent;

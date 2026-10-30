@@ -247,6 +247,11 @@ details.grp.cg>.cbody{padding:0 14px 10px}
 .buur p b{font-weight:600}
 .lnk{all:unset;cursor:pointer;font:700 1rem var(--f-display);color:var(--ink);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px;min-height:44px;display:inline-flex;align-items:center}
 .lnk:hover{text-decoration-color:var(--leaf)}
+.gsearch{margin-top:14px}
+.gsearch input{width:100%;box-sizing:border-box;padding:11px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit}
+.lead{margin-top:14px;padding:2px 0 2px 14px;border-left:4px solid var(--leaf)}
+.lead b{display:block;font:700 .85rem var(--f-display);color:var(--muted);letter-spacing:.02em}
+.lead p{margin:4px 0 0;font-size:1.08rem;max-width:66ch}
 .tl{all:unset;cursor:pointer;font:inherit;font-weight:700;color:var(--ink);text-decoration:underline;text-decoration-color:var(--leaf);text-underline-offset:3px}
 .tl:hover{text-decoration-thickness:2px}
 .tl:focus-visible{outline:3px solid var(--sky);border-radius:4px}
@@ -1794,7 +1799,7 @@ const faseLabel=k=>(FASEN.find(f=>f[0]===k)||[])[1]||"";
 const KIND={zb:[faseLabel("zb")],zd:[faseLabel("zd")],pt:[faseLabel("pt")]};
 function legendHtml(){const x={zb:" (open)",zd:" (gevuld)"};return `<div class="legend">${FASEN.map(([k,l])=>`<span><i class="k-${k}"></i>${l}${x[k]||""}</span>`).join("")}</div>`;}
 const NOW=new Date().getMonth()+1;const cr=s=>String(s).split(" I\u0027d")[0].replace(/\s*\(.*?$/,"");
-const S={tab:"kal",kv:"maand",m:NOW,type:"alle",diep:"alle",plek:"alle",q:"",cmp:new Set(),more:new Set(),grp:new Set(),jgrp:new Set(),hulp:null,hg:"",gc:null,ch:0};
+const S={tab:"kal",kv:"maand",m:NOW,type:"alle",diep:"alle",plek:"alle",q:"",cmp:new Set(),more:new Set(),grp:new Set(),jgrp:new Set(),hulp:null,hg:"",gc:null,gq:"",ch:0};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function ranges(arr){if(!arr||!arr.length)return "-";const s=new Set(arr);if(s.size===12)return "heel jaar";let st=1;while(s.has(st))st++;const out=[];let run=null;for(let k=1;k<=12;k++){const m=((st+k-1)%12)+1;if(s.has(m)){if(!run){run=[m,m];out.push(run);}else run[1]=m;}else run=null;}return out.map(x=>x[0]===x[1]?MN[x[0]-1]:MN[x[0]-1]+"-"+MN[x[1]-1]).join(", ");}
 const nm=id=>BY[id].n;
@@ -2068,16 +2073,16 @@ function lsSet(k,v){try{localStorage.setItem(k,v);return true;}catch(e){return f
 /* ---------- Gids: taakgroepen ---------- */
 const P=(c,...ids)=>ids.map(i=>c+"/"+i);
 const GROEPEN=[
- {id:"begin",t:"Begin hier",d:"Plek, materiaal en je eerste jaar",ic:"sprout",subs:[{arts:P("beginnen","waar-begin-ik","plek-kiezen","pot-bak-grond","gereedschap","eerste-jaar")}]},
- {id:"doen",t:"Zo doe je het",d:"Stap voor stap zaaien, verzorgen en oogsten",ic:"pot",subs:[
+ {id:"begin",t:"Ik begin net",d:"Plek, materiaal en je eerste jaar",ic:"sprout",subs:[{arts:P("beginnen","waar-begin-ik","plek-kiezen","pot-bak-grond","gereedschap","eerste-jaar")}]},
+ {id:"doen",t:"Ik wil aan de slag",d:"Stap voor stap zaaien, verzorgen en oogsten",ic:"pot",subs:[
   {t:"Zaaien en planten",arts:P("zaaien","zaaien-binnen-buiten","zaaigrond-licht","verspenen-afharden","kiemtijd","zaad-kopen","plantafstand","plantjes-kopen")},
   {t:"Verzorgen",arts:P("verzorging","water-geven","regenwater","onkruid","steun","tomaat-verzorgen","snoeien","weinig-tijd").concat(P("grond","mulchen"))},
   {t:"Grond en voeding",arts:P("grond","compost","potgrond","groenbemesters")},
   {t:"Oogsten en bewaren",arts:P("oogsten","oogst-wanneer","bewaren","invriezen","drogen","zaad-bewaren")},
   {t:"Seizoen en kleine ruimtes",arts:P("seizoen","kas-koude-bak","winter-groenten").concat(P("klein","balkon","schaduw","verticaal"))},
   {t:"Slim combineren",arts:P("combineren","tussenteelt","drie-zusters","helpers")}]},
- {id:"waarom",t:"Weten waarom",d:"Uitleg over grond, klimaat en combineren",ic:"book",subs:[{arts:P("grond","grondsoorten","ph-kalk","voeding").concat(P("seizoen","klimaat","ijsheiligen","vier-seizoenen","droogte-hitte"),P("combineren","combi-hoe","vruchtwisseling"),P("kennis","families","groenten-groepen","soorten-rassen"))}]},
- {id:"naslag",t:"Naslag",d:"Combinaties, woordenlijst en veelgestelde vragen",ic:"basket",subs:[{arts:P("combineren","combi-goed","combi-slecht").concat(P("kennis","woordenlijst","faq"))}]}
+ {id:"waarom",t:"Ik wil begrijpen waarom",d:"Uitleg over grond, klimaat en combineren",ic:"book",subs:[{arts:P("grond","grondsoorten","ph-kalk","voeding").concat(P("seizoen","klimaat","ijsheiligen","vier-seizoenen","droogte-hitte"),P("combineren","combi-hoe","vruchtwisseling"),P("kennis","families","groenten-groepen","soorten-rassen"))}]},
+ {id:"naslag",t:"Ik zoek iets na",d:"Combinaties, woordenlijst en veelgestelde vragen",ic:"basket",subs:[{arts:P("combineren","combi-goed","combi-slecht").concat(P("kennis","woordenlijst","faq"))}]}
 ];
 const PLAGEN=P("plagen","slakken","bladluis","koolwitje","wortelvlieg","phytophthora","meeldauw","dieren","plagen-overzicht");
 const artByPath=p=>{const [c,a]=p.split("/"),cat=GIDS.find(g=>g.id===c),x=cat&&cat.arts.find(y=>y.id===a);return x?{cat,a:x}:null;};
@@ -2104,11 +2109,42 @@ function viewGids(){
     return `<button class="back" data-act="gback">‹ Gids</button>${body}${gr.id==="naslag"?naslagExtra():""}`;
   }
   const last=parseInt(lsGet("sg-ch")||"0",10)||0;
-  return `<section class="hero-card"><div><b class="hc-t">Startersgids</b><p>${SG.length} hoofdstukken in de juiste volgorde, van plek kiezen tot oogsten. Rustig te lezen in ongeveer 40 minuten. Wat niet nodig is, staat onder 'Meer weten'.</p>
+  const zoek=`<div class="gsearch"><input type="search" id="gq" placeholder="Wat wil je leren of oplossen?" value="${esc(S.gq)}" aria-label="Zoek in de Gids"></div>`;
+  if(S.gq.trim())return zoek+gidsResults();
+  return zoek+`<section class="hero-card"><div><b class="hc-t">Startersgids</b><p>${SG.length} hoofdstukken in de juiste volgorde, van plek kiezen tot oogsten. Rustig te lezen in ongeveer 40 minuten. Wat niet nodig is, staat onder 'Meer weten'.</p>
     <div class="hc-row"><button class="btn pri" data-ch="${last}" data-start="1">${last>0?`Ga verder bij hoofdstuk ${last+1}`:"Begin met hoofdstuk 1"}</button>${last>0?`<button class="btn" data-ch="0" data-start="1">Van voor af aan</button>`:""}</div></div>
     <ol class="hc-list">${SG.map((c,i)=>`<li><button data-ch="${i}" data-start="1">${esc(c.t)}</button></li>`).join("")}</ol></section>
-   <section class="sec"><h2>Kies waarmee je verder wilt<small>Kort en praktisch. Je hebt ze niet nodig om te beginnen.</small></h2>
-   <div class="gcats">${GROEPEN.map(g=>`<button class="gcat" data-cat="${g.id}"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true">${GIC[g.ic]||GIC.sprout}</svg></span><span><b>${esc(g.t)}</b><span>${esc(g.d)}</span><em>${g.subs.reduce((n,x)=>n+x.arts.length,0)} artikels</em></span></button>`).join("")}<button class="gcat" data-act="tohulp"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true">${GIC.bug}</svg></span><span><b>Als het misgaat</b><span>Gele bladeren, vlekken, plagen en meer</span><em>Naar Hulp</em></span></button></div></section>`;
+   <section class="sec"><h2>Wat wil je doen?<small>Kort en praktisch. Je hebt ze niet nodig om te beginnen.</small></h2>
+   <div class="gcats">${GROEPEN.map(g=>`<button class="gcat" data-cat="${g.id}"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true">${GIC[g.ic]||GIC.sprout}</svg></span><span><b>${esc(g.t)}</b><span>${esc(g.d)}</span><em>${g.subs.reduce((n,x)=>n+x.arts.length,0)} artikels</em></span></button>`).join("")}<button class="gcat" data-act="tohulp"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true">${GIC.bug}</svg></span><span><b>Mijn plant heeft een probleem</b><span>Gele bladeren, vlekken, plagen en meer</span><em>Naar Hulp</em></span></button></div></section>`;
+}
+/* ---------- Zoeken in de Gids ---------- */
+let GIDX=null;
+function gtxt(x){return typeof x==="string"?x:Array.isArray(x)?x.map(gtxt).join(" "):x&&typeof x==="object"?(x.k==="more"||x.k==="ill"?"":Object.entries(x).filter(([k])=>k!=="k"&&k!=="id").map(([,v])=>gtxt(v)).join(" ")):"";}
+function gidsIndex(){
+  if(GIDX)return GIDX;
+  GIDX=[];
+  for(const cat of GIDS)for(const a of cat.arts)GIDX.push({p:cat.id+"/"+a.id,t:fold(a.t),s:fold(a.s||""),b:fold(a.b.map(gtxt).join(" "))});
+  return GIDX;
+}
+const GSTOP=new Set("mijn een het de ik wil hoe wat waarom wanneer niet kan je is zijn op in van voor te met er dat die ook nog aan bij om als".split(" "));
+const gVorm=w=>{const v=[w];if(w.length>5&&/(tjes|jes|tje|je)$/.test(w))v.push(w.replace(/(tjes|jes|tje|je)$/,""));if(w.length>4)v.push(w.slice(0,Math.max(4,w.length-2)));return v;};
+const gHit=(h,w)=>gVorm(w).some(v=>h.includes(v));
+function gidsFind(q,any){
+  const w=fold(q).split(/[^a-z0-9]+/).filter(x=>x.length>1&&!GSTOP.has(x));
+  if(!w.length)return [];
+  return gidsIndex().map(x=>{let sc=0,n=0;for(const k of w){const a=gHit(x.t,k),b=gHit(x.s,k),c=gHit(x.b,k);if(a||b||c){n++;sc+=a?3:b?2:1;}}return (any?n>0:n===w.length)?{p:x.p,sc}:null;}).filter(Boolean).sort((a,b)=>b.sc-a.sc).map(x=>x.p);
+}
+function gidsResults(){
+  let r=gidsFind(S.gq),q=esc(S.gq.trim()),los=false;
+  if(!r.length){r=gidsFind(S.gq,true);los=r.length>0;}
+  const lijst=r.length?`<div class="acards">${r.map(artCard).join("")}</div>`:`<div class="empty">Niets gevonden voor "${q}". Probeer een eenvoudiger woord, zoals "zaaien", "water" of "slakken".</div>`;
+  return `<section class="sec"><h2>${r.length} ${r.length===1?"resultaat":"resultaten"}<small>${los?`Geen artikel past op alles. Dit past op een deel van "${q}".`:`voor "${q}"`}</small></h2>${lijst}<p class="art-p">Gaat er iets mis met een plant? <button class="lnk" data-act="tohulp">Kijk bij Hulp</button></p></section>`;
+}
+/* Het eerste korte stuk van een artikel is het antwoord: zet het apart */
+function artBody(a){
+  const b=a.b,f=b[0];
+  if(f&&f.k==="p"&&f.t.length<=320)return `<div class="lead"><b>In het kort</b><p>${rich(f.t)}</p></div>`+blocks(b.slice(1));
+  return blocks(b);
 }
 function artMeta(path,cat){
   for(const g of GROEPEN)for(const x of g.subs)if(x.arts.includes(path))return g.t+(x.t?" › "+x.t:"");
@@ -2116,7 +2152,7 @@ function artMeta(path,cat){
 }
 function openArticle(path){
   const [cid,aid]=path.split("/"),cat=GIDS.find(g=>g.id===cid),a=cat&&cat.arts.find(x=>x.id===aid);if(!a)return;
-  showSheet(`<div class="art"><button class="x" style="top:18px" data-act="close" aria-label="Sluiten">×</button><h2>${esc(a.t)}</h2><div class="meta">${esc(artMeta(path,cat))} · ${a.min} min lezen</div>${blocks(a.b)}${a.bron&&a.nagekeken?`<p class="credit" style="margin-top:18px">Bron: ${esc(a.bron)}. Nagekeken: ${MF[+a.nagekeken.slice(5)-1]} ${a.nagekeken.slice(0,4)}.</p>`:""}${artFooter(path,a,cat)}</div>`);
+  showSheet(`<div class="art"><button class="x" style="top:18px" data-act="close" aria-label="Sluiten">×</button><h2>${esc(a.t)}</h2><div class="meta">${esc(artMeta(path,cat))} · ${a.min} min lezen</div>${artBody(a)}${a.bron&&a.nagekeken?`<p class="credit" style="margin-top:18px">Bron: ${esc(a.bron)}. Nagekeken: ${MF[+a.nagekeken.slice(5)-1]} ${a.nagekeken.slice(0,4)}.</p>`:""}${artFooter(path,a,cat)}</div>`);
 }
 
 /* ---------- Geschiedenis: terugknop en scrollpositie ---------- */
@@ -2150,7 +2186,7 @@ function render(){
   renderChrome();
   document.getElementById("main").innerHTML={alle:viewAlle,kal:viewKal,tuin:viewTuin,hulp:viewHulp,gids:viewGids}[S.tab]();
   renderTray();
-  document.getElementById("live").textContent=S.tab==="alle"?filtered().length+" gewassen":"";
+  document.getElementById("live").textContent=S.tab==="alle"?filtered().length+" gewassen":(S.tab==="gids"&&!S.gc&&S.gq.trim()?(gidsFind(S.gq).length||gidsFind(S.gq,true).length)+" resultaten":"");
   navSync();
 }
 function renderTray(){
@@ -2236,7 +2272,7 @@ function openFilter(){
 document.addEventListener("click",e=>{navY=window.scrollY;
   const t=e.target.closest("button, .overlay");if(!t)return;
   if(t.id==="ov"){if(e.target===t)closeOv();return;}
-  if(t.dataset.tab){S.tab=t.dataset.tab;if(S.tab==="gids")S.gc=null;if(S.tab==="hulp")S.hulp=null;render();window.scrollTo(0,0);return;}
+  if(t.dataset.tab){S.tab=t.dataset.tab;if(S.tab==="gids"){S.gc=null;S.gq="";}if(S.tab==="hulp")S.hulp=null;render();window.scrollTo(0,0);return;}
   if(t.dataset.mo){S.m=+t.dataset.mo;S.more.clear();render();return;}
   if(t.dataset.more){const k=t.dataset.more;S.more.add(k);render();const b=document.querySelectorAll(`[data-sec="${k}"] .tile>button`)[6];if(b)b.focus();return;}
   if(t.dataset.f){S[t.dataset.f]=t.dataset.v;const open=!document.getElementById("ov").hidden;render();if(open)openFilter();return;}
@@ -2263,7 +2299,7 @@ document.addEventListener("click",e=>{navY=window.scrollY;
   if(a==="compare"&&S.cmp.size>1){openCompare();return;}
   if(a==="clear"){S.cmp.clear();render();return;}
 });
-document.addEventListener("input",e=>{if(e.target.id==="q"){S.q=e.target.value;const pos=e.target.selectionStart;render();const q=document.getElementById("q");q.focus();q.setSelectionRange(pos,pos);}});
+document.addEventListener("input",e=>{if(e.target.id==="q"){S.q=e.target.value;const pos=e.target.selectionStart;render();const q=document.getElementById("q");q.focus();q.setSelectionRange(pos,pos);}else if(e.target.id==="gq"){S.gq=e.target.value;const pos=e.target.selectionStart;render();const q=document.getElementById("gq");q.focus();q.setSelectionRange(pos,pos);}});
 document.addEventListener("toggle",e=>{const d=e.target;if(!d.classList||!d.classList.contains("grp"))return;const set=d.dataset.view==="jaar"?S.jgrp:S.grp;if(!(S.q||S.type!=="alle"||S.diep!=="alle"||S.plek!=="alle")){if(d.open)set.add(d.dataset.grp);else set.delete(d.dataset.grp);}},true);
 document.addEventListener("change",e=>{const t=e.target;
   if(t.id==="hg"){S.hg=t.value;render();const g=document.getElementById("hg");if(g)g.focus();}

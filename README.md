@@ -36,7 +36,7 @@ Het is één statische webpagina. Er is geen account, geen server en geen volgsy
 | **Gewassen** | 59 groenten, kruiden en fruit in 11 groepen. Zoeken werkt ook op andere namen: *zucchini* vindt courgette, *patat* vindt aardappel. |
 | **Tuin** | Zet gewassen in je eigen tuin, vink de taken van deze maand af en maak een back-up van je gegevens. |
 | **Hulp** | Kies wat je ziet (gele bladeren, bruine vlekken, gaten in het blad, enzovoort) en krijg mogelijke oorzaken en wat je kunt doen. Geen schijnzekerheid. |
-| **Gids** | De Startersgids in 13 hoofdstukken, plus 60 korte artikels in vier groepen: *Begin hier*, *Zo doe je het*, *Weten waarom* en *Naslag*. Plagen en ziektes staan bij Hulp. |
+| **Gids** | De Startersgids in 13 hoofdstukken, plus 60 korte artikels in vier groepen: *Ik begin net*, *Ik wil aan de slag*, *Ik wil begrijpen waarom* en *Ik zoek iets na*, met een zoekveld bovenaan. Plagen en ziektes staan bij Hulp. |
 
 ## Uitgangspunten
 
